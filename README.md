@@ -1,5 +1,5 @@
-# DictionaryPlusPlus
-(Dictionary++)
+# DictionaryPlusPlus 
+#### (Dictionary++) | (Dict++)
 
 ---
 
