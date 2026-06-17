@@ -13,6 +13,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.dictionaryplusplus.R
+import com.example.dictionaryplusplus.ui.components.AuthTextField
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
@@ -23,11 +24,7 @@ fun LoginScreen(
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val email by viewModel.emailInput.collectAsStateWithLifecycle()
-    val password by viewModel.passwordInput.collectAsStateWithLifecycle()
-
-    val emailError by viewModel.emailError.collectAsStateWithLifecycle()
-    val passwordError by viewModel.passwordError.collectAsStateWithLifecycle()
+    val formState by viewModel.formState.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState) {
         if (uiState is AuthUiState.Success) {
@@ -51,27 +48,21 @@ fun LoginScreen(
                 style = MaterialTheme.typography.headlineMedium
             )
 
-            OutlinedTextField(
-                value = email,
-                onValueChange = { viewModel.onEmailChange(it) },
-                label = { Text(stringResource(R.string.label_email)) },
-                isError = emailError != null,
-                supportingText = emailError?.let { error -> { Text(error.asString()) } },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+            AuthTextField(
+                value = formState.email,
+                onValueChange = { viewModel.onAction(AuthAction.OnEmailChange(it)) },
+                label = stringResource(R.string.label_email),
+                error = formState.emailError,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
             )
 
-            OutlinedTextField(
-                value = password,
-                onValueChange = { viewModel.onPasswordChange(it) },
-                label = { Text(stringResource(R.string.label_password)) },
-                isError = passwordError != null,
-                supportingText = passwordError?.let { error -> { Text(error.asString()) } },
+            AuthTextField(
+                value = formState.password,
+                onValueChange = { viewModel.onAction(AuthAction.OnPasswordChange(it)) },
+                label = stringResource(R.string.label_password),
+                error = formState.passwordError,
                 visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
 
             when (val state = uiState) {
@@ -87,7 +78,7 @@ fun LoginScreen(
                 }
                 else -> {
                     Button(
-                        onClick = { viewModel.login() },
+                        onClick = { viewModel.onAction(AuthAction.Login) },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(text = stringResource(R.string.btn_login))

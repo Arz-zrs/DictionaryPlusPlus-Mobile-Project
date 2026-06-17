@@ -1,6 +1,5 @@
 package com.example.dictionaryplusplus.domain.repository
 
-import com.example.dictionaryplusplus.data.firebase.FirebaseAuthSource
 import com.example.dictionaryplusplus.data.firebase.FirestoreSyncStore
 import com.example.dictionaryplusplus.data.local.dao.UserProfileDao
 import com.example.dictionaryplusplus.data.local.entity.UserProfileEntity
@@ -11,27 +10,23 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SyncRepositoryImpl @Inject constructor(
-    private val authSource: FirebaseAuthSource,
+class UserRepositoryImpl @Inject constructor(
     private val firestoreSource: FirestoreSyncStore,
     private val userProfileDao: UserProfileDao
-): SyncRepository {
-    override suspend fun login(
-        email: String,
-        password: String
-    ): Result<UserProfile> {
-        return try {
-            val authResult = authSource.signInWithEmail(email, password)
-            val uid = authResult.getOrThrow()
+) : UserRepository {
 
+    override fun observeUserProfile(): Flow<UserProfile?> {
+        return userProfileDao.observeUserProfile().map { it?.toDomain() }
+    }
+
+    override suspend fun getUserProfile(): UserProfile? {
+        return userProfileDao.getUserProfile()?.toDomain()
+    }
+
+    override suspend fun fetchAndSyncProfile(uid: String, email: String): Result<UserProfile> {
+        return try {
             val cloudDataResult = firestoreSource.fetchUserDocument(uid)
-            val cloudData = cloudDataResult.getOrElse {
-                authSource.signOut()
-                throw it
-            } ?: run {
-                authSource.signOut()
-                throw Exception("User document not found")
-            }
+            val cloudData = cloudDataResult.getOrThrow() ?: throw Exception("User document not found")
 
             val displayName = cloudData["display_name"] as? String ?: "User"
             val totalScore = (cloudData["totalScore"] as? Long)?.toInt() ?: 0
@@ -49,15 +44,12 @@ class SyncRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun register(
+    override suspend fun createProfile(
+        uid: String,
         displayName: String,
-        email: String,
-        password: String
+        email: String
     ): Result<UserProfile> {
         return try {
-            val authResult = authSource.signUpWithEmail(email, password)
-            val uid = authResult.getOrThrow()
-
             firestoreSource.createUserDocument(uid, displayName, email).getOrThrow()
             val localProfile = UserProfileEntity(
                 userId = uid,
@@ -72,22 +64,8 @@ class SyncRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun logout(): Result<Unit> {
-        return try {
-            authSource.signOut()
-            userProfileDao.clearUserProfile()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    override fun observeUserProfile(): Flow<UserProfile?> {
-        return userProfileDao.observeUserProfile().map { it?.toDomain() }
-    }
-
-    override suspend fun isUserSessionActive(): Boolean {
-        return authSource.isUserLoggedIn() && userProfileDao.getUserProfile() != null
+    override suspend fun clearLocalProfile() {
+        userProfileDao.clearUserProfile()
     }
 
     private fun UserProfileEntity.toDomain() = UserProfile(

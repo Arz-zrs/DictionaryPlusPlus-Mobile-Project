@@ -1,7 +1,9 @@
 package com.example.dictionaryplusplus.di
 
-import com.example.dictionaryplusplus.domain.repository.SyncRepository
-import com.example.dictionaryplusplus.domain.repository.SyncRepositoryImpl
+import com.example.dictionaryplusplus.domain.repository.AuthRepository
+import com.example.dictionaryplusplus.domain.repository.AuthRepositoryImpl
+import com.example.dictionaryplusplus.domain.repository.UserRepository
+import com.example.dictionaryplusplus.domain.repository.UserRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -13,7 +15,13 @@ import javax.inject.Singleton
 abstract class RepositoryModule {
     @Binds
     @Singleton
-    abstract fun bindSyncRepository(
-        syncRepositoryImpl: SyncRepositoryImpl
-    ): SyncRepository
+    abstract fun bindAuthRepository(
+        authRepositoryImpl: AuthRepositoryImpl
+    ): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserRepository(
+        userRepositoryImpl: UserRepositoryImpl
+    ): UserRepository
 }

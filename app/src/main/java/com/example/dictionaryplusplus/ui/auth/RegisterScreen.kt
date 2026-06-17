@@ -13,6 +13,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.dictionaryplusplus.R
+import com.example.dictionaryplusplus.ui.components.AuthTextField
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
@@ -23,15 +24,7 @@ fun RegisterScreen(
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val displayName by viewModel.displayNameInput.collectAsStateWithLifecycle()
-    val email by viewModel.emailInput.collectAsStateWithLifecycle()
-    val password by viewModel.passwordInput.collectAsStateWithLifecycle()
-    val confirmPassword by viewModel.confirmPasswordInput.collectAsStateWithLifecycle()
-
-    val displayNameError by viewModel.displayNameError.collectAsStateWithLifecycle()
-    val emailError by viewModel.emailError.collectAsStateWithLifecycle()
-    val passwordError by viewModel.passwordError.collectAsStateWithLifecycle()
-    val confirmPasswordError by viewModel.confirmPasswordError.collectAsStateWithLifecycle()
+    val formState by viewModel.formState.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState) {
         if (uiState is AuthUiState.Success) {
@@ -55,49 +48,37 @@ fun RegisterScreen(
                 style = MaterialTheme.typography.headlineMedium
             )
 
-            OutlinedTextField(
-                value = displayName,
-                onValueChange = { viewModel.onDisplayNameChange(it) },
-                label = { Text(stringResource(R.string.label_username)) },
-                isError = displayNameError != null,
-                supportingText = displayNameError?.let { { Text(it.asString()) } },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+            AuthTextField(
+                value = formState.displayName,
+                onValueChange = { viewModel.onAction(AuthAction.OnDisplayNameChange(it)) },
+                label = stringResource(R.string.label_username),
+                error = formState.displayNameError
             )
 
-            OutlinedTextField(
-                value = email,
-                onValueChange = { viewModel.onEmailChange(it) },
-                label = { Text(stringResource(R.string.label_email)) },
-                isError = emailError != null,
-                supportingText = emailError?.let { { Text(it.asString()) } },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+            AuthTextField(
+                value = formState.email,
+                onValueChange = { viewModel.onAction(AuthAction.OnEmailChange(it)) },
+                label = stringResource(R.string.label_email),
+                error = formState.emailError,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
             )
 
-            OutlinedTextField(
-                value = password,
-                onValueChange = { viewModel.onPasswordChange(it) },
-                label = { Text(stringResource(R.string.label_password_hint)) },
-                isError = passwordError != null,
-                supportingText = passwordError?.let { { Text(it.asString()) } },
+            AuthTextField(
+                value = formState.password,
+                onValueChange = { viewModel.onAction(AuthAction.OnPasswordChange(it)) },
+                label = stringResource(R.string.label_password_hint),
+                error = formState.passwordError,
                 visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
 
-            OutlinedTextField(
-                value = confirmPassword,
-                onValueChange = { viewModel.onConfirmPasswordChange(it) },
-                label = { Text(stringResource(R.string.label_confirm_password)) },
-                isError = confirmPasswordError != null,
-                supportingText = confirmPasswordError?.let { { Text(it.asString()) } },
+            AuthTextField(
+                value = formState.confirmPassword,
+                onValueChange = { viewModel.onAction(AuthAction.OnConfirmPasswordChange(it)) },
+                label = stringResource(R.string.label_confirm_password),
+                error = formState.confirmPasswordError,
                 visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
 
             when (val state = uiState) {
@@ -113,7 +94,7 @@ fun RegisterScreen(
                 }
                 else -> {
                     Button(
-                        onClick = { viewModel.register() },
+                        onClick = { viewModel.onAction(AuthAction.Register) },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(text = stringResource(R.string.btn_register))

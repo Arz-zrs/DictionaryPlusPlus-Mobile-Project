@@ -19,3 +19,7 @@ sealed class UiText {
         }
     }
 }
+
+fun Throwable.asUiText(defaultResId: Int): UiText {
+    return this.message?.let { UiText.DynamicString(it) } ?: UiText.StringResource(defaultResId)
+}
