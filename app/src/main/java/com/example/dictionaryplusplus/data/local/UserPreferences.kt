@@ -38,7 +38,7 @@ class UserPreferences @Inject constructor(
             preferences[PreferencesKeys.HAS_SEEN_ONBOARDING] ?: false
         }
 
-    suspend fun setHasSeenOnBoarding(completed: Boolean) {
+    suspend fun setHasSeenOnboarding(completed: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.HAS_SEEN_ONBOARDING] = completed
         }
