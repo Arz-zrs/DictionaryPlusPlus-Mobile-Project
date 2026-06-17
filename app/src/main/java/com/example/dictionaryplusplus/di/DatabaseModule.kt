@@ -2,7 +2,7 @@ package com.example.dictionaryplusplus.di
 
 import android.app.Application
 import androidx.room.Room
-import com.example.dictionaryplusplus.data.AppDatabase
+import com.example.dictionaryplusplus.data.local.AppDatabase
 import com.example.dictionaryplusplus.data.local.dao.*
 import dagger.Module
 import dagger.Provides
