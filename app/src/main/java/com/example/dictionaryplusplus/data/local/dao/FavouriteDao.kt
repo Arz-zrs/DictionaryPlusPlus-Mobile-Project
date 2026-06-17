@@ -1,4 +1,7 @@
 package com.example.dictionaryplusplus.data.local.dao
 
-interface FavoriteDao {
+import androidx.room.Dao
+
+@Dao
+interface FavouriteDao {
 }
