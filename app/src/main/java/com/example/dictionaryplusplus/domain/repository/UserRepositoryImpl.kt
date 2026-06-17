@@ -29,7 +29,7 @@ class UserRepositoryImpl @Inject constructor(
             val cloudData = cloudDataResult.getOrThrow() ?: throw Exception("User document not found")
 
             val displayName = cloudData["display_name"] as? String ?: "User"
-            val totalScore = (cloudData["totalScore"] as? Long)?.toInt() ?: 0
+            val totalScore = (cloudData["total_score"] as? Long)?.toInt() ?: 0
 
             val localProfile = UserProfileEntity(
                 userId = uid,

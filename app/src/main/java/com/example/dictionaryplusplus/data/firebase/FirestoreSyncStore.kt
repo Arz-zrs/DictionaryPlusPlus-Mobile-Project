@@ -19,7 +19,7 @@ class FirestoreSyncStore @Inject constructor(
                 "uid" to uid,
                 "display_name" to displayName,
                 "email" to email,
-                "totalScore" to 0,
+                "total_score" to 0,
                 "last_quiz_completed_at" to null,
                 "seen_words" to emptyList<String>(),
                 "favourites" to emptyList<String>(),
