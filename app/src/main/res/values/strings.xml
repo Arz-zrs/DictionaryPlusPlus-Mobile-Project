@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">DictionaryPlusPlus</string>
+    <string name="error_login_failed">Login Failed</string>
+    <string name="error_registration_failed">Registration Failed</string>
+    <string name="error_username_empty">Username cannot be empty.</string>
+    <string name="error_email_empty">Email cannot be empty.</string>
+    <string name="error_email_invalid">Please enter a valid email address.</string>
+    <string name="error_password_too_short">Password must be at least 8 characters.</string>
+    <string name="error_passwords_not_match">Passwords do not match.</string>
+
+    <!-- Login Screen -->
+    <string name="login_welcome">Welcome to Dictionary++</string>
+    <string name="label_email">Email</string>
+    <string name="label_password">Password</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_no_account_register">Don\'t have an account? Register</string>
+
+    <!-- Register Screen -->
+    <string name="register_title">Create Account</string>
+    <string name="label_username">Username</string>
+    <string name="label_password_hint">Password (Min 8 chars)</string>
+    <string name="label_confirm_password">Confirm Password</string>
+    <string name="btn_register">Register</string>
+    <string name="btn_back_to_login">Back to Login</string>
 </resources>

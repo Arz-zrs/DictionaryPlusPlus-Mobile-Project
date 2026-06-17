@@ -9,8 +9,8 @@
     <!--  POST NOTIFICATIONS for Android 13+  -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
-    <!--  Boot Receiver  -->
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!--  Boot Receiver TODO: uncomment when ready -->
+<!--    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />-->
 
     <application
         android:name=".DictionaryPlusPlusApp"
@@ -45,22 +45,22 @@
             </intent-filter>
         </activity>
 
-        <!--  Daily Notif Receiver   -->
-        <receiver
-            android:name=".notification.QuizActionReceiver"
-            android:exported="false"/>
+        <!--  Daily Notif Receiver TODO: uncomment when ready  -->
+<!--        <receiver-->
+<!--            android:name=".notification.QuizActionReceiver"-->
+<!--            android:exported="false"/>-->
 
-        <!-- WorkManager initializer with Hilt -->
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx.startup"
-            android:exported="false"
-            tools:node="merge">
-            <meta-data
-                android:name="androidx.work.WorkManagerInitializer"
-                android:value="androidx.startup.Initialization"
-                tools:node="remove"/>
-        </provider>
+        <!-- WorkManager initializer with Hilt TODO: uncomment when ready -->
+<!--        <provider-->
+<!--            android:name="androidx.startup.InitializationProvider"-->
+<!--            android:authorities="${applicationId}.androidx.startup"-->
+<!--            android:exported="false"-->
+<!--            tools:node="merge">-->
+<!--            <meta-data-->
+<!--                android:name="androidx.work.WorkManagerInitializer"-->
+<!--                android:value="androidx.startup.Initialization"-->
+<!--                tools:node="remove"/>-->
+<!--        </provider>-->
 
     </application>
 
