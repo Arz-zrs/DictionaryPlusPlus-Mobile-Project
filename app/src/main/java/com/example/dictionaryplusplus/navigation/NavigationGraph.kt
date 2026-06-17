@@ -57,7 +57,7 @@ fun NavigationGraph(
             RegisterScreen(
                 onRegisterSuccess = {
                     navController.navigate(Screen.Dashboard.route) {
-                        popUpTo(Screen.Register.route) { inclusive = true }
+                        popUpTo(Screen.Login.route) { inclusive = true }
                     }
                 },
                 onNavigateBack = {

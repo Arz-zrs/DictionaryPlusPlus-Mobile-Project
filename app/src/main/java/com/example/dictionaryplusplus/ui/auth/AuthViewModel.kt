@@ -20,13 +20,20 @@ class AuthViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
-    val usernameInput = MutableStateFlow("")
-    val emailInput = MutableStateFlow("")
-    val passwordInput = MutableStateFlow("")
-    val confirmPasswordInput = MutableStateFlow("")
+    private val _displayNameInput = MutableStateFlow("")
+    val displayNameInput: StateFlow<String> = _displayNameInput.asStateFlow()
 
-    private val _usernameError = MutableStateFlow<UiText?>(null)
-    val usernameError: StateFlow<UiText?> = _usernameError.asStateFlow()
+    private val _emailInput = MutableStateFlow("")
+    val emailInput: StateFlow<String> = _emailInput.asStateFlow()
+
+    private val _passwordInput = MutableStateFlow("")
+    val passwordInput: StateFlow<String> = _passwordInput.asStateFlow()
+
+    private val _confirmPasswordInput = MutableStateFlow("")
+    val confirmPasswordInput: StateFlow<String> = _confirmPasswordInput.asStateFlow()
+
+    private val _displayNameError = MutableStateFlow<UiText?>(null)
+    val displayNameError: StateFlow<UiText?> = _displayNameError.asStateFlow()
 
     private val _emailError = MutableStateFlow<UiText?>(null)
     val emailError: StateFlow<UiText?> = _emailError.asStateFlow()
@@ -37,10 +44,30 @@ class AuthViewModel @Inject constructor(
     private val _confirmPasswordError = MutableStateFlow<UiText?>(null)
     val confirmPasswordError: StateFlow<UiText?> = _confirmPasswordError.asStateFlow()
 
+    fun onDisplayNameChange(value: String) {
+        _displayNameInput.value = value
+    }
+
+    fun onEmailChange(value: String) {
+        _emailInput.value = value
+    }
+
+    fun onPasswordChange(value: String) {
+        _passwordInput.value = value
+    }
+
+    fun onConfirmPasswordChange(value: String) {
+        _confirmPasswordInput.value = value
+    }
+
     fun login() {
-        val email = emailInput.value.trim()
-        val password = passwordInput.value
-        if (!validateEmail(email) || !validatePassword(password)) return
+        val email = _emailInput.value.trim()
+        val password = _passwordInput.value
+
+        val isEmailValid = validateEmail(email)
+        val isPasswordValid = validatePassword(password)
+
+        if (!isEmailValid || !isPasswordValid) return
 
         _uiState.value = AuthUiState.Loading
         viewModelScope.launch {
@@ -58,22 +85,22 @@ class AuthViewModel @Inject constructor(
     }
 
     fun register() {
-        val username = usernameInput.value.trim()
-        val email = emailInput.value.trim()
-        val password = passwordInput.value
-        val confirmPassword = confirmPasswordInput.value
+        val displayName = _displayNameInput.value.trim()
+        val email = _emailInput.value.trim()
+        val password = _passwordInput.value
+        val confirmPassword = _confirmPasswordInput.value
 
-        val isUsernameValid = validateUsername(username)
+        val isDisplayNameValid = validateDisplayName(displayName)
         val isEmailValid = validateEmail(email)
         val isPasswordValid = validatePassword(password)
         val isConfirmPasswordValid = validateConfirmPassword(password, confirmPassword)
 
-        if (!isUsernameValid || !isEmailValid ||
+        if (!isDisplayNameValid || !isEmailValid ||
             !isPasswordValid || !isConfirmPasswordValid) return
 
         _uiState.value = AuthUiState.Loading
         viewModelScope.launch {
-            syncRepository.register(username, email, password)
+            syncRepository.register(displayName, email, password)
                 .onSuccess { userProfile ->
                     _uiState.value = AuthUiState.Success(userProfile)
                 }
@@ -86,12 +113,12 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    private fun validateUsername(name: String): Boolean {
+    private fun validateDisplayName(name: String): Boolean {
         return if (name.isEmpty()) {
-            _usernameError.value = UiText.StringResource(R.string.error_username_empty)
+            _displayNameError.value = UiText.StringResource(R.string.error_username_empty)
             false
         } else {
-            _usernameError.value = null
+            _displayNameError.value = null
             true
         }
     }

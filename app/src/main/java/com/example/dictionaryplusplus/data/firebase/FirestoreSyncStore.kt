@@ -11,13 +11,13 @@ class FirestoreSyncStore @Inject constructor(
 ) {
     suspend fun createUserDocument(
         uid: String,
-        username: String,
+        displayName: String,
         email: String
     ): Result<Unit> {
         return try {
             val userDocument = mapOf(
                 "uid" to uid,
-                "username" to username,
+                "display_name" to displayName,
                 "email" to email,
                 "totalScore" to 0,
                 "last_quiz_completed_at" to null,

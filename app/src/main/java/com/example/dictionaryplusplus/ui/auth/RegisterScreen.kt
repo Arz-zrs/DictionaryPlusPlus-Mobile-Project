@@ -23,12 +23,12 @@ fun RegisterScreen(
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val username by viewModel.usernameInput.collectAsStateWithLifecycle()
+    val displayName by viewModel.displayNameInput.collectAsStateWithLifecycle()
     val email by viewModel.emailInput.collectAsStateWithLifecycle()
     val password by viewModel.passwordInput.collectAsStateWithLifecycle()
     val confirmPassword by viewModel.confirmPasswordInput.collectAsStateWithLifecycle()
 
-    val usernameError by viewModel.usernameError.collectAsStateWithLifecycle()
+    val displayNameError by viewModel.displayNameError.collectAsStateWithLifecycle()
     val emailError by viewModel.emailError.collectAsStateWithLifecycle()
     val passwordError by viewModel.passwordError.collectAsStateWithLifecycle()
     val confirmPasswordError by viewModel.confirmPasswordError.collectAsStateWithLifecycle()
@@ -56,18 +56,18 @@ fun RegisterScreen(
             )
 
             OutlinedTextField(
-                value = username,
-                onValueChange = { viewModel.usernameInput.value = it },
+                value = displayName,
+                onValueChange = { viewModel.onDisplayNameChange(it) },
                 label = { Text(stringResource(R.string.label_username)) },
-                isError = usernameError != null,
-                supportingText = usernameError?.let { { Text(it.asString()) } },
+                isError = displayNameError != null,
+                supportingText = displayNameError?.let { { Text(it.asString()) } },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
 
             OutlinedTextField(
                 value = email,
-                onValueChange = { viewModel.emailInput.value = it },
+                onValueChange = { viewModel.onEmailChange(it) },
                 label = { Text(stringResource(R.string.label_email)) },
                 isError = emailError != null,
                 supportingText = emailError?.let { { Text(it.asString()) } },
@@ -78,7 +78,7 @@ fun RegisterScreen(
 
             OutlinedTextField(
                 value = password,
-                onValueChange = { viewModel.passwordInput.value = it },
+                onValueChange = { viewModel.onPasswordChange(it) },
                 label = { Text(stringResource(R.string.label_password_hint)) },
                 isError = passwordError != null,
                 supportingText = passwordError?.let { { Text(it.asString()) } },
@@ -90,7 +90,7 @@ fun RegisterScreen(
 
             OutlinedTextField(
                 value = confirmPassword,
-                onValueChange = { viewModel.confirmPasswordInput.value = it },
+                onValueChange = { viewModel.onConfirmPasswordChange(it) },
                 label = { Text(stringResource(R.string.label_confirm_password)) },
                 isError = confirmPasswordError != null,
                 supportingText = confirmPasswordError?.let { { Text(it.asString()) } },

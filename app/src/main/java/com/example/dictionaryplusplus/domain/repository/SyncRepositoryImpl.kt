@@ -25,14 +25,20 @@ class SyncRepositoryImpl @Inject constructor(
             val uid = authResult.getOrThrow()
 
             val cloudDataResult = firestoreSource.fetchUserDocument(uid)
-            val cloudData = cloudDataResult.getOrThrow() ?: throw Exception("User document not found")
+            val cloudData = cloudDataResult.getOrElse {
+                authSource.signOut()
+                throw it
+            } ?: run {
+                authSource.signOut()
+                throw Exception("User document not found")
+            }
 
-            val username = cloudData["username"] as? String ?: "User"
+            val displayName = cloudData["display_name"] as? String ?: "User"
             val totalScore = (cloudData["totalScore"] as? Long)?.toInt() ?: 0
 
             val localProfile = UserProfileEntity(
                 userId = uid,
-                username = username,
+                displayName = displayName,
                 email = email,
                 totalScore = totalScore
             )
@@ -44,7 +50,7 @@ class SyncRepositoryImpl @Inject constructor(
     }
 
     override suspend fun register(
-        username: String,
+        displayName: String,
         email: String,
         password: String
     ): Result<UserProfile> {
@@ -52,10 +58,10 @@ class SyncRepositoryImpl @Inject constructor(
             val authResult = authSource.signUpWithEmail(email, password)
             val uid = authResult.getOrThrow()
 
-            firestoreSource.createUserDocument(uid, username, email).getOrThrow()
+            firestoreSource.createUserDocument(uid, displayName, email).getOrThrow()
             val localProfile = UserProfileEntity(
                 userId = uid,
-                username = username,
+                displayName = displayName,
                 email = email,
                 totalScore = 0
             )
@@ -86,7 +92,7 @@ class SyncRepositoryImpl @Inject constructor(
 
     private fun UserProfileEntity.toDomain() = UserProfile(
         userId = userId,
-        username = username,
+        displayName = displayName,
         email = email,
         totalScore = totalScore,
     )

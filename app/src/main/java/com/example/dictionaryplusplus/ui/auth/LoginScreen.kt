@@ -53,7 +53,7 @@ fun LoginScreen(
 
             OutlinedTextField(
                 value = email,
-                onValueChange = { viewModel.emailInput.value = it },
+                onValueChange = { viewModel.onEmailChange(it) },
                 label = { Text(stringResource(R.string.label_email)) },
                 isError = emailError != null,
                 supportingText = emailError?.let { error -> { Text(error.asString()) } },
@@ -64,7 +64,7 @@ fun LoginScreen(
 
             OutlinedTextField(
                 value = password,
-                onValueChange = { viewModel.passwordInput.value = it },
+                onValueChange = { viewModel.onPasswordChange(it) },
                 label = { Text(stringResource(R.string.label_password)) },
                 isError = passwordError != null,
                 supportingText = passwordError?.let { error -> { Text(error.asString()) } },
