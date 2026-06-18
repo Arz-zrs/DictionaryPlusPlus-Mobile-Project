@@ -1,7 +1,7 @@
 package com.example.dictionaryplusplus.domain.repository
 
 import com.example.dictionaryplusplus.data.firebase.FirebaseAuthSource
-import com.example.dictionaryplusplus.domain.model.UserProfile
+import com.example.dictionaryplusplus.domain.mapper.UserProfileMapper
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -11,7 +11,7 @@ class AuthRepositoryImpl @Inject constructor(
     private val userRepository: UserRepository
 ) : AuthRepository {
 
-    override suspend fun login(email: String, password: String): Result<UserProfile> {
+    override suspend fun login(email: String, password: String): Result<UserProfileMapper> {
         return try {
             val authResult = authSource.signInWithEmail(email, password)
             val uid = authResult.getOrThrow()
@@ -31,7 +31,7 @@ class AuthRepositoryImpl @Inject constructor(
         displayName: String,
         email: String,
         password: String
-    ): Result<UserProfile> {
+    ): Result<UserProfileMapper> {
         return try {
             val authResult = authSource.signUpWithEmail(email, password)
             val uid = authResult.getOrThrow()

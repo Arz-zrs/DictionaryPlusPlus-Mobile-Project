@@ -1,6 +1,6 @@
-package com.example.dictionaryplusplus.domain.model
+package com.example.dictionaryplusplus.domain.mapper
 
-data class UserProfile(
+data class UserProfileMapper(
     val userId: String,
     val displayName: String,
     val email: String,
