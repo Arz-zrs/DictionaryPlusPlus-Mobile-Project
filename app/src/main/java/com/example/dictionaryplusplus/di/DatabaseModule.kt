@@ -1,12 +1,13 @@
 package com.example.dictionaryplusplus.di
 
-import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import com.example.dictionaryplusplus.data.local.AppDatabase
 import com.example.dictionaryplusplus.data.local.dao.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -16,12 +17,14 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideAppDatabase(application: Application): AppDatabase {
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
         return Room.databaseBuilder(
-                application,
+                context,
                 AppDatabase::class.java,
-                "app_database"
-            ).fallbackToDestructiveMigration(false).build() // TODO: Remove fallback when migration is done
+                "dictionary_plus_plus_db"
+            )
+            .fallbackToDestructiveMigration(false) // TODO: Remove fallback when migration is done
+            .build()
     }
 
     @Provides

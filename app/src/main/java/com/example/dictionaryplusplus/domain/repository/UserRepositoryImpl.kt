@@ -3,7 +3,7 @@ package com.example.dictionaryplusplus.domain.repository
 import com.example.dictionaryplusplus.data.firebase.FirestoreSyncStore
 import com.example.dictionaryplusplus.data.local.dao.UserProfileDao
 import com.example.dictionaryplusplus.data.local.entity.UserProfileEntity
-import com.example.dictionaryplusplus.domain.mapper.UserProfileMapper
+import com.example.dictionaryplusplus.domain.mapper.UserProfile
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -15,15 +15,15 @@ class UserRepositoryImpl @Inject constructor(
     private val userProfileDao: UserProfileDao
 ) : UserRepository {
 
-    override fun observeUserProfile(): Flow<UserProfileMapper?> {
+    override fun observeUserProfile(): Flow<UserProfile?> {
         return userProfileDao.observeUserProfile().map { it?.toDomain() }
     }
 
-    override suspend fun getUserProfile(): UserProfileMapper? {
+    override suspend fun getUserProfile(): UserProfile? {
         return userProfileDao.getUserProfile()?.toDomain()
     }
 
-    override suspend fun fetchAndSyncProfile(uid: String, email: String): Result<UserProfileMapper> {
+    override suspend fun fetchAndSyncProfile(uid: String, email: String): Result<UserProfile> {
         return try {
             val cloudDataResult = firestoreSource.fetchUserDocument(uid)
             val cloudData = cloudDataResult.getOrThrow() ?: throw Exception("User document not found")
@@ -48,7 +48,7 @@ class UserRepositoryImpl @Inject constructor(
         uid: String,
         displayName: String,
         email: String
-    ): Result<UserProfileMapper> {
+    ): Result<UserProfile> {
         return try {
             firestoreSource.createUserDocument(uid, displayName, email).getOrThrow()
             val localProfile = UserProfileEntity(
@@ -68,7 +68,7 @@ class UserRepositoryImpl @Inject constructor(
         userProfileDao.clearUserProfile()
     }
 
-    private fun UserProfileEntity.toDomain() = UserProfileMapper(
+    private fun UserProfileEntity.toDomain() = UserProfile(
         userId = userId,
         displayName = displayName,
         email = email,

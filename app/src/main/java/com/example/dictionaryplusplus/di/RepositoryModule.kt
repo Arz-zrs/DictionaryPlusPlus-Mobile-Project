@@ -4,6 +4,8 @@ import com.example.dictionaryplusplus.domain.repository.AuthRepository
 import com.example.dictionaryplusplus.domain.repository.AuthRepositoryImpl
 import com.example.dictionaryplusplus.domain.repository.UserRepository
 import com.example.dictionaryplusplus.domain.repository.UserRepositoryImpl
+import com.example.dictionaryplusplus.domain.repository.WordRepository
+import com.example.dictionaryplusplus.domain.repository.WordRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -24,4 +26,10 @@ abstract class RepositoryModule {
     abstract fun bindUserRepository(
         userRepositoryImpl: UserRepositoryImpl
     ): UserRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindWordRepository(
+        wordRepositoryImpl: WordRepositoryImpl
+    ): WordRepository
 }

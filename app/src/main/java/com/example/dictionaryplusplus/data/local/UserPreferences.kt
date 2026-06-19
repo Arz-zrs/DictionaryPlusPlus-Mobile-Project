@@ -9,6 +9,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 import javax.inject.Inject
@@ -24,6 +25,7 @@ class UserPreferences @Inject constructor(
         val HAS_SEEN_ONBOARDING = booleanPreferencesKey("has_seen_onboarding")
         val NOTIFICATION_TIME = stringPreferencesKey("notification_time")
         val THEME_MODE = stringPreferencesKey("theme_mode")
+        val IS_WORD_BANK_SEEDED = booleanPreferencesKey("is_word_bank_seeded")
     }
 
     val hasSeenOnboarding: Flow<Boolean> = context.dataStore.data
@@ -52,6 +54,27 @@ class UserPreferences @Inject constructor(
     suspend fun setNotificationTime(time: String) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.NOTIFICATION_TIME] = time
+        }
+    }
+
+    suspend fun isWordBankSeeded(): Boolean {
+        return context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }
+            .map { preferences ->
+                preferences[PreferencesKeys.IS_WORD_BANK_SEEDED] ?: false
+            }
+            .first()
+    }
+
+    suspend fun setWordBankSeeded(seeded: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.IS_WORD_BANK_SEEDED] = seeded
         }
     }
 }
