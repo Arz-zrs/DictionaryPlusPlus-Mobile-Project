@@ -30,9 +30,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.ui.dictionary.DefinitionState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,7 +79,7 @@ fun WordDetailSheet(
                         imageVector =
                             if (uiState.isFavourite) Icons.Default.Star
                             else Icons.Outlined.Star,
-                        contentDescription = "Favourite Toggle",
+                        contentDescription = stringResource(R.string.favourite_toggle_desc),
                         tint =
                             if (uiState.isFavourite) MaterialTheme.colorScheme.primary
                             else MaterialTheme.colorScheme.onSurfaceVariant
@@ -105,7 +107,7 @@ fun WordDetailSheet(
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
-                                text = "Definition:",
+                                text = stringResource(R.string.label_definition),
                                 style = MaterialTheme.typography.titleSmall,
                                 color = MaterialTheme.colorScheme.primary
                             )
@@ -119,7 +121,7 @@ fun WordDetailSheet(
                 }
                 is DefinitionState.NotCached -> {
                     Text(
-                        text = "Definition Not cached",
+                        text = stringResource(R.string.error_definition_not_cached),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -136,8 +138,8 @@ fun WordDetailSheet(
             OutlinedTextField(
                 value = noteInput,
                 onValueChange = { noteInput = it },
-                label = { Text("Personal Notes") },
-                placeholder = { Text("Add your notes here...") },
+                label = { Text(stringResource(R.string.label_personal_notes)) },
+                placeholder = { Text(stringResource(R.string.placeholder_personal_notes)) },
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 3,
                 maxLines = 5
