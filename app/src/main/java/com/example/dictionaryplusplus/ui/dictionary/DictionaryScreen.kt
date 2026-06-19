@@ -10,9 +10,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -21,6 +18,7 @@ import com.example.dictionaryplusplus.R
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.domain.mapper.Word
+import com.example.dictionaryplusplus.ui.dictionary.components.WordDetailSheet
 
 @Composable
 fun DictionaryScreen(
@@ -28,8 +26,7 @@ fun DictionaryScreen(
 ) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val searchResults by viewModel.searchResults.collectAsStateWithLifecycle()
-
-    var selectedWordForDetail by remember { mutableStateOf<String?>(null) }
+    val sheetState by viewModel.sheetState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -87,13 +84,23 @@ fun DictionaryScreen(
                         SearchResultItem(
                             word = wordItem,
                             onItemClick = {
-                                selectedWordForDetail = wordItem.word
+                                viewModel.onWordSelected(wordItem.word)
                             }
                         )
                     }
                 }
             }
         }
+    }
+
+    when (val state = sheetState) {
+        is DictionarySheetState.WordDetail -> {
+            WordDetailSheet(
+                word = state.word,
+                onDismiss = { viewModel.onSheetDismissed() }
+            )
+        }
+        DictionarySheetState.Hidden -> {}
     }
 }
 
