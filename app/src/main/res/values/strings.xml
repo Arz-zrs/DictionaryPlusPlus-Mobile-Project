@@ -25,9 +25,9 @@
 
     <!-- Onboarding Screen -->
     <string name="onboarding_notification_title">Allow Notification Access</string>
-    <string name="onboarding_notification_desc">Dictionary++ delivers one passive English word to your lock screen every single day. We require notification access to build your routine without forcing you to open the app.</string>
+    <string name="onboarding_notification_desc">Dictionary++ delivers one passive English word to your lock screen every single day. We require notification access to deliver each words via notification without forcing you to open the app.</string>
     <string name="onboarding_btn_enable_notification">Enable Notification</string>
-    <string name="onboarding_time_title">Choose Your Daily Delivery</string>
+    <string name="onboarding_time_title">Choose Your Daily Notification</string>
     <string name="onboarding_time_desc">Pick the best time to receive your notification.</string>
     <string name="onboarding_btn_skip">Skip</string>
     <string name="onboarding_btn_finish">Finish Setup</string>

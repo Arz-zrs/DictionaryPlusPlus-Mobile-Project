@@ -31,7 +31,7 @@ fun OnboardingScreen(
     onNavigateToLogin: () -> Unit,
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     var currentStep by remember { mutableStateOf(1) }
@@ -39,7 +39,7 @@ fun OnboardingScreen(
     var selectedMinute by remember { mutableStateOf(0) }
 
     LaunchedEffect(uiState) {
-        if (uiState.value == OnboardingUiState.Completed) {
+        if (uiState == OnboardingUiState.Completed) {
             onNavigateToLogin()
         }
     }
@@ -98,17 +98,17 @@ fun OnboardingScreen(
                         )
                     }
                 }
-                BottomNavigationButtons(
-                    currentStep = currentStep,
-                    onSkip = {
-                        viewModel.completeOnboarding("08:00")
-                    },
-                    onComplete = {
-                        val formattedTime = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)
-                        viewModel.completeOnboarding(formattedTime)
-                    }
-                )
             }
+            BottomNavigationButtons(
+                currentStep = currentStep,
+                onSkip = {
+                    viewModel.completeOnboarding("08:00")
+                },
+                onComplete = {
+                    val formattedTime = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)
+                    viewModel.completeOnboarding(formattedTime)
+                }
+            )
         }
     }
 }
@@ -120,7 +120,7 @@ private fun ProgressDots(currentStep: Int, totalSteps: Int = 2) {
         modifier = Modifier.padding(top = 16.dp)
     ) {
         repeat(totalSteps) { step ->
-            val color = if (step == currentStep) MaterialTheme.colorScheme.primary
+            val color = if (step + 1 == currentStep) MaterialTheme.colorScheme.primary
             else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
             Box(
                 modifier = Modifier
