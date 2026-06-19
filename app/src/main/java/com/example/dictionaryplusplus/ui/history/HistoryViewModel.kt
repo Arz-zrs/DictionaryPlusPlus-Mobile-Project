@@ -1,6 +1,5 @@
 package com.example.dictionaryplusplus.ui.history
 
-import android.icu.text.SimpleDateFormat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.domain.repository.HistoryRepository
@@ -14,6 +13,9 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject.Inject
 
@@ -21,7 +23,8 @@ import javax.inject.Inject
 class HistoryViewModel @Inject constructor(
     private val historyRepository: HistoryRepository
 ) : ViewModel() {
-    private val dateFormatter = SimpleDateFormat("dd MM yyyy, HH:mm", Locale.getDefault())
+    private val dateFormatter = DateTimeFormatter.ofPattern("dd MM yyyy, HH:mm", Locale.getDefault())
+        .withZone(ZoneId.systemDefault())
 
     private val _currentFilter = MutableStateFlow("All")
     val currentFilter: StateFlow<String> = _currentFilter.asStateFlow()
@@ -36,7 +39,7 @@ class HistoryViewModel @Inject constructor(
                 SeenEventUiModel(
                     id = event.id,
                     word = event.word,
-                    formattedDate = dateFormatter.format(event.seenAtTimestamp),
+                    formattedDate = dateFormatter.format(Instant.ofEpochMilli(event.seenAtTimestamp)),
                     masteryStatus = event.masteryStatus
                 )
             }
