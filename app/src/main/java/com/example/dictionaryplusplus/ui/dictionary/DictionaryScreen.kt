@@ -10,6 +10,9 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,6 +28,8 @@ fun DictionaryScreen(
 ) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val searchResults by viewModel.searchResults.collectAsStateWithLifecycle()
+
+    var selectedWordForDetail by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = Modifier
@@ -42,7 +47,10 @@ fun DictionaryScreen(
             value = searchQuery,
             onValueChange = { viewModel.onSearchQueryChanged(it) },
             label = { Text(stringResource(R.string.search_hint)) },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = stringResource(R.string.search_icon_desc)) },
+            leadingIcon = {
+                Icon(Icons.Default.Search,
+                    contentDescription = stringResource(R.string.search_icon_desc)
+                )},
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
@@ -75,11 +83,11 @@ fun DictionaryScreen(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(searchResults, key = { it.word }) { word ->
+                    items(searchResults, key = { it.word }) { wordItem ->
                         SearchResultItem(
-                            word = word,
+                            word = wordItem,
                             onItemClick = {
-                                // TODO: Handle item click
+                                selectedWordForDetail = wordItem.word
                             }
                         )
                     }

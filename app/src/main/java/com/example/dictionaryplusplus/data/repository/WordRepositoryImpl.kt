@@ -1,7 +1,8 @@
-package com.example.dictionaryplusplus.domain.repository
+package com.example.dictionaryplusplus.data.repository
 
 import com.example.dictionaryplusplus.data.local.dao.WordDao
 import com.example.dictionaryplusplus.domain.mapper.Word
+import com.example.dictionaryplusplus.domain.repository.WordRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

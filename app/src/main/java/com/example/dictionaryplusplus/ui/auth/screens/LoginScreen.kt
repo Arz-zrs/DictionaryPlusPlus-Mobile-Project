@@ -1,4 +1,4 @@
-package com.example.dictionaryplusplus.ui.auth
+package com.example.dictionaryplusplus.ui.auth.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,11 +16,14 @@ import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.ui.components.AuthTextField
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.dictionaryplusplus.ui.auth.AuthAction
+import com.example.dictionaryplusplus.ui.auth.AuthUiState
+import com.example.dictionaryplusplus.ui.auth.AuthViewModel
 
 @Composable
-fun RegisterScreen(
-    onRegisterSuccess: () -> Unit,
-    onNavigateBack: () -> Unit,
+fun LoginScreen(
+    onLoginSuccess: () -> Unit,
+    onNavigateToRegister: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -28,31 +31,24 @@ fun RegisterScreen(
 
     LaunchedEffect(uiState) {
         if (uiState is AuthUiState.Success) {
-            onRegisterSuccess()
+            onLoginSuccess()
         }
     }
 
     Box(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
+        .fillMaxSize()
+        .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = stringResource(R.string.register_title),
+                text = stringResource(R.string.login_welcome),
                 style = MaterialTheme.typography.headlineMedium
-            )
-
-            AuthTextField(
-                value = formState.displayName,
-                onValueChange = { viewModel.onAction(AuthAction.OnDisplayNameChange(it)) },
-                label = stringResource(R.string.label_username),
-                error = formState.displayNameError
             )
 
             AuthTextField(
@@ -66,17 +62,8 @@ fun RegisterScreen(
             AuthTextField(
                 value = formState.password,
                 onValueChange = { viewModel.onAction(AuthAction.OnPasswordChange(it)) },
-                label = stringResource(R.string.label_password_hint),
+                label = stringResource(R.string.label_password),
                 error = formState.passwordError,
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
-            )
-
-            AuthTextField(
-                value = formState.confirmPassword,
-                onValueChange = { viewModel.onAction(AuthAction.OnConfirmPasswordChange(it)) },
-                label = stringResource(R.string.label_confirm_password),
-                error = formState.confirmPasswordError,
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
@@ -94,13 +81,13 @@ fun RegisterScreen(
                 }
                 else -> {
                     Button(
-                        onClick = { viewModel.onAction(AuthAction.Register) },
+                        onClick = { viewModel.onAction(AuthAction.Login) },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(text = stringResource(R.string.btn_register))
+                        Text(text = stringResource(R.string.btn_login))
                     }
-                    TextButton(onClick = onNavigateBack) {
-                        Text(text = stringResource(R.string.btn_back_to_login))
+                    TextButton(onClick = onNavigateToRegister) {
+                        Text(text = stringResource(R.string.btn_no_account_register))
                     }
                 }
             }

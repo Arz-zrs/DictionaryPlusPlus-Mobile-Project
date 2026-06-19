@@ -1,9 +1,10 @@
-package com.example.dictionaryplusplus.domain.repository
+package com.example.dictionaryplusplus.data.repository
 
 import com.example.dictionaryplusplus.data.firebase.FirestoreSyncStore
 import com.example.dictionaryplusplus.data.local.dao.UserProfileDao
 import com.example.dictionaryplusplus.data.local.entity.UserProfileEntity
 import com.example.dictionaryplusplus.domain.mapper.UserProfile
+import com.example.dictionaryplusplus.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

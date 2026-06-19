@@ -1,7 +1,9 @@
-package com.example.dictionaryplusplus.domain.repository
+package com.example.dictionaryplusplus.data.repository
 
 import com.example.dictionaryplusplus.data.firebase.FirebaseAuthSource
 import com.example.dictionaryplusplus.domain.mapper.UserProfile
+import com.example.dictionaryplusplus.domain.repository.AuthRepository
+import com.example.dictionaryplusplus.domain.repository.UserRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
