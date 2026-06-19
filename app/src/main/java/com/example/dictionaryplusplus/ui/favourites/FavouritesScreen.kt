@@ -70,13 +70,13 @@ fun FavouritesScreen(
     }
 
     when (val state = sheetState) {
-        is FavouriteSheetState.WordDetail -> {
+        is FavouriteUiState.WordDetail -> {
             WordDetailSheet(
                 word = state.word,
                 onDismiss = { viewModel.onSheetDismissed() }
             )
         }
-        FavouriteSheetState.Hidden -> {}
+        FavouriteUiState.Hidden -> {}
     }
 }
 

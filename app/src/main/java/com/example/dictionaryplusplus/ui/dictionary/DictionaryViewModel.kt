@@ -27,8 +27,8 @@ class DictionaryViewModel @Inject constructor(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    private val _sheetState = MutableStateFlow<DictionarySheetState>(DictionarySheetState.Hidden)
-    val sheetState: StateFlow<DictionarySheetState> = _sheetState.asStateFlow()
+    private val _sheetState = MutableStateFlow<DictionaryUiState>(DictionaryUiState.Hidden)
+    val sheetState: StateFlow<DictionaryUiState> = _sheetState.asStateFlow()
 
     val searchResults: StateFlow<List<Word>> = _searchQuery
         .debounce(300.milliseconds)
@@ -48,10 +48,10 @@ class DictionaryViewModel @Inject constructor(
     }
 
     fun onWordSelected(word: String) {
-        _sheetState.value = DictionarySheetState.WordDetail(word)
+        _sheetState.value = DictionaryUiState.WordDetail(word)
     }
 
     fun onSheetDismissed() {
-        _sheetState.value = DictionarySheetState.Hidden
+        _sheetState.value = DictionaryUiState.Hidden
     }
 }

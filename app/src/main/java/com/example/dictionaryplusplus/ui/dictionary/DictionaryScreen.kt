@@ -94,13 +94,13 @@ fun DictionaryScreen(
     }
 
     when (val state = sheetState) {
-        is DictionarySheetState.WordDetail -> {
+        is DictionaryUiState.WordDetail -> {
             WordDetailSheet(
                 word = state.word,
                 onDismiss = { viewModel.onSheetDismissed() }
             )
         }
-        DictionarySheetState.Hidden -> {}
+        DictionaryUiState.Hidden -> {}
     }
 }
 

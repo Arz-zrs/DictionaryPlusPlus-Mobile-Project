@@ -25,8 +25,8 @@ class FavouritesViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    private val _sheetState = MutableStateFlow<FavouriteSheetState>(FavouriteSheetState.Hidden)
-    val sheetState: StateFlow<FavouriteSheetState> = _sheetState.asStateFlow()
+    private val _sheetState = MutableStateFlow<FavouriteUiState>(FavouriteUiState.Hidden)
+    val sheetState: StateFlow<FavouriteUiState> = _sheetState.asStateFlow()
 
     fun unfavourite(word: String) {
         viewModelScope.launch {
@@ -35,10 +35,10 @@ class FavouritesViewModel @Inject constructor(
     }
 
     fun onWordSelected(word: String) {
-        _sheetState.value = FavouriteSheetState.WordDetail(word)
+        _sheetState.value = FavouriteUiState.WordDetail(word)
     }
 
     fun onSheetDismissed() {
-        _sheetState.value = FavouriteSheetState.Hidden
+        _sheetState.value = FavouriteUiState.Hidden
     }
 }
