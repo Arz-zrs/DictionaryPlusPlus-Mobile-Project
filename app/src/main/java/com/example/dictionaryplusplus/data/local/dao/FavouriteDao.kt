@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.dictionaryplusplus.data.local.dto.FavouriteWordDto
 import com.example.dictionaryplusplus.data.local.entity.FavouriteEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -17,4 +18,17 @@ interface FavouriteDao {
 
     @Query("DELETE FROM favourite WHERE word = :word")
     suspend fun deleteFavourite(word: String)
+
+    @Query("""
+        SELECT f.word, d.definition, s.masteryStatus
+        FROM favourite f
+        LEFT JOIN definition_cache d ON f.word = d.word
+        LEFT JOIN (
+            SELECT word, MAX(seenAtTimestamp) as max_ts, masteryStatus
+            FROM seen_event
+            GROUP BY word
+        ) s ON f.word = s.word
+        ORDER BY f.addedAtTimestamp DESC
+    """)
+    fun observeFavouriteWords(): Flow<List<FavouriteWordDto>>
 }
