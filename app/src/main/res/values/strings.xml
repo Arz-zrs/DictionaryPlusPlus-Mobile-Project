@@ -39,4 +39,19 @@
     <string name="search_icon_desc">Search Icon</string>
     <string name="no_results">No results found</string>
     <string name="word_rank">Rank #%1$d</string>
+
+    <!-- History Screen -->
+    <string name="history_title">Word History</string>
+    <string name="history_empty_state">No history entries found.</string>
+    <string name="delete_content_description">Delete</string>
+    <string name="filter_all">All</string>
+    <string name="filter_learning">Learning</string>
+    <string name="filter_mastered">Mastered</string>
+
+    <!-- Word Detail Sheet -->
+    <string name="favourite_toggle_desc">Favourite Toggle</string>
+    <string name="label_definition">Definition:</string>
+    <string name="error_definition_not_cached">Definition Not cached</string>
+    <string name="label_personal_notes">Personal Notes</string>
+    <string name="placeholder_personal_notes">Add your notes here…</string>
 </resources>
