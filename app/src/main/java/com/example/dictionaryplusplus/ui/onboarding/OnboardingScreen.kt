@@ -2,7 +2,6 @@ package com.example.dictionaryplusplus.ui.onboarding
 
 import android.app.TimePickerDialog
 import android.os.Build
-import java.util.Locale
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -13,9 +12,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,12 +30,8 @@ fun OnboardingScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    var currentStep by remember { mutableStateOf(1) }
-    var selectedHour by remember { mutableStateOf(8) }
-    var selectedMinute by remember { mutableStateOf(0) }
-
-    LaunchedEffect(uiState) {
-        if (uiState == OnboardingUiState.Completed) {
+    LaunchedEffect(uiState.isCompleted) {
+        if (uiState.isCompleted) {
             onNavigateToLogin()
         }
     }
@@ -47,7 +39,7 @@ fun OnboardingScreen(
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { _ ->
-            currentStep = 2
+            viewModel.moveToNextStep()
         }
     )
 
@@ -60,38 +52,37 @@ fun OnboardingScreen(
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ProgressDots(currentStep = currentStep)
+            ProgressDots(currentStep = uiState.currentStep)
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                when (currentStep) {
+                when (uiState.currentStep) {
                     1 -> {
                         StepOnePermissionExplanation(
                             onRequestPermission = {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                     permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
                                 } else {
-                                    currentStep = 2
+                                    viewModel.moveToNextStep()
                                 }
                             }
                         )
                     }
                     else -> {
                         StepTwoTimeSelection(
-                            selectedHour = selectedHour,
-                            selectedMinute = selectedMinute,
+                            selectedHour = uiState.selectedHour,
+                            selectedMinute = uiState.selectedMinute,
                             onTimeSelectClick = {
                                 TimePickerDialog(
                                     context,
                                     { _, hour: Int, minute: Int ->
-                                        selectedHour = hour
-                                        selectedMinute = minute
+                                        viewModel.onTimeSelected(hour, minute)
                                     },
-                                    selectedHour,
-                                    selectedMinute,
+                                    uiState.selectedHour,
+                                    uiState.selectedMinute,
                                     true
                                 ).show()
                             }
@@ -100,14 +91,9 @@ fun OnboardingScreen(
                 }
             }
             BottomNavigationButtons(
-                currentStep = currentStep,
-                onSkip = {
-                    viewModel.completeOnboarding("08:00")
-                },
-                onComplete = {
-                    val formattedTime = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)
-                    viewModel.completeOnboarding(formattedTime)
-                }
+                currentStep = uiState.currentStep,
+                onSkip = { viewModel.skipOnboarding() },
+                onComplete = { viewModel.completeOnboarding() }
             )
         }
     }
