@@ -20,7 +20,10 @@ class OnboardingViewModel @Inject constructor(
     val uiState: StateFlow<OnboardingUiState> = _uiState.asStateFlow()
 
     fun moveToNextStep() {
-        _uiState.update { it.copy(currentStep = 2) }
+        _uiState.update { state ->
+            val nextStep = state.currentStep.next()
+            state.copy(currentStep = nextStep ?: OnboardingStep.FINISHED)
+        }
     }
 
     fun onTimeSelected(hour: Int, minute: Int) {
@@ -34,7 +37,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     fun skipOnboarding() {
-        saveOnboarding("08:00")
+        _uiState.update { it.copy(currentStep = OnboardingStep.FINISHED) }
     }
 
     private fun saveOnboarding(selectedNotificationTime: String) {

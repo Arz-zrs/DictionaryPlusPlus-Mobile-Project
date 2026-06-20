@@ -24,12 +24,18 @@
     <string name="btn_back_to_login">Back to Login</string>
 
     <!-- Onboarding Screen -->
+    <string name="onboarding_welcome_title">Welcome to Dictionary++</string>
+    <string name="onboarding_welcome_desc">Your personal dictionary complete with Word of the Day notifications, Quizzes, and more. Let\'s get you set up in a few simple steps.</string>
+    <string name="onboarding_btn_start">Get Started</string>
     <string name="onboarding_notification_title">Allow Notification Access</string>
-    <string name="onboarding_notification_desc">Dictionary++ delivers one passive English word to your lock screen every single day. We require notification access to deliver each words via notification without forcing you to open the app.</string>
+    <string name="onboarding_notification_desc">Dictionary++ delivers one passive English word to you every single day. We require notification access to deliver each words via notification without forcing you to open the app.</string>
     <string name="onboarding_btn_enable_notification">Enable Notification</string>
     <string name="onboarding_time_title">Choose Your Daily Notification</string>
     <string name="onboarding_time_desc">Pick the best time to receive your notification.</string>
+    <string name="onboarding_all_set_title">You\'re all set!</string>
+    <string name="onboarding_all_set_desc">Your dictionary is ready to use. Explore new words and quiz yourself every day. Ready to start?</string>
     <string name="onboarding_btn_skip">Skip</string>
+    <string name="onboarding_btn_next">Next</string>
     <string name="onboarding_btn_finish">Finish Setup</string>
     <string name="time_format">%1$02d:%2$02d</string>
 

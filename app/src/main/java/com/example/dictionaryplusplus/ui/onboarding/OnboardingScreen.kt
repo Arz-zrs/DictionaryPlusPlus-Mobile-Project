@@ -6,7 +6,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -53,6 +52,7 @@ fun OnboardingScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             ProgressDots(currentStep = uiState.currentStep)
+
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -60,8 +60,11 @@ fun OnboardingScreen(
                 contentAlignment = Alignment.Center
             ) {
                 when (uiState.currentStep) {
-                    1 -> {
-                        StepOnePermissionExplanation(
+                    OnboardingStep.WELCOME -> {
+                        StepWelcome(onStart = { viewModel.moveToNextStep() })
+                    }
+                    OnboardingStep.NOTIFICATIONS -> {
+                        StepPermissionExplanation(
                             onRequestPermission = {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                     permissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
@@ -71,8 +74,8 @@ fun OnboardingScreen(
                             }
                         )
                     }
-                    else -> {
-                        StepTwoTimeSelection(
+                    OnboardingStep.TIME_SELECTION -> {
+                        StepTimeSelection(
                             selectedHour = uiState.selectedHour,
                             selectedMinute = uiState.selectedMinute,
                             onTimeSelectClick = {
@@ -88,25 +91,31 @@ fun OnboardingScreen(
                             }
                         )
                     }
+                    OnboardingStep.FINISHED -> {
+                        StepFinished(
+                            onComplete = { viewModel.completeOnboarding() },
+                        )
+                    }
                 }
             }
+
             BottomNavigationButtons(
                 currentStep = uiState.currentStep,
                 onSkip = { viewModel.skipOnboarding() },
-                onComplete = { viewModel.completeOnboarding() }
+                onNext = { viewModel.moveToNextStep() }
             )
         }
     }
 }
 
 @Composable
-private fun ProgressDots(currentStep: Int, totalSteps: Int = 2) {
+private fun ProgressDots(currentStep: OnboardingStep) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.padding(top = 16.dp)
     ) {
-        repeat(totalSteps) { step ->
-            val color = if (step + 1 == currentStep) MaterialTheme.colorScheme.primary
+        OnboardingStep.entries.forEach { step ->
+            val color = if (step == currentStep) MaterialTheme.colorScheme.primary
             else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
             Box(
                 modifier = Modifier
@@ -119,7 +128,30 @@ private fun ProgressDots(currentStep: Int, totalSteps: Int = 2) {
 }
 
 @Composable
-private fun StepOnePermissionExplanation(
+private fun StepWelcome(onStart: () -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.padding(16.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.onboarding_welcome_title),
+            style = MaterialTheme.typography.headlineMedium
+        )
+        Text(
+            text = stringResource(R.string.onboarding_welcome_desc),
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(horizontal = 8.dp)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = onStart) {
+            Text(stringResource(R.string.onboarding_btn_start))
+        }
+    }
+}
+
+@Composable
+private fun StepPermissionExplanation(
     onRequestPermission: () -> Unit
 ) {
     Column(
@@ -144,7 +176,7 @@ private fun StepOnePermissionExplanation(
 }
 
 @Composable
-private fun StepTwoTimeSelection(
+private fun StepTimeSelection(
     selectedHour: Int,
     selectedMinute: Int,
     onTimeSelectClick: () -> Unit
@@ -186,10 +218,33 @@ private fun StepTwoTimeSelection(
 }
 
 @Composable
+private fun StepFinished(onComplete: () -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.padding(16.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.onboarding_all_set_title),
+            style = MaterialTheme.typography.headlineMedium
+        )
+        Text(
+            text = stringResource(R.string.onboarding_all_set_desc),
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(horizontal = 8.dp)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = onComplete) {
+            Text(stringResource(R.string.onboarding_btn_finish))
+        }
+    }
+}
+
+@Composable
 private fun BottomNavigationButtons(
-    currentStep: Int,
+    currentStep: OnboardingStep,
     onSkip: () -> Unit,
-    onComplete: () -> Unit
+    onNext: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -198,22 +253,23 @@ private fun BottomNavigationButtons(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        when (currentStep) {
-            2 -> {
-                TextButton(onClick = onSkip) {
-                    Text(
-                        text = stringResource(R.string.onboarding_btn_skip),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+        if (currentStep.showSkip) {
+            TextButton(onClick = onSkip) {
+                Text(
+                    text = stringResource(R.string.onboarding_btn_skip),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        } else {
+            Spacer(modifier = Modifier.width(48.dp))
+        }
 
-                Button(onClick = onComplete) {
-                    Text(stringResource(R.string.onboarding_btn_finish))
-                }
+        if (currentStep.showNext) {
+            Button(onClick = onNext) {
+                Text(stringResource(R.string.onboarding_btn_next))
             }
-            else -> {
-                Spacer(modifier = Modifier.width(48.dp))
-            }
+        } else {
+            Spacer(modifier = Modifier.width(48.dp))
         }
     }
 }
