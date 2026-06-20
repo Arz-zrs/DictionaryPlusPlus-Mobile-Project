@@ -1,6 +1,6 @@
 package com.example.dictionaryplusplus.domain.mapper
 
-data class DefinitionCache(
+data class Definition(
     val word: String,
     val definition: String,
     val phonetic: String?,

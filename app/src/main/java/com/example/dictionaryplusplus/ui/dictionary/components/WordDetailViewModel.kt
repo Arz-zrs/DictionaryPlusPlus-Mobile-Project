@@ -2,7 +2,7 @@ package com.example.dictionaryplusplus.ui.dictionary.components
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dictionaryplusplus.domain.repository.DefinitionCacheRepository
+import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
 import com.example.dictionaryplusplus.domain.repository.FavouriteRepository
 import com.example.dictionaryplusplus.domain.repository.WordNoteRepository
 import com.example.dictionaryplusplus.ui.dictionary.DefinitionState
@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WordDetailViewModel @Inject constructor(
-    private val definitionCacheRepository: DefinitionCacheRepository,
+    private val definitionRepository: DefinitionRepository,
     private val favouriteRepository: FavouriteRepository,
     private val wordNoteRepository: WordNoteRepository
 ) : ViewModel() {
@@ -31,7 +31,7 @@ class WordDetailViewModel @Inject constructor(
         .filter { it.isNotEmpty() }
         .flatMapLatest { word ->
             combine(
-                definitionCacheRepository.observeDefinition(word),
+                definitionRepository.observeDefinition(word),
                 wordNoteRepository.observeWordNote(word),
                 favouriteRepository.observeIsFavourite(word)
             ) { definition, note, isFavourite ->

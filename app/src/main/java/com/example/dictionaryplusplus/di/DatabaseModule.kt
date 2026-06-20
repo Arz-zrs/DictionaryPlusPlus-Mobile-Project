@@ -34,7 +34,7 @@ object DatabaseModule {
     fun provideSeenEventDao(database: AppDatabase) : SeenEventDao = database.seenEventDao()
 
     @Provides
-    fun provideDefinitionCacheDao(database: AppDatabase) : DefinitionCacheDao = database.definitionCacheDao()
+    fun provideDefinitionDao(database: AppDatabase) : DefinitionDao = database.definitionDao()
 
     @Provides
     fun provideWordNoteDao(database: AppDatabase) : WordNoteDao = database.wordNoteDao()

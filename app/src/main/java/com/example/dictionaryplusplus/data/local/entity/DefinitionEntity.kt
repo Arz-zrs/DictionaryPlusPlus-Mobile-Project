@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "definition_cache")
-data class DefinitionCacheEntity(
+data class DefinitionEntity(
     @PrimaryKey val word: String,
     val definition: String,
     val phonetic: String?,
