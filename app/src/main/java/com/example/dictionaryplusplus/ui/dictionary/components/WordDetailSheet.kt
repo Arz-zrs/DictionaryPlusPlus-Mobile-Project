@@ -128,7 +128,7 @@ fun WordDetailSheet(
                 }
                 is DefinitionState.Error -> {
                     Text(
-                        text = state.message,
+                        text = state.message.asString(),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.error
                     )

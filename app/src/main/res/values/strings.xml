@@ -58,6 +58,10 @@
     <string name="favourite_toggle_desc">Favourite Toggle</string>
     <string name="label_definition">Definition:</string>
     <string name="error_definition_not_cached">Definition Not cached</string>
+    <string name="error_word_not_found">Word not found in the dictionary.</string>
+    <string name="error_no_internet">No internet connection. Please check your network.</string>
+    <string name="error_timeout">The request timed out. Try again later.</string>
+    <string name="error_unknown">An unexpected error occurred.</string>
     <string name="label_personal_notes">Personal Notes</string>
     <string name="placeholder_personal_notes">Add your notes here…</string>
 

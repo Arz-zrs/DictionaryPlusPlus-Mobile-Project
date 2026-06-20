@@ -26,7 +26,7 @@ class DefinitionRepositoryImpl @Inject constructor(
 
     private val denyList: Set<String> by lazy {
         try {
-            val jsonString = context.assets.open("denylist.json")
+            val jsonString = context.assets.open("deny_list.json") // TODO: fill the deny_list.json data
                 .bufferedReader()
                 .use { it.readText() }
             val jsonArray = JSONArray(jsonString)
@@ -57,7 +57,7 @@ class DefinitionRepositoryImpl @Inject constructor(
             if (cachedDefinition != null) {
                 Result.success(cachedDefinition)
             } else {
-                Result.failure(Exception("Definition not found"))
+                Result.failure(Exception("Definition not found in cache"))
             }
 
             val apiResponse = apiService.fetchDefinition(word)

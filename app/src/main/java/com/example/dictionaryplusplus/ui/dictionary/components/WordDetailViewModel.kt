@@ -5,7 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
 import com.example.dictionaryplusplus.domain.repository.FavouriteRepository
 import com.example.dictionaryplusplus.domain.repository.WordNoteRepository
+import com.example.dictionaryplusplus.domain.usecase.GetDefinitionUseCase
 import com.example.dictionaryplusplus.ui.dictionary.DefinitionState
+import com.example.dictionaryplusplus.util.UiText
+import com.example.dictionaryplusplus.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,9 +25,11 @@ import javax.inject.Inject
 class WordDetailViewModel @Inject constructor(
     private val definitionRepository: DefinitionRepository,
     private val favouriteRepository: FavouriteRepository,
-    private val wordNoteRepository: WordNoteRepository
+    private val wordNoteRepository: WordNoteRepository,
+    private val getDefinitionUseCase: GetDefinitionUseCase
 ) : ViewModel() {
     private val _currentWord = MutableStateFlow("")
+    private val _definitionError = MutableStateFlow<UiText?>(null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<WordDetailUiState> = _currentWord
@@ -33,12 +38,13 @@ class WordDetailViewModel @Inject constructor(
             combine(
                 definitionRepository.observeDefinition(word),
                 wordNoteRepository.observeWordNote(word),
-                favouriteRepository.observeIsFavourite(word)
-            ) { definition, note, isFavourite ->
-                val definitionState = if (definition != null) {
-                    DefinitionState.Success(definition)
-                } else {
-                    DefinitionState.NotCached
+                favouriteRepository.observeIsFavourite(word),
+                _definitionError
+            ) { definition, note, isFavourite, error ->
+                val definitionState = when {
+                    definition != null -> DefinitionState.Success(definition)
+                    error != null -> DefinitionState.Error(error)
+                    else -> DefinitionState.Loading
                 }
 
                 WordDetailUiState(
@@ -56,7 +62,13 @@ class WordDetailViewModel @Inject constructor(
         )
 
     fun loadWordDetails(word: String) {
+        _definitionError.value = null
         _currentWord.value = word
+        viewModelScope.launch {
+            getDefinitionUseCase(word).onFailure { exception ->
+                _definitionError.value = mapThrowableToMessage(exception)
+            }
+        }
     }
 
     fun saveWordNote(note: String) {
@@ -74,6 +86,21 @@ class WordDetailViewModel @Inject constructor(
             viewModelScope.launch {
                 favouriteRepository.toggleFavourite(word)
             }
+        }
+    }
+
+    private fun mapThrowableToMessage(throwable: Throwable): UiText {
+        return when (throwable) {
+            is java.net.UnknownHostException -> UiText.StringResource(R.string.error_no_internet)
+            is java.net.SocketTimeoutException -> UiText.StringResource(R.string.error_timeout)
+            is retrofit2.HttpException -> {
+                when (throwable.code()) {
+                    404 -> UiText.StringResource(R.string.error_word_not_found)
+                    else -> UiText.DynamicString("Error: ${throwable.code()}")
+                }
+            }
+            else -> throwable.localizedMessage?.let { UiText.DynamicString(it) }
+                ?: UiText.StringResource(R.string.error_unknown)
         }
     }
 }
