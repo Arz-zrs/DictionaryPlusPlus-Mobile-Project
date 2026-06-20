@@ -27,7 +27,7 @@ fun FavouritesScreen(
     viewModel: FavouritesViewModel = hiltViewModel()
 ) {
     val favouriteWords by viewModel.favouriteWords.collectAsStateWithLifecycle()
-    val sheetState by viewModel.sheetState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -69,7 +69,7 @@ fun FavouritesScreen(
         }
     }
 
-    when (val state = sheetState) {
+    when (val state = uiState) {
         is FavouriteUiState.WordDetail -> {
             WordDetailSheet(
                 word = state.word,

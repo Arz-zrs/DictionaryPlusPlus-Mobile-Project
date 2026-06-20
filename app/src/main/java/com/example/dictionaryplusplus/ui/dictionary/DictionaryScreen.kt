@@ -26,7 +26,7 @@ fun DictionaryScreen(
 ) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val searchResults by viewModel.searchResults.collectAsStateWithLifecycle()
-    val sheetState by viewModel.sheetState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -93,7 +93,7 @@ fun DictionaryScreen(
         }
     }
 
-    when (val state = sheetState) {
+    when (val state = uiState) {
         is DictionaryUiState.WordDetail -> {
             WordDetailSheet(
                 word = state.word,
