@@ -1,7 +1,7 @@
 package com.example.dictionaryplusplus.data.repository
 
 import com.example.dictionaryplusplus.data.local.dao.WordDao
-import com.example.dictionaryplusplus.domain.mapper.Word
+import com.example.dictionaryplusplus.domain.model.Word
 import com.example.dictionaryplusplus.domain.repository.WordRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

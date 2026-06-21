@@ -2,7 +2,7 @@ package com.example.dictionaryplusplus.ui.favourites
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dictionaryplusplus.domain.mapper.FavouriteWord
+import com.example.dictionaryplusplus.domain.model.FavouriteWord
 import com.example.dictionaryplusplus.domain.repository.FavouriteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

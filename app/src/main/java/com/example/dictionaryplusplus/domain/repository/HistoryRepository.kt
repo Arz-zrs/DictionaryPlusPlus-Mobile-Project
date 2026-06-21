@@ -1,6 +1,6 @@
 package com.example.dictionaryplusplus.domain.repository
 
-import com.example.dictionaryplusplus.domain.mapper.SeenEvent
+import com.example.dictionaryplusplus.domain.model.SeenEvent
 import kotlinx.coroutines.flow.Flow
 
 interface HistoryRepository {

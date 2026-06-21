@@ -1,7 +1,8 @@
 package com.example.dictionaryplusplus.data.repository
 
 import com.example.dictionaryplusplus.data.local.dao.SeenEventDao
-import com.example.dictionaryplusplus.domain.mapper.SeenEvent
+import com.example.dictionaryplusplus.domain.model.MasteryStatus
+import com.example.dictionaryplusplus.domain.model.SeenEvent
 import com.example.dictionaryplusplus.domain.repository.HistoryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -16,7 +17,7 @@ class HistoryRepositoryImpl @Inject constructor(
         val flow = if (filter.equals("All", ignoreCase = true)) {
                 seenEventDao.getAllSeenEvents()
             } else {
-                seenEventDao.getSeenEventsByMasteryStatus(filter.lowercase())
+                seenEventDao.getSeenEventsByMasteryStatus(MasteryStatus.fromString(filter))
             }
 
         return flow.map { list ->

@@ -1,6 +1,6 @@
 package com.example.dictionaryplusplus.domain.usecase
 
-import com.example.dictionaryplusplus.domain.mapper.Definition
+import com.example.dictionaryplusplus.domain.model.Definition
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
 import javax.inject.Inject
 

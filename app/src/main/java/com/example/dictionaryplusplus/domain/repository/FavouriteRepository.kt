@@ -1,6 +1,6 @@
 package com.example.dictionaryplusplus.domain.repository
 
-import com.example.dictionaryplusplus.domain.mapper.FavouriteWord
+import com.example.dictionaryplusplus.domain.model.FavouriteWord
 import kotlinx.coroutines.flow.Flow
 
 interface FavouriteRepository {

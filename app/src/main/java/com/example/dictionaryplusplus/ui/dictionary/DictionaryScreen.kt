@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.example.dictionaryplusplus.R
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.dictionaryplusplus.domain.mapper.Word
+import com.example.dictionaryplusplus.domain.model.Word
 import com.example.dictionaryplusplus.ui.dictionary.components.WordDetailSheet
 
 @Composable

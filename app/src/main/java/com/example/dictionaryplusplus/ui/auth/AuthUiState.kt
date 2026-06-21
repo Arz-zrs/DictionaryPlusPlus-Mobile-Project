@@ -1,6 +1,6 @@
 package com.example.dictionaryplusplus.ui.auth
 
-import com.example.dictionaryplusplus.domain.mapper.UserProfile
+import com.example.dictionaryplusplus.domain.model.UserProfile
 import com.example.dictionaryplusplus.util.ErrorMessage
 
 sealed interface AuthUiState {

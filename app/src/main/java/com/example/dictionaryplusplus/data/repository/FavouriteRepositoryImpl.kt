@@ -2,7 +2,7 @@ package com.example.dictionaryplusplus.data.repository
 
 import com.example.dictionaryplusplus.data.local.dao.FavouriteDao
 import com.example.dictionaryplusplus.data.local.entity.FavouriteEntity
-import com.example.dictionaryplusplus.domain.mapper.FavouriteWord
+import com.example.dictionaryplusplus.domain.model.FavouriteWord
 import com.example.dictionaryplusplus.domain.repository.FavouriteRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull

@@ -2,7 +2,7 @@ package com.example.dictionaryplusplus.ui.dictionary
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dictionaryplusplus.domain.mapper.Word
+import com.example.dictionaryplusplus.domain.model.Word
 import com.example.dictionaryplusplus.domain.repository.WordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi

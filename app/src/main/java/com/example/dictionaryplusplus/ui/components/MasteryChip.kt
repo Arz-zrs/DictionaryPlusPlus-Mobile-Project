@@ -13,14 +13,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.dictionaryplusplus.domain.model.MasteryStatus
 import com.example.dictionaryplusplus.ui.theme.Success
 
 @Composable
 fun MasteryChip(
-    status: String,
+    status: MasteryStatus,
     modifier: Modifier = Modifier,
 ) {
-    val isMastered = status.equals("mastered", ignoreCase = true)
+    val isMastered = status == MasteryStatus.MASTERED
 
     val backgroundColor =
         if (isMastered) Success.copy(alpha = 0.15f)
@@ -38,7 +39,7 @@ fun MasteryChip(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = status.uppercase(),
+            text = status.name.uppercase(),
             color = textColor,
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,

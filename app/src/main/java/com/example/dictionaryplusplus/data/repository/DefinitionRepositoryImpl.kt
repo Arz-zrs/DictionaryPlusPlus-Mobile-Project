@@ -4,7 +4,7 @@ import android.content.Context
 import com.example.dictionaryplusplus.data.local.dao.DefinitionDao
 import com.example.dictionaryplusplus.data.local.entity.DefinitionEntity
 import com.example.dictionaryplusplus.data.remote.DictionaryApiService
-import com.example.dictionaryplusplus.domain.mapper.Definition
+import com.example.dictionaryplusplus.domain.model.Definition
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson

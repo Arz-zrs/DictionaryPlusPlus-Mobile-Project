@@ -1,6 +1,6 @@
 package com.example.dictionaryplusplus.domain.repository
 
-import com.example.dictionaryplusplus.domain.mapper.UserProfile
+import com.example.dictionaryplusplus.domain.model.UserProfile
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {

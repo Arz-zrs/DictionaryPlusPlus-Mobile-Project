@@ -1,6 +1,6 @@
 package com.example.dictionaryplusplus.domain.repository
 
-import com.example.dictionaryplusplus.domain.mapper.UserProfile
+import com.example.dictionaryplusplus.domain.model.UserProfile
 
 interface AuthRepository {
     suspend fun login(email: String, password: String): Result<UserProfile>

@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.R
-import com.example.dictionaryplusplus.domain.mapper.FavouriteWord
+import com.example.dictionaryplusplus.domain.model.FavouriteWord
 import com.example.dictionaryplusplus.ui.components.MasteryChip
 import com.example.dictionaryplusplus.ui.dictionary.components.WordDetailSheet
 

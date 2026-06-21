@@ -1,6 +1,6 @@
 package com.example.dictionaryplusplus.ui.dictionary
 
-import com.example.dictionaryplusplus.domain.mapper.Definition
+import com.example.dictionaryplusplus.domain.model.Definition
 import com.example.dictionaryplusplus.util.ErrorMessage
 
 sealed interface DefinitionState {
