@@ -225,11 +225,11 @@ private fun StepFinished(onComplete: () -> Unit) {
         modifier = Modifier.padding(16.dp)
     ) {
         Text(
-            text = stringResource(R.string.onboarding_all_set_title),
+            text = stringResource(R.string.onboarding_finishing_title),
             style = MaterialTheme.typography.headlineMedium
         )
         Text(
-            text = stringResource(R.string.onboarding_all_set_desc),
+            text = stringResource(R.string.onboarding_finishing_desc),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(horizontal = 8.dp)
         )
