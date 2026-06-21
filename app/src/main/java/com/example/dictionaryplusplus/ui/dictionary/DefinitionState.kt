@@ -1,11 +1,11 @@
 package com.example.dictionaryplusplus.ui.dictionary
 
 import com.example.dictionaryplusplus.domain.mapper.Definition
-import com.example.dictionaryplusplus.util.UiText
+import com.example.dictionaryplusplus.util.ErrorMessage
 
-interface DefinitionState {
-    object Loading : DefinitionState
+sealed interface DefinitionState {
+    data object Loading : DefinitionState
     data class Success(val definition: Definition) : DefinitionState
-    data class Error(val message: UiText) : DefinitionState
-    object NotCached : DefinitionState
+    data class Error(val errorMessage: ErrorMessage) : DefinitionState
+    data object NotCached : DefinitionState
 }

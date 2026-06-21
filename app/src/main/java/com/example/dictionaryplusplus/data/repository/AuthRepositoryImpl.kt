@@ -38,7 +38,12 @@ class AuthRepositoryImpl @Inject constructor(
             val authResult = authSource.signUpWithEmail(email, password)
             val uid = authResult.getOrThrow()
 
-            userRepository.createProfile(uid, displayName, email)
+            val profileResult = userRepository.createProfile(uid, displayName, email)
+            profileResult.getOrElse {
+                authSource.signOut()
+                throw it
+            }
+            profileResult
         } catch (e: Exception) {
             Result.failure(e)
         }

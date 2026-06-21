@@ -19,6 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.ui.auth.AuthAction
 import com.example.dictionaryplusplus.ui.auth.AuthUiState
 import com.example.dictionaryplusplus.ui.auth.AuthViewModel
+import com.example.dictionaryplusplus.util.ErrorMessage
 
 @Composable
 fun RegisterScreen(
@@ -55,14 +56,14 @@ fun RegisterScreen(
                 value = formState.displayName,
                 onValueChange = { viewModel.onAction(AuthAction.OnDisplayNameChange(it)) },
                 label = stringResource(R.string.label_username),
-                error = formState.displayNameError
+                errorMessage = formState.displayNameError
             )
 
             AuthTextField(
                 value = formState.email,
                 onValueChange = { viewModel.onAction(AuthAction.OnEmailChange(it)) },
                 label = stringResource(R.string.label_email),
-                error = formState.emailError,
+                errorMessage = formState.emailError,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
             )
 
@@ -70,7 +71,7 @@ fun RegisterScreen(
                 value = formState.password,
                 onValueChange = { viewModel.onAction(AuthAction.OnPasswordChange(it)) },
                 label = stringResource(R.string.label_password_hint),
-                error = formState.passwordError,
+                errorMessage = formState.passwordError,
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
@@ -79,7 +80,7 @@ fun RegisterScreen(
                 value = formState.confirmPassword,
                 onValueChange = { viewModel.onAction(AuthAction.OnConfirmPasswordChange(it)) },
                 label = stringResource(R.string.label_confirm_password),
-                error = formState.confirmPasswordError,
+                errorMessage = formState.confirmPasswordError,
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
@@ -89,11 +90,17 @@ fun RegisterScreen(
                     CircularProgressIndicator()
                 }
                 is AuthUiState.Error -> {
-                    Text(
-                        text = state.message.asString(),
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                    val errorText = when (val error = state.errorMessage) {
+                        is ErrorMessage.Known -> stringResource(error.messageRes)
+                        ErrorMessage.None -> ""
+                    }
+                    if (errorText.isNotEmpty()) {
+                        Text(
+                            text = errorText,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                 }
                 else -> {
                     Button(

@@ -36,6 +36,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.ui.dictionary.DefinitionState
+import com.example.dictionaryplusplus.util.ErrorMessage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -127,11 +128,17 @@ fun WordDetailSheet(
                     )
                 }
                 is DefinitionState.Error -> {
-                    Text(
-                        text = state.message.asString(),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.error
-                    )
+                    val message = when (val error = state.errorMessage) {
+                        is ErrorMessage.Known -> stringResource(error.messageRes)
+                        ErrorMessage.None -> ""
+                    }
+                    if (message.isNotEmpty()) {
+                        Text(
+                            text = message,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
             }
 

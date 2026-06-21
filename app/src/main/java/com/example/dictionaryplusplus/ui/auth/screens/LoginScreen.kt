@@ -19,6 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.ui.auth.AuthAction
 import com.example.dictionaryplusplus.ui.auth.AuthUiState
 import com.example.dictionaryplusplus.ui.auth.AuthViewModel
+import com.example.dictionaryplusplus.util.ErrorMessage
 
 @Composable
 fun LoginScreen(
@@ -55,7 +56,7 @@ fun LoginScreen(
                 value = formState.email,
                 onValueChange = { viewModel.onAction(AuthAction.OnEmailChange(it)) },
                 label = stringResource(R.string.label_email),
-                error = formState.emailError,
+                errorMessage = formState.emailError,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
             )
 
@@ -63,7 +64,7 @@ fun LoginScreen(
                 value = formState.password,
                 onValueChange = { viewModel.onAction(AuthAction.OnPasswordChange(it)) },
                 label = stringResource(R.string.label_password),
-                error = formState.passwordError,
+                errorMessage = formState.passwordError,
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
@@ -73,11 +74,17 @@ fun LoginScreen(
                     CircularProgressIndicator()
                 }
                 is AuthUiState.Error -> {
-                    Text(
-                        text = state.message.asString(),
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                    val errorText = when (val error = state.errorMessage) {
+                        is ErrorMessage.Known -> stringResource(error.messageRes)
+                        ErrorMessage.None -> ""
+                    }
+                    if (errorText.isNotEmpty()) {
+                        Text(
+                            text = errorText,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                 }
                 else -> {
                     Button(

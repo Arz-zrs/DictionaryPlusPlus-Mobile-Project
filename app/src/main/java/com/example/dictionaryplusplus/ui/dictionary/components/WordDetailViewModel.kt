@@ -7,7 +7,7 @@ import com.example.dictionaryplusplus.domain.repository.FavouriteRepository
 import com.example.dictionaryplusplus.domain.repository.WordNoteRepository
 import com.example.dictionaryplusplus.domain.usecase.GetDefinitionUseCase
 import com.example.dictionaryplusplus.ui.dictionary.DefinitionState
-import com.example.dictionaryplusplus.util.UiText
+import com.example.dictionaryplusplus.util.ErrorMessage
 import com.example.dictionaryplusplus.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,7 +29,7 @@ class WordDetailViewModel @Inject constructor(
     private val getDefinitionUseCase: GetDefinitionUseCase
 ) : ViewModel() {
     private val _currentWord = MutableStateFlow("")
-    private val _definitionError = MutableStateFlow<UiText?>(null)
+    private val _definitionError = MutableStateFlow<ErrorMessage>(ErrorMessage.None)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<WordDetailUiState> = _currentWord
@@ -43,7 +43,7 @@ class WordDetailViewModel @Inject constructor(
             ) { definition, note, isFavourite, error ->
                 val definitionState = when {
                     definition != null -> DefinitionState.Success(definition)
-                    error != null -> DefinitionState.Error(error)
+                    error !is ErrorMessage.None -> DefinitionState.Error(error)
                     else -> DefinitionState.Loading
                 }
 
@@ -62,7 +62,7 @@ class WordDetailViewModel @Inject constructor(
         )
 
     fun loadWordDetails(word: String) {
-        _definitionError.value = null
+        _definitionError.value = ErrorMessage.None
         _currentWord.value = word
         viewModelScope.launch {
             getDefinitionUseCase(word).onFailure { exception ->
@@ -89,18 +89,17 @@ class WordDetailViewModel @Inject constructor(
         }
     }
 
-    private fun mapThrowableToMessage(throwable: Throwable): UiText {
+    private fun mapThrowableToMessage(throwable: Throwable): ErrorMessage {
         return when (throwable) {
-            is java.net.UnknownHostException -> UiText.StringResource(R.string.error_no_internet)
-            is java.net.SocketTimeoutException -> UiText.StringResource(R.string.error_timeout)
+            is java.net.UnknownHostException -> ErrorMessage.Known(R.string.error_no_internet)
+            is java.net.SocketTimeoutException -> ErrorMessage.Known(R.string.error_timeout)
             is retrofit2.HttpException -> {
                 when (throwable.code()) {
-                    404 -> UiText.StringResource(R.string.error_word_not_found)
-                    else -> UiText.DynamicString("Error: ${throwable.code()}")
+                    404 -> ErrorMessage.Known(R.string.error_word_not_found)
+                    else -> ErrorMessage.Known(R.string.error_unknown)
                 }
             }
-            else -> throwable.localizedMessage?.let { UiText.DynamicString(it) }
-                ?: UiText.StringResource(R.string.error_unknown)
+            else -> ErrorMessage.Known(R.string.error_unknown)
         }
     }
 }

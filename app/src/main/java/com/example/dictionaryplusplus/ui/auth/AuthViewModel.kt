@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.domain.repository.AuthRepository
-import com.example.dictionaryplusplus.util.UiText
-import com.example.dictionaryplusplus.util.asUiText
+import com.example.dictionaryplusplus.util.ErrorMessage
+import com.example.dictionaryplusplus.util.asErrorMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,16 +28,16 @@ class AuthViewModel @Inject constructor(
     fun onAction(action: AuthAction) {
         when (action) {
             is AuthAction.OnDisplayNameChange -> {
-                _formState.update { it.copy(displayName = action.value, displayNameError = null) }
+                _formState.update { it.copy(displayName = action.value, displayNameError = ErrorMessage.None) }
             }
             is AuthAction.OnEmailChange -> {
-                _formState.update { it.copy(email = action.value, emailError = null) }
+                _formState.update { it.copy(email = action.value, emailError = ErrorMessage.None) }
             }
             is AuthAction.OnPasswordChange -> {
-                _formState.update { it.copy(password = action.value, passwordError = null) }
+                _formState.update { it.copy(password = action.value, passwordError = ErrorMessage.None) }
             }
             is AuthAction.OnConfirmPasswordChange -> {
-                _formState.update { it.copy(confirmPassword = action.value, confirmPasswordError = null) }
+                _formState.update { it.copy(confirmPassword = action.value, confirmPasswordError = ErrorMessage.None) }
             }
             AuthAction.Login -> login()
             AuthAction.Register -> register()
@@ -49,7 +49,7 @@ class AuthViewModel @Inject constructor(
         val emailError = validateEmail(state.email)
         val passwordError = validatePassword(state.password)
 
-        val hasError = listOf(emailError, passwordError).any { it != null }
+        val hasError = listOf(emailError, passwordError).any { it !is ErrorMessage.None }
 
         if (hasError) {
             _formState.update { it.copy(emailError = emailError, passwordError = passwordError) }
@@ -62,8 +62,10 @@ class AuthViewModel @Inject constructor(
                 .onSuccess { userProfile ->
                     _uiState.value = AuthUiState.Success(userProfile)
                 }
-                .onFailure { exception ->
-                    _uiState.value = AuthUiState.Error(exception.asUiText(R.string.error_login_failed))
+                .onFailure { _ ->
+                    _uiState.value = AuthUiState.Error(
+                        asErrorMessage(R.string.error_login_failed)
+                    )
                 }
         }
     }
@@ -80,7 +82,7 @@ class AuthViewModel @Inject constructor(
             emailError,
             passwordError,
             confirmPasswordError
-        ).any { it != null }
+        ).any { it !is ErrorMessage.None }
 
         if (hasError) {
             _formState.update { 
@@ -100,43 +102,45 @@ class AuthViewModel @Inject constructor(
                 .onSuccess { userProfile ->
                     _uiState.value = AuthUiState.Success(userProfile)
                 }
-                .onFailure { exception ->
-                    _uiState.value = AuthUiState.Error(exception.asUiText(R.string.error_registration_failed))
+                .onFailure { _ ->
+                    _uiState.value = AuthUiState.Error(
+                        asErrorMessage(R.string.error_registration_failed)
+                    )
                 }
         }
     }
 
-    private fun validateDisplayName(name: String): UiText? {
+    private fun validateDisplayName(name: String): ErrorMessage {
         return if (name.isEmpty()) {
-            UiText.StringResource(R.string.error_username_empty)
+            ErrorMessage.Known(R.string.error_username_empty)
         } else {
-            null
+            ErrorMessage.None
         }
     }
 
-    private fun validateEmail(email: String): UiText? {
+    private fun validateEmail(email: String): ErrorMessage {
         return if (email.isEmpty()) {
-            UiText.StringResource(R.string.error_email_empty)
+            ErrorMessage.Known(R.string.error_email_empty)
         } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            UiText.StringResource(R.string.error_email_invalid)
+            ErrorMessage.Known(R.string.error_email_invalid)
         } else {
-            null
+            ErrorMessage.None
         }
     }
 
-    private fun validatePassword(password: String): UiText? {
+    private fun validatePassword(password: String): ErrorMessage {
         return if (password.length < 8) {
-            UiText.StringResource(R.string.error_password_too_short)
+            ErrorMessage.Known(R.string.error_password_too_short)
         } else {
-            null
+            ErrorMessage.None
         }
     }
 
-    private fun validateConfirmPassword(password: String, confirm: String): UiText? {
+    private fun validateConfirmPassword(password: String, confirm: String): ErrorMessage {
         return if (password != confirm) {
-            UiText.StringResource(R.string.error_passwords_not_match)
+            ErrorMessage.Known(R.string.error_passwords_not_match)
         } else {
-            null
+            ErrorMessage.None
         }
     }
 }
