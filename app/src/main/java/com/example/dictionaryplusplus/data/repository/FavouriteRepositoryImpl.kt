@@ -1,9 +1,11 @@
 package com.example.dictionaryplusplus.data.repository
 
+import android.database.sqlite.SQLiteConstraintException
 import com.example.dictionaryplusplus.data.local.dao.FavouriteDao
 import com.example.dictionaryplusplus.data.local.entity.FavouriteEntity
 import com.example.dictionaryplusplus.domain.model.FavouriteWord
 import com.example.dictionaryplusplus.domain.repository.FavouriteRepository
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -19,17 +21,23 @@ class FavouriteRepositoryImpl @Inject constructor(
     }
 
     override suspend fun toggleFavourite(word: String) {
-        val isFavourite =
-            favouriteDao.observeIsFavourite(word).map { it }.firstOrNull() ?: false
+        try {
+            val isFavourite =
+                favouriteDao.observeIsFavourite(word).map { it }.firstOrNull() ?: false
 
-        if (isFavourite) {
-            favouriteDao.deleteFavourite(word)
-        } else {
-            favouriteDao.insertFavourite(
-                FavouriteEntity(
-                    word = word,
-                    addedAtTimestamp = System.currentTimeMillis()
+            if (isFavourite) {
+                favouriteDao.deleteFavourite(word)
+            } else {
+                favouriteDao.insertFavourite(
+                    FavouriteEntity(
+                        word = word,
+                        addedAtTimestamp = System.currentTimeMillis()
+                    )
                 )
+            }
+        } catch (e: SQLiteConstraintException) {
+            FirebaseCrashlytics.getInstance().recordException(
+                Exception("Foreign Key Violation: can't toggle favourite on non-existent word: $word", e)
             )
         }
     }

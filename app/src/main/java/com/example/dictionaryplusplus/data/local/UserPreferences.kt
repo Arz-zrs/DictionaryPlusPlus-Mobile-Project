@@ -26,6 +26,7 @@ class UserPreferences @Inject constructor(
         val NOTIFICATION_TIME = stringPreferencesKey("notification_time")
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val IS_WORD_BANK_SEEDED = booleanPreferencesKey("is_word_bank_seeded")
+        val IS_DEFINITION_SEEDED = booleanPreferencesKey("is_definition_seeded")
     }
 
     val hasSeenOnboarding: Flow<Boolean> = context.dataStore.data
@@ -75,6 +76,27 @@ class UserPreferences @Inject constructor(
     suspend fun setWordBankSeeded(seeded: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.IS_WORD_BANK_SEEDED] = seeded
+        }
+    }
+
+    suspend fun isDefinitionSeeded(): Boolean {
+        return context.dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }
+            .map { preferences ->
+                preferences[PreferencesKeys.IS_DEFINITION_SEEDED] ?: false
+            }
+            .first()
+    }
+
+    suspend fun setDefinitionSeeded(seeded: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.IS_DEFINITION_SEEDED] = seeded
         }
     }
 }

@@ -6,6 +6,7 @@ import com.example.dictionaryplusplus.data.local.entity.DefinitionEntity
 import com.example.dictionaryplusplus.data.remote.DictionaryApiService
 import com.example.dictionaryplusplus.domain.model.Definition
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
+import com.example.dictionaryplusplus.util.ContentSanitizer
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -20,7 +21,8 @@ import javax.inject.Singleton
 class DefinitionRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val definitionDao: DefinitionDao,
-    private val apiService: DictionaryApiService
+    private val apiService: DictionaryApiService,
+    private val sanitizer: ContentSanitizer
 ) : DefinitionRepository {
     private val gson = Gson()
 
@@ -53,15 +55,13 @@ class DefinitionRepositoryImpl @Inject constructor(
 
     override suspend fun getDefinition(word: String): Result<Definition> {
         return try {
-            val cachedDefinition = observeDefinition(word).map { it }.firstOrNull()
+            val cachedDefinition = observeDefinition(word).firstOrNull()
             if (cachedDefinition != null) {
                 Result.success(cachedDefinition)
-            } else {
-                Result.failure(Exception("Definition not found in cache"))
             }
 
             val apiResponse = apiService.fetchDefinition(word)
-            val firstEntry = apiResponse.firstOrNull() ?: throw Exception("No definition found")
+            val firstEntry = apiResponse.firstOrNull() ?: throw Exception("Empty Response")
 
             val phoneticText = firstEntry.phonetics?.firstOrNull { !it.text.isNullOrEmpty() }?.text
             val firstMeaning = firstEntry.meanings?.firstOrNull()
@@ -71,9 +71,9 @@ class DefinitionRepositoryImpl @Inject constructor(
             val rawExample = firstDefinition?.example ?: "No example available"
             val rawSynonyms = firstMeaning?.synonyms ?: emptyList()
 
-            val sanitizedDefinition = sanitizeText(rawDefinition, "Offensive definition omitted.")
-            val sanitizedExample = sanitizeText(rawExample, "Offensive example omitted.")
-            val sanitizedSynonyms = sanitizeSynonyms(rawSynonyms)
+            val sanitizedDefinition = sanitizer.sanitizeText(rawDefinition, denyList, "Offensive definition omitted.")
+            val sanitizedExample = sanitizer.sanitizeText(rawExample, denyList, "Offensive example omitted.")
+            val sanitizedSynonyms = sanitizer.sanitizeSynonyms(rawSynonyms, denyList)
 
             val definitionEntity = DefinitionEntity(
                 word = word,
@@ -95,15 +95,5 @@ class DefinitionRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Result.failure(e)
         }
-    }
-
-    private fun sanitizeText(text: String, fallback: String): String {
-        val words = text.lowercase().split(Regex("[^a-zA-Z0-9']+"))
-        val containsSensitiveWords = words.any { denyList.contains(it) }
-        return if (containsSensitiveWords) fallback else text
-    }
-
-    private fun sanitizeSynonyms(synonyms: List<String>): List<String> {
-        return synonyms.filter { !denyList.contains(it.lowercase()) }
     }
 }

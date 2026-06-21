@@ -52,8 +52,15 @@ fun WordDetailSheet(
         viewModel.loadWordDetails(word)
     }
 
+    LaunchedEffect(uiState.noteText) {
+        noteInput = uiState.noteText
+    }
+
     ModalBottomSheet(
-        onDismissRequest = onDismiss,
+        onDismissRequest = {
+            viewModel.saveWordNote(noteInput)
+            onDismiss()
+        },
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ) {
         Column(
@@ -144,7 +151,10 @@ fun WordDetailSheet(
 
             OutlinedTextField(
                 value = noteInput,
-                onValueChange = { noteInput = it },
+                onValueChange = { newValue ->
+                    noteInput = newValue
+                    viewModel.saveWordNote(newValue)
+                },
                 label = { Text(stringResource(R.string.label_personal_notes)) },
                 placeholder = { Text(stringResource(R.string.placeholder_personal_notes)) },
                 modifier = Modifier.fillMaxWidth(),

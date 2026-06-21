@@ -1,6 +1,8 @@
 package com.example.dictionaryplusplus.data.local.dao
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.dictionaryplusplus.data.local.entity.SeenEventEntity
 import com.example.dictionaryplusplus.domain.model.MasteryStatus
@@ -8,6 +10,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SeenEventDao {
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertSeenEvent(seenEvent: SeenEventEntity): Long
+
     @Query("SELECT * FROM seen_event ORDER BY seenAtTimestamp DESC")
     fun getAllSeenEvents(): Flow<List<SeenEventEntity>>
 

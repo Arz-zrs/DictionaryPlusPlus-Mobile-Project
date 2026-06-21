@@ -3,6 +3,7 @@ package com.example.dictionaryplusplus
 import android.app.Application
 import androidx.work.Configuration
 import androidx.hilt.work.HiltWorkerFactory
+import com.example.dictionaryplusplus.data.local.seeder.DefinitionSeeder
 import com.example.dictionaryplusplus.data.local.seeder.WordBankSeeder
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -14,6 +15,7 @@ import javax.inject.Inject
 class DictionaryPlusPlusApp : Application(), Configuration.Provider {
     @Inject lateinit var workerFactory: HiltWorkerFactory
     @Inject lateinit var wordBankSeeder: WordBankSeeder
+    @Inject lateinit var definitionSeeder: DefinitionSeeder
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
@@ -24,6 +26,7 @@ class DictionaryPlusPlusApp : Application(), Configuration.Provider {
         super.onCreate()
         CoroutineScope(Dispatchers.IO).launch {
             wordBankSeeder.seedWordBank()
+            definitionSeeder.seedDefinitions()
         }
     }
 }
