@@ -1,58 +1,26 @@
 package com.example.dictionaryplusplus.data.repository
 
 import com.example.dictionaryplusplus.data.firebase.FirebaseAuthSource
-import com.example.dictionaryplusplus.domain.model.UserProfile
 import com.example.dictionaryplusplus.domain.repository.AuthRepository
-import com.example.dictionaryplusplus.domain.repository.UserRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
-    private val authSource: FirebaseAuthSource,
-    private val userRepository: UserRepository
+    private val authSource: FirebaseAuthSource
 ) : AuthRepository {
 
-    override suspend fun login(email: String, password: String): Result<UserProfile> {
-        return try {
-            val authResult = authSource.signInWithEmail(email, password)
-            val uid = authResult.getOrThrow()
-
-            val profileResult = userRepository.fetchAndSyncProfile(uid, email)
-            profileResult.getOrElse {
-                authSource.signOut()
-                throw it
-            }
-            profileResult
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    override suspend fun login(email: String, password: String): Result<String> {
+        return authSource.signInWithEmail(email, password)
     }
 
-    override suspend fun register(
-        displayName: String,
-        email: String,
-        password: String
-    ): Result<UserProfile> {
-        return try {
-            val authResult = authSource.signUpWithEmail(email, password)
-            val uid = authResult.getOrThrow()
-
-            val profileResult = userRepository.createProfile(uid, displayName, email)
-            profileResult.getOrElse {
-                authSource.signOut()
-                throw it
-            }
-            profileResult
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    override suspend fun register(email: String, password: String): Result<String> {
+        return authSource.signUpWithEmail(email, password)
     }
 
     override suspend fun logout(): Result<Unit> {
         return try {
             authSource.signOut()
-            userRepository.clearLocalProfile()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -60,6 +28,6 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun isUserSessionActive(): Boolean {
-        return authSource.isUserLoggedIn() && userRepository.getUserProfile() != null
+        return authSource.isUserLoggedIn()
     }
 }

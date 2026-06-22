@@ -4,7 +4,8 @@ import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.R
-import com.example.dictionaryplusplus.domain.repository.AuthRepository
+import com.example.dictionaryplusplus.domain.usecase.LoginUseCase
+import com.example.dictionaryplusplus.domain.usecase.RegisterUseCase
 import com.example.dictionaryplusplus.util.ErrorMessage
 import com.example.dictionaryplusplus.util.asErrorMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +18,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val loginUseCase: LoginUseCase,
+    private val registerUseCase: RegisterUseCase
 ): ViewModel() {
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
@@ -58,15 +60,9 @@ class AuthViewModel @Inject constructor(
 
         _uiState.value = AuthUiState.Loading
         viewModelScope.launch {
-            authRepository.login(state.email.trim(), state.password)
-                .onSuccess { userProfile ->
-                    _uiState.value = AuthUiState.Success(userProfile)
-                }
-                .onFailure { _ ->
-                    _uiState.value = AuthUiState.Error(
-                        asErrorMessage(R.string.error_login_failed)
-                    )
-                }
+            loginUseCase(state.email.trim(), state.password)
+                .onSuccess { _uiState.value = AuthUiState.Success(it) }
+                .onFailure { _uiState.value = AuthUiState.Error(asErrorMessage(R.string.error_login_failed)) }
         }
     }
 
@@ -98,15 +94,9 @@ class AuthViewModel @Inject constructor(
 
         _uiState.value = AuthUiState.Loading
         viewModelScope.launch {
-            authRepository.register(state.displayName.trim(), state.email.trim(), state.password)
-                .onSuccess { userProfile ->
-                    _uiState.value = AuthUiState.Success(userProfile)
-                }
-                .onFailure { _ ->
-                    _uiState.value = AuthUiState.Error(
-                        asErrorMessage(R.string.error_registration_failed)
-                    )
-                }
+            registerUseCase(state.displayName.trim(), state.email.trim(), state.password)
+                .onSuccess { _uiState.value = AuthUiState.Success(it) }
+                .onFailure { _uiState.value = AuthUiState.Error(asErrorMessage(R.string.error_registration_failed)) }
         }
     }
 

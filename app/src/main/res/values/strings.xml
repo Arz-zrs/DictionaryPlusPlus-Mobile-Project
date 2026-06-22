@@ -70,4 +70,26 @@
     <string name="favourites_empty">No favourites yet</string>
     <string name="unfavourite_content_description">Unfavourite</string>
     <string name="no_definition_available">No definition available</string>
+
+    <!-- Score Banner -->
+    <string name="label_total_score">TOTAL SCORE</string>
+
+    <!-- Daily Quiz Card -->
+    <string name="daily_quiz_title">DAILY QUIZ</string>
+    <string name="daily_quiz_start">Start Quiz</string>
+    <string name="daily_quiz_completed">You have completed today\'s quiz, wait until tomorrow!</string>
+
+    <!-- Leaderboard Preview Card -->
+    <string name="leaderboard_preview_title">RANKS</string>
+    <string name="leaderboard_preview_cta">Tap to see Leaderboard</string>
+
+    <!-- Mastery Status -->
+    <string name="status_learning">Learning</string>
+    <string name="status_mastered">Mastered</string>
+
+    <!-- Dashboard Screen -->
+    <string name="dashboard_title">Dashboard</string>
+    <string name="label_word_of_the_day">WORD OF THE DAY</string>
+    <string name="label_recent_words">RECENT WORDS</string>
+    <string name="dashboard_no_recent_words">No recent words</string>
 </resources>

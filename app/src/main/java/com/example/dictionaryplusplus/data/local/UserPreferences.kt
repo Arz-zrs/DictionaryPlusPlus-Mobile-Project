@@ -27,6 +27,7 @@ class UserPreferences @Inject constructor(
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val IS_WORD_BANK_SEEDED = booleanPreferencesKey("is_word_bank_seeded")
         val IS_DEFINITION_SEEDED = booleanPreferencesKey("is_definition_seeded")
+        val WORD_OF_THE_DAY = stringPreferencesKey("word_of_the_day")
     }
 
     val hasSeenOnboarding: Flow<Boolean> = context.dataStore.data
@@ -97,6 +98,17 @@ class UserPreferences @Inject constructor(
     suspend fun setDefinitionSeeded(seeded: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.IS_DEFINITION_SEEDED] = seeded
+        }
+    }
+
+    val wordOfTheDay: Flow<String> = context.dataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.WORD_OF_THE_DAY] ?: "river"
+        }
+
+    suspend fun setWordOfTheDay(word: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.WORD_OF_THE_DAY] = word
         }
     }
 }

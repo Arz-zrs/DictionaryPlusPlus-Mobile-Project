@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.data.local.UserPreferences
 import com.example.dictionaryplusplus.domain.repository.AuthRepository
+import com.example.dictionaryplusplus.domain.repository.UserRepository
 import com.example.dictionaryplusplus.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val userPreferences: UserPreferences,
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _startDestination = MutableStateFlow<String?>(null)
@@ -35,10 +37,10 @@ class MainViewModel @Inject constructor(
             }
 
             val isUserLoggedIn = authRepository.isUserSessionActive()
-            if (isUserLoggedIn) {
-                _startDestination.value = Screen.Dashboard.route
-            } else {
-                _startDestination.value = Screen.Login.route
+            val hasUserProfile = userRepository.getUserProfile() != null
+            _startDestination.value = when {
+                isUserLoggedIn && hasUserProfile -> Screen.Dashboard.route
+                else -> Screen.Login.route
             }
         }
     }

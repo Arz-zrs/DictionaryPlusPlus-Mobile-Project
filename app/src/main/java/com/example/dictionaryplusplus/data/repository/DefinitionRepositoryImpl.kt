@@ -3,6 +3,7 @@ package com.example.dictionaryplusplus.data.repository
 import android.content.Context
 import com.example.dictionaryplusplus.data.local.dao.DefinitionDao
 import com.example.dictionaryplusplus.data.local.entity.DefinitionEntity
+import com.example.dictionaryplusplus.data.local.mapper.toDomain
 import com.example.dictionaryplusplus.data.remote.DictionaryApiService
 import com.example.dictionaryplusplus.domain.model.Definition
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
@@ -28,7 +29,7 @@ class DefinitionRepositoryImpl @Inject constructor(
 
     private val denyList: Set<String> by lazy {
         try {
-            val jsonString = context.assets.open("deny_list.json") // TODO: fill the deny_list.json data
+            val jsonString = context.assets.open("deny_list.json")
                 .bufferedReader()
                 .use { it.readText() }
             val jsonArray = JSONArray(jsonString)
@@ -41,15 +42,7 @@ class DefinitionRepositoryImpl @Inject constructor(
 
     override fun observeDefinition(word: String): Flow<Definition?> {
         return definitionDao.observeDefinition(word).map { entity ->
-            entity?.let {
-                Definition(
-                    word = it.word,
-                    definition = it.definition,
-                    phonetic = it.phonetic,
-                    exampleSentence = it.exampleSentence,
-                    synonyms = gson.fromJson(it.relatedWordsJson, Array<String>::class.java).toList()
-                )
-            }
+            entity?.toDomain(gson)
         }
     }
 

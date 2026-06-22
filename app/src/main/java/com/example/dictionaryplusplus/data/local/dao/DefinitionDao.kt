@@ -14,4 +14,7 @@ interface DefinitionDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDefinition(definition: DefinitionEntity)
+
+    @Query("SELECT * FROM definition_cache ORDER BY RANDOM() LIMIT 1")
+    suspend fun getRandomDefinition(): DefinitionEntity?
 }

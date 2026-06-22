@@ -10,10 +10,12 @@ import com.example.dictionaryplusplus.data.repository.UserRepositoryImpl
 import com.example.dictionaryplusplus.data.repository.WordNoteRepositoryImpl
 import com.example.dictionaryplusplus.domain.repository.WordRepository
 import com.example.dictionaryplusplus.data.repository.WordRepositoryImpl
+import com.example.dictionaryplusplus.data.repository.WotdRepositoryImpl
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
 import com.example.dictionaryplusplus.domain.repository.FavouriteRepository
 import com.example.dictionaryplusplus.domain.repository.HistoryRepository
 import com.example.dictionaryplusplus.domain.repository.WordNoteRepository
+import com.example.dictionaryplusplus.domain.repository.WotdRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -64,4 +66,10 @@ abstract class RepositoryModule {
     abstract fun bindHistoryRepository(
         historyRepositoryImpl: HistoryRepositoryImpl
     ): HistoryRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindWotdRepository(
+        wotdRepositoryImpl: WotdRepositoryImpl
+    ): WotdRepository
 }
