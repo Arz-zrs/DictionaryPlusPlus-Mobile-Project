@@ -15,6 +15,7 @@ import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.ui.components.DailyQuizEntryCard
 import com.example.dictionaryplusplus.ui.components.LeaderboardPreviewCard
 import com.example.dictionaryplusplus.ui.components.ScoreBanner
+import com.example.dictionaryplusplus.ui.components.WordOfTheDayCard
 import com.example.dictionaryplusplus.ui.history.WordHistoryItem
 
 @Composable
@@ -46,39 +47,26 @@ fun DashboardScreen(
             )
         }
 
-        // TODO: needa figure out to refac or extract the nulls in this UI
-        uiState.wordOfTheDay?.let { wotd ->
-            item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f)
+        when (val wotd = uiState.wordOfTheDay) {
+            WotdState.Loading -> {
+                item {
+                    LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth()
                     )
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = stringResource(R.string.label_word_of_the_day),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = wotd.word,
-                            style = MaterialTheme.typography.headlineSmall
-                        )
-                        wotd.phonetic?.let {
-                            Text(
-                                text = it,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = wotd.definition,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
+                }
+            }
+            WotdState.Unavailable -> {
+                item {
+                    Text(
+                        text = stringResource(R.string.dashboard_wotd_unavailable),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+            is WotdState.Available -> {
+                item {
+                    WordOfTheDayCard(wotd = wotd.definition)
                 }
             }
         }

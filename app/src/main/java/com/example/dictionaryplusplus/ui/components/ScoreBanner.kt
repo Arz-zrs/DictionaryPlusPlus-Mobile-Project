@@ -40,7 +40,7 @@ fun ScoreBanner(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
+            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.25f))
             .clickable { onBannerClick() }
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -60,7 +60,7 @@ fun ScoreBanner(
                 transitionSpec = {
                     (slideInVertically { it } + fadeIn()).togetherWith(slideOutVertically { -it } + fadeOut())
                 },
-                label = "Score"
+                label = "ScoreCounter"
             ) { targetScore ->
                 Text(
                     text = targetScore.toString(),

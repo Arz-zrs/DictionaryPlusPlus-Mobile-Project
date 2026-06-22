@@ -92,4 +92,5 @@
     <string name="label_word_of_the_day">WORD OF THE DAY</string>
     <string name="label_recent_words">RECENT WORDS</string>
     <string name="dashboard_no_recent_words">No recent words</string>
+    <string name="dashboard_wotd_unavailable">Word of the Day is not available due to fetching issue</string>
 </resources>

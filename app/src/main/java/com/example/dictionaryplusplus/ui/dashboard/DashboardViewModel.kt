@@ -33,7 +33,10 @@ class DashboardViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<DashboardUiState> = combine(
         userRepository.observeUserProfile().map { it?.totalScore ?: 0 },
-        wotdRepository.observeWordOfTheDay(),
+        wotdRepository.observeWordOfTheDay().map { definition ->
+            if (definition != null) WotdState.Available(definition)
+            else WotdState.Unavailable
+        },
         historyRepository.observeSeenEvents("All").map { it.take(5) }
     ) { score, wotd, recentList ->
         DashboardUiState(
