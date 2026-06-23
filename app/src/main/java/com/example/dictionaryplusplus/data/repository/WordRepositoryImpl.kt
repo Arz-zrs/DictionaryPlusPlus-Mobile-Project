@@ -30,4 +30,8 @@ class WordRepositoryImpl @Inject constructor(
     override suspend fun getRandomSeenWord(): String? {
         return seenEventDao.getRandomSeenWord()
     }
+
+    override suspend fun getRandomWords(limit: Int): List<String> {
+        return wordDao.getRandomWords(limit)
+    }
 }

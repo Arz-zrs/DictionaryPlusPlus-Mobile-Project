@@ -1,7 +1,9 @@
 package com.example.dictionaryplusplus.data.local.mapper
 
 import com.example.dictionaryplusplus.data.local.entity.DefinitionEntity
+import com.example.dictionaryplusplus.data.local.entity.UserProfileEntity
 import com.example.dictionaryplusplus.domain.model.Definition
+import com.example.dictionaryplusplus.domain.model.UserProfile
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 
@@ -17,5 +19,14 @@ fun DefinitionEntity.toDomain(gson: Gson): Definition {
             FirebaseCrashlytics.getInstance().recordException(e)
             emptyList()
         }
+    )
+}
+
+fun UserProfileEntity.toDomain(): UserProfile {
+    return UserProfile(
+        userId = userId,
+        displayName = displayName,
+        email = email,
+        totalScore = totalScore,
     )
 }

@@ -20,4 +20,7 @@ interface UserProfileDao {
 
     @Query("DELETE FROM user_profile")
     suspend fun clearUserProfile()
+
+    @Query("UPDATE user_profile SET totalScore = totalScore + :points")
+    suspend fun updateScore(points: Int)
 }

@@ -42,4 +42,13 @@ class FirestoreSyncStore @Inject constructor(
             Result.failure(e)
         }
     }
+
+    suspend fun updateScore(uid: String, totalScore: Int): Result<Unit> {
+        return try {
+            firestore.collection("users").document(uid).update("total_score", totalScore).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

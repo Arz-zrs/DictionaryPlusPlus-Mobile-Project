@@ -124,7 +124,7 @@ fun WordHistoryScreen(
 }
 
 @Composable
-fun WordHistoryItem(event: SeenEventUiModel) {
+fun WordHistoryItem(event: HistoryUiState) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(

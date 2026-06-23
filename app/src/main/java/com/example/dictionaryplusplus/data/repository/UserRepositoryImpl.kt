@@ -1,8 +1,14 @@
 package com.example.dictionaryplusplus.data.repository
 
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.example.dictionaryplusplus.core.worker.SyncUserScoreWorker
 import com.example.dictionaryplusplus.data.firebase.FirestoreSyncStore
 import com.example.dictionaryplusplus.data.local.dao.UserProfileDao
 import com.example.dictionaryplusplus.data.local.entity.UserProfileEntity
+import com.example.dictionaryplusplus.data.local.mapper.toDomain
 import com.example.dictionaryplusplus.domain.model.UserProfile
 import com.example.dictionaryplusplus.domain.repository.UserRepository
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +19,8 @@ import javax.inject.Singleton
 @Singleton
 class UserRepositoryImpl @Inject constructor(
     private val firestoreSource: FirestoreSyncStore,
-    private val userProfileDao: UserProfileDao
+    private val userProfileDao: UserProfileDao,
+    private val workManager: WorkManager
 ) : UserRepository {
 
     override fun observeUserProfile(): Flow<UserProfile?> {
@@ -69,10 +76,34 @@ class UserRepositoryImpl @Inject constructor(
         userProfileDao.clearUserProfile()
     }
 
-    private fun UserProfileEntity.toDomain() = UserProfile(
-        userId = userId,
-        displayName = displayName,
-        email = email,
-        totalScore = totalScore,
-    )
+    override suspend fun updateLocalScore(points: Int): Result<Unit> {
+        return try {
+            userProfileDao.updateScore(points)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun syncScoreToCloud(): Result<Unit> {
+        return try {
+            val profile = userProfileDao.getUserProfile() ?: throw Exception("Profile not found")
+            firestoreSource.updateScore(profile.userId, profile.totalScore).getOrThrow()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun enqueueScoreSync() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val syncRequest = OneTimeWorkRequestBuilder<SyncUserScoreWorker>()
+            .setConstraints(constraints)
+            .build()
+
+        workManager.enqueue(syncRequest)
+    }
 }

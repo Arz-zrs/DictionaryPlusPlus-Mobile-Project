@@ -27,13 +27,13 @@ class HistoryViewModel @Inject constructor(
     val currentFilter: StateFlow<HistoryFilter> = _currentFilter.asStateFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val historyList: StateFlow<List<SeenEventUiModel>> = _currentFilter
+    val historyList: StateFlow<List<HistoryUiState>> = _currentFilter
         .flatMapLatest { filter ->
             observeSeenEventsUseCase(filter)
         }
         .map { events ->
             events.map { event ->
-                SeenEventUiModel.fromDomain(
+                HistoryUiState.fromDomain(
                     id = event.id,
                     word = event.word,
                     timestamp = event.seenAtTimestamp,

@@ -73,6 +73,7 @@
 
     <!-- Score Banner -->
     <string name="label_total_score">TOTAL SCORE</string>
+    <string name="label_total_score_format">Final Score: %1$d</string>
 
     <!-- Daily Quiz Card -->
     <string name="daily_quiz_title">DAILY QUIZ</string>
@@ -101,4 +102,8 @@
     <string name="quiz_match_definition">Match the Definition</string>
     <string name="quiz_find_synonym">Find the Synonym</string>
     <string name="quiz_back_to_hub">Back to Hub</string>
+    <string name="daily_quiz_completed_title">QUIZ COMPLETED</string>
+    <string name="btn_done">Done</string>
+    <string name="label_question_count">Question %1$d of %2$d</string>
+    <string name="label_speed_bonus">+%1$d (Speed!)</string>
 </resources>

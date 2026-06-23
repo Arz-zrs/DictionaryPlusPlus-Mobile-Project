@@ -16,7 +16,7 @@ import com.example.dictionaryplusplus.ui.favourites.FavouritesScreen
 import com.example.dictionaryplusplus.ui.history.WordHistoryScreen
 import com.example.dictionaryplusplus.ui.leaderboard.LeaderboardScreen
 import com.example.dictionaryplusplus.ui.onboarding.OnboardingScreen
-import com.example.dictionaryplusplus.ui.quiz.DailyQuizScreen
+import com.example.dictionaryplusplus.ui.quiz.dailyquiz.DailyQuizScreen
 import com.example.dictionaryplusplus.ui.quiz.QuizScreen
 import com.example.dictionaryplusplus.ui.quiz.synonymquiz.SynonymQuizScreen
 import com.example.dictionaryplusplus.ui.settings.SettingsScreen

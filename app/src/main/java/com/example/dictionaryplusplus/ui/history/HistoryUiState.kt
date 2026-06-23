@@ -6,7 +6,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-data class SeenEventUiModel(
+data class HistoryUiState(
     val id: Long,
     val word: String,
     val formattedDate: String,
@@ -19,10 +19,10 @@ data class SeenEventUiModel(
             timestamp: Long,
             masteryStatus: MasteryStatus,
             pattern: String = "dd MMM yyyy"
-        ): SeenEventUiModel {
+        ): HistoryUiState {
             val formatter = DateTimeFormatter.ofPattern(pattern, Locale.getDefault())
                 .withZone(ZoneId.systemDefault())
-            return SeenEventUiModel(
+            return HistoryUiState(
                 id = id,
                 word = word,
                 formattedDate = formatter.format(Instant.ofEpochMilli(timestamp)),

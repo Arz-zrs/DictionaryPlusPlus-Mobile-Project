@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -28,6 +30,16 @@ class UserPreferences @Inject constructor(
         val IS_WORD_BANK_SEEDED = booleanPreferencesKey("is_word_bank_seeded")
         val IS_DEFINITION_SEEDED = booleanPreferencesKey("is_definition_seeded")
         val WORD_OF_THE_DAY = stringPreferencesKey("word_of_the_day")
+        val QUIZ_LENGTH = intPreferencesKey("quiz_length")
+        val DAILY_QUIZ_REFRESH_TIME = stringPreferencesKey("daily_quiz_refresh_time")
+        val LAST_COMPLETED_AT_TIMESTAMP = longPreferencesKey("last_completed_at_timestamp")
+        val REFRESH_TIME_AT_LAST_COMPLETION = stringPreferencesKey("refresh_time_at_last_completion")
+    }
+
+    companion object {
+        const val WOTD_FALLBACK: String = "river"
+        const val DEFAULT_QUIZ_LENGTH: Int = 5
+        const val DEFAULT_TIMESTAMP: String = "06:00"
     }
 
     val hasSeenOnboarding: Flow<Boolean> = context.dataStore.data
@@ -103,12 +115,51 @@ class UserPreferences @Inject constructor(
 
     val wordOfTheDay: Flow<String> = context.dataStore.data
         .map { preferences ->
-            preferences[PreferencesKeys.WORD_OF_THE_DAY] ?: "river"
+            preferences[PreferencesKeys.WORD_OF_THE_DAY] ?: WOTD_FALLBACK
         }
 
     suspend fun setWordOfTheDay(word: String) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.WORD_OF_THE_DAY] = word
+        }
+    }
+
+    val quizLength: Flow<Int> = context.dataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.QUIZ_LENGTH] ?: DEFAULT_QUIZ_LENGTH
+        }
+
+    suspend fun setQuizLength(length: Int) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.QUIZ_LENGTH]
+        }
+    }
+
+    val dailyQuizRefreshTime: Flow<String> = context.dataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.DAILY_QUIZ_REFRESH_TIME] ?: DEFAULT_TIMESTAMP
+        }
+
+    suspend fun setDailyQuizRefreshTime(time: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.DAILY_QUIZ_REFRESH_TIME] = time
+        }
+    }
+
+    val lastCompletedAtTimestamp: Flow<Long?> = context.dataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.LAST_COMPLETED_AT_TIMESTAMP]
+        }
+
+    val refreshTimeAtLastCompletion: Flow<String> = context.dataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.REFRESH_TIME_AT_LAST_COMPLETION] ?: DEFAULT_TIMESTAMP
+        }
+
+    suspend fun saveQuizCompletion(timestamp: Long, refreshTimeSnapshot: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.LAST_COMPLETED_AT_TIMESTAMP] = timestamp
+            preferences[PreferencesKeys.REFRESH_TIME_AT_LAST_COMPLETION] = refreshTimeSnapshot
         }
     }
 }

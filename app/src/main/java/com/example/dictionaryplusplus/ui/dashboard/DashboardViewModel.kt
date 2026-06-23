@@ -6,7 +6,7 @@ import com.example.dictionaryplusplus.domain.model.HistoryFilter
 import com.example.dictionaryplusplus.domain.usecase.ObserveUserProfileUseCase
 import com.example.dictionaryplusplus.domain.usecase.ObserveWordOfTheDayUseCase
 import com.example.dictionaryplusplus.domain.usecase.ObserveSeenEventsUseCase
-import com.example.dictionaryplusplus.ui.history.SeenEventUiModel
+import com.example.dictionaryplusplus.ui.history.HistoryUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
@@ -36,7 +36,7 @@ class DashboardViewModel @Inject constructor(
             userScore = score,
             wordOfTheDay = wotd,
             recentWords = recentList.map { event ->
-                SeenEventUiModel.fromDomain(
+                HistoryUiState.fromDomain(
                     id = event.id,
                     word = event.word,
                     timestamp = event.seenAtTimestamp,

@@ -7,6 +7,7 @@ import com.example.dictionaryplusplus.data.repository.FavouriteRepositoryImpl
 import com.example.dictionaryplusplus.data.repository.HistoryRepositoryImpl
 import com.example.dictionaryplusplus.domain.repository.UserRepository
 import com.example.dictionaryplusplus.data.repository.OnboardingRepositoryImpl
+import com.example.dictionaryplusplus.data.repository.QuizRepositoryImpl
 import com.example.dictionaryplusplus.data.repository.UserRepositoryImpl
 import com.example.dictionaryplusplus.data.repository.WordNoteRepositoryImpl
 import com.example.dictionaryplusplus.domain.repository.WordRepository
@@ -16,6 +17,7 @@ import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
 import com.example.dictionaryplusplus.domain.repository.FavouriteRepository
 import com.example.dictionaryplusplus.domain.repository.HistoryRepository
 import com.example.dictionaryplusplus.domain.repository.OnboardingRepository
+import com.example.dictionaryplusplus.domain.repository.QuizRepository
 import com.example.dictionaryplusplus.domain.repository.WordNoteRepository
 import com.example.dictionaryplusplus.domain.repository.WotdRepository
 import dagger.Binds
@@ -80,4 +82,10 @@ abstract class RepositoryModule {
     abstract fun bindOnboardingRepository(
         onboardingRepositoryImpl: OnboardingRepositoryImpl
     ): OnboardingRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindQuizRepository(
+        quizRepositoryImpl: QuizRepositoryImpl
+    ): QuizRepository
 }

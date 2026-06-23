@@ -8,5 +8,8 @@ interface UserRepository {
     suspend fun getUserProfile(): UserProfile?
     suspend fun fetchAndSyncProfile(uid: String, email: String): Result<UserProfile>
     suspend fun createProfile(uid: String, displayName: String, email: String): Result<UserProfile>
+    suspend fun updateLocalScore(points: Int): Result<Unit>
+    suspend fun syncScoreToCloud(): Result<Unit>
+    suspend fun enqueueScoreSync()
     suspend fun clearLocalProfile()
 }
