@@ -4,7 +4,9 @@ import android.content.Context
 import com.example.dictionaryplusplus.data.local.dao.DefinitionDao
 import com.example.dictionaryplusplus.data.local.entity.DefinitionEntity
 import com.example.dictionaryplusplus.data.local.mapper.toDomain
+import com.example.dictionaryplusplus.data.remote.ApiResponse
 import com.example.dictionaryplusplus.data.remote.DictionaryApiService
+import com.example.dictionaryplusplus.data.remote.ErrorType
 import com.example.dictionaryplusplus.domain.model.Definition
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
 import com.example.dictionaryplusplus.util.ContentSanitizer
@@ -46,11 +48,11 @@ class DefinitionRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getDefinition(word: String): Result<Definition> {
+    override suspend fun getDefinition(word: String): ApiResponse<Definition> {
         return try {
             val cachedDefinition = observeDefinition(word).firstOrNull()
             if (cachedDefinition != null) {
-                Result.success(cachedDefinition)
+                return ApiResponse.Success(cachedDefinition)
             }
 
             val apiResponse = apiService.fetchDefinition(word)
@@ -84,9 +86,17 @@ class DefinitionRepositoryImpl @Inject constructor(
                 exampleSentence = sanitizedExample,
                 synonyms = sanitizedSynonyms
             )
-            Result.success(domainModel)
+            ApiResponse.Success(domainModel)
         } catch (e: Exception) {
-            Result.failure(e)
+            val errorType = when (e) {
+                is java.net.UnknownHostException -> ErrorType.NO_INTERNET
+                is java.net.SocketTimeoutException -> ErrorType.TIMEOUT
+                is retrofit2.HttpException -> {
+                    if (e.code() == 404) ErrorType.NOT_FOUND else ErrorType.UNKNOWN
+                }
+                else -> ErrorType.UNKNOWN
+            }
+            ApiResponse.Error(errorType)
         }
     }
 }

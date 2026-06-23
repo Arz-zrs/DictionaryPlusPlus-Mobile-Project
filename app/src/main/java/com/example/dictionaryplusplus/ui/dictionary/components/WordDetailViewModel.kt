@@ -2,6 +2,8 @@ package com.example.dictionaryplusplus.ui.dictionary.components
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.dictionaryplusplus.data.remote.ApiResponse
+import com.example.dictionaryplusplus.data.remote.ErrorType
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
 import com.example.dictionaryplusplus.domain.repository.FavouriteRepository
 import com.example.dictionaryplusplus.domain.repository.WordNoteRepository
@@ -65,8 +67,9 @@ class WordDetailViewModel @Inject constructor(
         _definitionError.value = ErrorMessage.None
         _currentWord.value = word
         viewModelScope.launch {
-            getDefinitionUseCase(word).onFailure { exception ->
-                _definitionError.value = mapThrowableToMessage(exception)
+            val response = getDefinitionUseCase(word)
+            if (response is ApiResponse.Error) {
+                _definitionError.value = mapErrorTypeToMessage(response.errorType)
             }
         }
     }
@@ -89,17 +92,12 @@ class WordDetailViewModel @Inject constructor(
         }
     }
 
-    private fun mapThrowableToMessage(throwable: Throwable): ErrorMessage {
-        return when (throwable) {
-            is java.net.UnknownHostException -> ErrorMessage.Known(R.string.error_no_internet)
-            is java.net.SocketTimeoutException -> ErrorMessage.Known(R.string.error_timeout)
-            is retrofit2.HttpException -> {
-                when (throwable.code()) {
-                    404 -> ErrorMessage.Known(R.string.error_word_not_found)
-                    else -> ErrorMessage.Known(R.string.error_unknown)
-                }
-            }
-            else -> ErrorMessage.Known(R.string.error_unknown)
+    private fun mapErrorTypeToMessage(errorType: ErrorType): ErrorMessage {
+        return when (errorType) {
+            ErrorType.NO_INTERNET -> ErrorMessage.Known(R.string.error_no_internet)
+            ErrorType.TIMEOUT -> ErrorMessage.Known(R.string.error_timeout)
+            ErrorType.NOT_FOUND -> ErrorMessage.Known(R.string.error_word_not_found)
+            ErrorType.UNKNOWN -> ErrorMessage.Known(R.string.error_unknown)
         }
     }
 }
