@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.domain.model.QuizQuestion
-import com.example.dictionaryplusplus.domain.usecase.GetSynonymQuizUC
-import com.example.dictionaryplusplus.util.asErrorMessage
+import com.example.dictionaryplusplus.domain.usecase.GetSynonymQuizUseCase
+import com.example.dictionaryplusplus.core.util.asErrorMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SynonymQuizViewModel @Inject constructor(
-    private val getSynonymQuizUC: GetSynonymQuizUC,
+    private val getSynonymQuizUseCase: GetSynonymQuizUseCase,
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
     private val _uiState = MutableStateFlow<SynonymQuizUiState>(SynonymQuizUiState.Loading)
@@ -29,10 +29,9 @@ class SynonymQuizViewModel @Inject constructor(
     }
 
     fun loadQuiz(word: String?) {
-        val anchorWord = word ?: "abandon"
         _uiState.value = SynonymQuizUiState.Loading
         viewModelScope.launch {
-            getSynonymQuizUC(anchorWord)
+            getSynonymQuizUseCase(word)
                 .onSuccess { question ->
                     _uiState.value = mapToSuccessState(question)
                 }

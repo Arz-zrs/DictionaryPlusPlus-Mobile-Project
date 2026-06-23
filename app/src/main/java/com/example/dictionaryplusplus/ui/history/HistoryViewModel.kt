@@ -2,7 +2,9 @@ package com.example.dictionaryplusplus.ui.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dictionaryplusplus.domain.repository.HistoryRepository
+import com.example.dictionaryplusplus.domain.model.HistoryFilter
+import com.example.dictionaryplusplus.domain.usecase.ObserveSeenEventsUseCase
+import com.example.dictionaryplusplus.domain.usecase.DeleteSeenEventUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,34 +15,30 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class HistoryViewModel @Inject constructor(
-    private val historyRepository: HistoryRepository
+    private val observeSeenEventsUseCase: ObserveSeenEventsUseCase,
+    private val deleteSeenEventUseCase: DeleteSeenEventUseCase
 ) : ViewModel() {
-    private val dateFormatter = DateTimeFormatter.ofPattern("dd MM yyyy, HH:mm", Locale.getDefault())
-        .withZone(ZoneId.systemDefault())
 
-    private val _currentFilter = MutableStateFlow("All")
-    val currentFilter: StateFlow<String> = _currentFilter.asStateFlow()
+    private val _currentFilter = MutableStateFlow(HistoryFilter.ALL)
+    val currentFilter: StateFlow<HistoryFilter> = _currentFilter.asStateFlow()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val historyList: StateFlow<List<SeenEventUiModel>> = _currentFilter
         .flatMapLatest { filter ->
-            historyRepository.observeSeenEvents(filter)
+            observeSeenEventsUseCase(filter)
         }
         .map { events ->
             events.map { event ->
-                SeenEventUiModel(
+                SeenEventUiModel.fromDomain(
                     id = event.id,
                     word = event.word,
-                    formattedDate = dateFormatter.format(Instant.ofEpochMilli(event.seenAtTimestamp)),
-                    masteryStatus = event.masteryStatus
+                    timestamp = event.seenAtTimestamp,
+                    masteryStatus = event.masteryStatus,
+                    pattern = "dd MM yyyy, HH:mm"
                 )
             }
         }
@@ -50,13 +48,13 @@ class HistoryViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    fun onFilterChanged(newFilter: String) {
+    fun onFilterChanged(newFilter: HistoryFilter) {
         _currentFilter.value = newFilter
     }
 
     fun removeHistoryEntry(id: Long) {
         viewModelScope.launch {
-            historyRepository.deleteSeenEvent(id)
+            deleteSeenEventUseCase(id)
         }
     }
 }

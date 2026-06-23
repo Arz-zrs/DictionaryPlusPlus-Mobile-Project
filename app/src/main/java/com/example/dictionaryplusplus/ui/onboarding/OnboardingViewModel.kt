@@ -2,7 +2,7 @@ package com.example.dictionaryplusplus.ui.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dictionaryplusplus.data.local.UserPreferences
+import com.example.dictionaryplusplus.domain.usecase.CompleteOnboardingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val userPreferences: UserPreferences
+    private val completeOnboardingUseCase: CompleteOnboardingUseCase
 ): ViewModel() {
     private val _uiState = MutableStateFlow(OnboardingUiState())
     val uiState: StateFlow<OnboardingUiState> = _uiState.asStateFlow()
@@ -42,8 +42,7 @@ class OnboardingViewModel @Inject constructor(
 
     private fun saveOnboarding(selectedNotificationTime: String) {
         viewModelScope.launch {
-            userPreferences.setNotificationTime(selectedNotificationTime)
-            userPreferences.setHasSeenOnboarding(true)
+            completeOnboardingUseCase(selectedNotificationTime)
             _uiState.update { it.copy(isCompleted = true) }
         }
     }

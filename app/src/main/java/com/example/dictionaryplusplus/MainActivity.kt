@@ -15,7 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
-import com.example.dictionaryplusplus.navigation.NavigationGraph
+import com.example.dictionaryplusplus.core.navigation.NavigationGraph
 import com.example.dictionaryplusplus.ui.theme.DictionaryPlusPlusTheme
 import dagger.hilt.android.AndroidEntryPoint
 

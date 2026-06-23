@@ -2,7 +2,7 @@ package com.example.dictionaryplusplus.ui.quiz.synonymquiz
 
 import androidx.annotation.StringRes
 import com.example.dictionaryplusplus.domain.model.QuizQuestion
-import com.example.dictionaryplusplus.util.ErrorMessage
+import com.example.dictionaryplusplus.core.util.ErrorMessage
 
 sealed interface SynonymQuizUiState {
     data object Loading: SynonymQuizUiState

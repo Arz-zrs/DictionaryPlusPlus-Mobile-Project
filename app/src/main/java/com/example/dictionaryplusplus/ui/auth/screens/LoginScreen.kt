@@ -19,7 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.ui.auth.AuthAction
 import com.example.dictionaryplusplus.ui.auth.AuthUiState
 import com.example.dictionaryplusplus.ui.auth.AuthViewModel
-import com.example.dictionaryplusplus.util.ErrorMessage
+import com.example.dictionaryplusplus.core.util.ErrorMessage
 
 @Composable
 fun LoginScreen(

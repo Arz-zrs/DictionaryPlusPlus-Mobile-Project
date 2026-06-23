@@ -1,6 +1,4 @@
-package com.example.dictionaryplusplus.ui.dictionary.components
-
-import com.example.dictionaryplusplus.ui.dictionary.DefinitionState
+package com.example.dictionaryplusplus.ui.dictionary
 
 data class WordDetailUiState(
     val word: String = "",

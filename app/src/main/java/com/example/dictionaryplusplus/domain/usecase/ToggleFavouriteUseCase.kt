@@ -1,0 +1,12 @@
+package com.example.dictionaryplusplus.domain.usecase
+
+import com.example.dictionaryplusplus.domain.repository.FavouriteRepository
+import javax.inject.Inject
+
+class ToggleFavouriteUseCase @Inject constructor(
+    private val favouriteRepository: FavouriteRepository
+) {
+    suspend operator fun invoke(word: String) {
+        favouriteRepository.toggleFavourite(word)
+    }
+}

@@ -1,4 +1,4 @@
-package com.example.dictionaryplusplus.navigation
+package com.example.dictionaryplusplus.core.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

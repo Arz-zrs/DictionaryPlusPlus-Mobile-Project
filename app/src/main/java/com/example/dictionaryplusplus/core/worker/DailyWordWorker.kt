@@ -1,4 +1,4 @@
-package com.example.dictionaryplusplus.worker
+package com.example.dictionaryplusplus.core.worker
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
@@ -7,11 +7,11 @@ import androidx.work.WorkerParameters
 import com.example.dictionaryplusplus.data.local.dao.SeenEventDao
 import com.example.dictionaryplusplus.data.local.dao.WordDao
 import com.example.dictionaryplusplus.data.local.entity.SeenEventEntity
-import com.example.dictionaryplusplus.data.remote.ApiResponse
-import com.example.dictionaryplusplus.data.remote.ErrorType
+import com.example.dictionaryplusplus.domain.model.DefinitionResult
+import com.example.dictionaryplusplus.domain.model.DefinitionErrorType
 import com.example.dictionaryplusplus.domain.model.MasteryStatus
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
-import com.example.dictionaryplusplus.notification.NotificationBuilder
+import com.example.dictionaryplusplus.core.notification.NotificationBuilder
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -33,15 +33,15 @@ class DailyWordWorker @AssistedInject constructor(
             val definitionResult = definitionRepository.getDefinition(word)
             
             val definition = when (definitionResult) {
-                is ApiResponse.Success -> definitionResult.data
-                is ApiResponse.Error -> {
-                    return if (definitionResult.errorType == ErrorType.NOT_FOUND) {
+                is DefinitionResult.Success -> definitionResult.definition
+                is DefinitionResult.Error -> {
+                    return if (definitionResult.type == DefinitionErrorType.NOT_FOUND) {
                         Result.failure()
                     } else {
                         Result.retry()
                     }
                 }
-                ApiResponse.Loading -> return Result.retry()
+                DefinitionResult.Loading -> return Result.retry()
             }
 
             val seenEventId = seenEventDao.insertSeenEvent(

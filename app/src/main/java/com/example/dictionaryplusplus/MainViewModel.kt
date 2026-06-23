@@ -2,10 +2,10 @@ package com.example.dictionaryplusplus
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dictionaryplusplus.data.local.UserPreferences
 import com.example.dictionaryplusplus.domain.repository.AuthRepository
 import com.example.dictionaryplusplus.domain.repository.UserRepository
-import com.example.dictionaryplusplus.navigation.Screen
+import com.example.dictionaryplusplus.domain.usecase.ObserveHasSeenOnboardingUseCase
+import com.example.dictionaryplusplus.core.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val userPreferences: UserPreferences,
+    private val observeHasSeenOnboardingUseCase: ObserveHasSeenOnboardingUseCase,
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
@@ -30,7 +30,7 @@ class MainViewModel @Inject constructor(
 
     private fun determineStartDestination() {
         viewModelScope.launch {
-            val hasSeenOnboarding = userPreferences.hasSeenOnboarding.first()
+            val hasSeenOnboarding = observeHasSeenOnboardingUseCase().first()
             if (!hasSeenOnboarding) {
                 _startDestination.value = Screen.Onboarding.route
                 return@launch

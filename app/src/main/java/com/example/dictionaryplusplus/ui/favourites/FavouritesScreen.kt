@@ -20,7 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.domain.model.FavouriteWord
 import com.example.dictionaryplusplus.ui.components.MasteryChip
-import com.example.dictionaryplusplus.ui.dictionary.components.WordDetailSheet
+import com.example.dictionaryplusplus.ui.dictionary.WordDetailSheet
 
 @Composable
 fun FavouritesScreen(

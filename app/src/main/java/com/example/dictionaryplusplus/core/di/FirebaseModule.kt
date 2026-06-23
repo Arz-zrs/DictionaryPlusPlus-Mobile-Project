@@ -1,4 +1,4 @@
-package com.example.dictionaryplusplus.di
+package com.example.dictionaryplusplus.core.di
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore

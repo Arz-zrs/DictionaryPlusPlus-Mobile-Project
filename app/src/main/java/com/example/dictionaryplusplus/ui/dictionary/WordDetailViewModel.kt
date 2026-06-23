@@ -1,15 +1,16 @@
-package com.example.dictionaryplusplus.ui.dictionary.components
+package com.example.dictionaryplusplus.ui.dictionary
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dictionaryplusplus.data.remote.ApiResponse
-import com.example.dictionaryplusplus.data.remote.ErrorType
-import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
-import com.example.dictionaryplusplus.domain.repository.FavouriteRepository
-import com.example.dictionaryplusplus.domain.repository.WordNoteRepository
+import com.example.dictionaryplusplus.domain.model.DefinitionResult
+import com.example.dictionaryplusplus.domain.model.DefinitionErrorType
 import com.example.dictionaryplusplus.domain.usecase.GetDefinitionUseCase
-import com.example.dictionaryplusplus.ui.dictionary.DefinitionState
-import com.example.dictionaryplusplus.util.ErrorMessage
+import com.example.dictionaryplusplus.domain.usecase.ObserveDefinitionUseCase
+import com.example.dictionaryplusplus.domain.usecase.ObserveIsFavouriteUseCase
+import com.example.dictionaryplusplus.domain.usecase.ObserveWordNoteUseCase
+import com.example.dictionaryplusplus.domain.usecase.SaveWordNoteUseCase
+import com.example.dictionaryplusplus.domain.usecase.ToggleFavouriteUseCase
+import com.example.dictionaryplusplus.core.util.ErrorMessage
 import com.example.dictionaryplusplus.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,10 +26,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WordDetailViewModel @Inject constructor(
-    private val definitionRepository: DefinitionRepository,
-    private val favouriteRepository: FavouriteRepository,
-    private val wordNoteRepository: WordNoteRepository,
-    private val getDefinitionUseCase: GetDefinitionUseCase
+    private val observeDefinitionUseCase: ObserveDefinitionUseCase,
+    private val observeWordNoteUseCase: ObserveWordNoteUseCase,
+    private val observeIsFavouriteUseCase: ObserveIsFavouriteUseCase,
+    private val getDefinitionUseCase: GetDefinitionUseCase,
+    private val saveWordNoteUseCase: SaveWordNoteUseCase,
+    private val toggleFavouriteUseCase: ToggleFavouriteUseCase
 ) : ViewModel() {
     private val _currentWord = MutableStateFlow("")
     private val _definitionError = MutableStateFlow<ErrorMessage>(ErrorMessage.None)
@@ -38,9 +41,9 @@ class WordDetailViewModel @Inject constructor(
         .filter { it.isNotEmpty() }
         .flatMapLatest { word ->
             combine(
-                definitionRepository.observeDefinition(word),
-                wordNoteRepository.observeWordNote(word),
-                favouriteRepository.observeIsFavourite(word),
+                observeDefinitionUseCase(word),
+                observeWordNoteUseCase(word),
+                observeIsFavouriteUseCase(word),
                 _definitionError
             ) { definition, note, isFavourite, error ->
                 val definitionState = when {
@@ -68,8 +71,8 @@ class WordDetailViewModel @Inject constructor(
         _currentWord.value = word
         viewModelScope.launch {
             val response = getDefinitionUseCase(word)
-            if (response is ApiResponse.Error) {
-                _definitionError.value = mapErrorTypeToMessage(response.errorType)
+            if (response is DefinitionResult.Error) {
+                _definitionError.value = mapErrorTypeToMessage(response.type)
             }
         }
     }
@@ -78,7 +81,7 @@ class WordDetailViewModel @Inject constructor(
         val word = _currentWord.value
         if (word.isNotEmpty()) {
             viewModelScope.launch {
-                wordNoteRepository.saveWordNote(word, note)
+                saveWordNoteUseCase(word, note)
             }
         }
     }
@@ -87,17 +90,17 @@ class WordDetailViewModel @Inject constructor(
         val word = _currentWord.value
         if (word.isNotEmpty()) {
             viewModelScope.launch {
-                favouriteRepository.toggleFavourite(word)
+                toggleFavouriteUseCase(word)
             }
         }
     }
 
-    private fun mapErrorTypeToMessage(errorType: ErrorType): ErrorMessage {
+    private fun mapErrorTypeToMessage(errorType: DefinitionErrorType): ErrorMessage {
         return when (errorType) {
-            ErrorType.NO_INTERNET -> ErrorMessage.Known(R.string.error_no_internet)
-            ErrorType.TIMEOUT -> ErrorMessage.Known(R.string.error_timeout)
-            ErrorType.NOT_FOUND -> ErrorMessage.Known(R.string.error_word_not_found)
-            ErrorType.UNKNOWN -> ErrorMessage.Known(R.string.error_unknown)
+            DefinitionErrorType.NO_INTERNET -> ErrorMessage.Known(R.string.error_no_internet)
+            DefinitionErrorType.TIMEOUT -> ErrorMessage.Known(R.string.error_timeout)
+            DefinitionErrorType.NOT_FOUND -> ErrorMessage.Known(R.string.error_word_not_found)
+            DefinitionErrorType.UNKNOWN -> ErrorMessage.Known(R.string.error_unknown)
         }
     }
 }

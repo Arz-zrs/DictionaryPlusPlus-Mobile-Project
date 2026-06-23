@@ -1,4 +1,4 @@
-package com.example.dictionaryplusplus.notification
+package com.example.dictionaryplusplus.core.notification
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

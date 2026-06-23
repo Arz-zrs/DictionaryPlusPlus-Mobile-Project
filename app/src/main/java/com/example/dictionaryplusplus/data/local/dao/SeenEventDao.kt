@@ -21,4 +21,10 @@ interface SeenEventDao {
 
     @Query("DELETE FROM seen_event WHERE id = :id")
     suspend fun deleteSeenEventById(id: Long)
+
+    @Query("UPDATE seen_event SET isConfirmed = 1 WHERE id = :id")
+    suspend fun confirmSeenEvent(id: Long)
+
+    @Query("SELECT word FROM seen_event ORDER BY RANDOM() LIMIT 1")
+    suspend fun getRandomSeenWord(): String?
 }

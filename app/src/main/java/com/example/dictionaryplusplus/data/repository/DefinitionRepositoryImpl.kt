@@ -4,12 +4,12 @@ import android.content.Context
 import com.example.dictionaryplusplus.data.local.dao.DefinitionDao
 import com.example.dictionaryplusplus.data.local.entity.DefinitionEntity
 import com.example.dictionaryplusplus.data.local.mapper.toDomain
-import com.example.dictionaryplusplus.data.remote.ApiResponse
 import com.example.dictionaryplusplus.data.remote.DictionaryApiService
-import com.example.dictionaryplusplus.data.remote.ErrorType
 import com.example.dictionaryplusplus.domain.model.Definition
+import com.example.dictionaryplusplus.domain.model.DefinitionResult
+import com.example.dictionaryplusplus.domain.model.DefinitionErrorType
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
-import com.example.dictionaryplusplus.util.ContentSanitizer
+import com.example.dictionaryplusplus.core.util.ContentSanitizer
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -48,11 +48,11 @@ class DefinitionRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getDefinition(word: String): ApiResponse<Definition> {
+    override suspend fun getDefinition(word: String): DefinitionResult {
         return try {
             val cachedDefinition = observeDefinition(word).firstOrNull()
             if (cachedDefinition != null) {
-                return ApiResponse.Success(cachedDefinition)
+                return DefinitionResult.Success(cachedDefinition)
             }
 
             val apiResponse = apiService.fetchDefinition(word)
@@ -75,7 +75,7 @@ class DefinitionRepositoryImpl @Inject constructor(
                 definition = sanitizedDefinition,
                 phonetic = phoneticText,
                 exampleSentence = sanitizedExample,
-                relatedWordsJson = gson.toJson(sanitizedExample),
+                relatedWordsJson = gson.toJson(sanitizedSynonyms),
             )
             definitionDao.insertDefinition(definitionEntity)
 
@@ -86,17 +86,17 @@ class DefinitionRepositoryImpl @Inject constructor(
                 exampleSentence = sanitizedExample,
                 synonyms = sanitizedSynonyms
             )
-            ApiResponse.Success(domainModel)
+            DefinitionResult.Success(domainModel)
         } catch (e: Exception) {
             val errorType = when (e) {
-                is java.net.UnknownHostException -> ErrorType.NO_INTERNET
-                is java.net.SocketTimeoutException -> ErrorType.TIMEOUT
+                is java.net.UnknownHostException -> DefinitionErrorType.NO_INTERNET
+                is java.net.SocketTimeoutException -> DefinitionErrorType.TIMEOUT
                 is retrofit2.HttpException -> {
-                    if (e.code() == 404) ErrorType.NOT_FOUND else ErrorType.UNKNOWN
+                    if (e.code() == 404) DefinitionErrorType.NOT_FOUND else DefinitionErrorType.UNKNOWN
                 }
-                else -> ErrorType.UNKNOWN
+                else -> DefinitionErrorType.UNKNOWN
             }
-            ApiResponse.Error(errorType)
+            DefinitionResult.Error(errorType)
         }
     }
 }

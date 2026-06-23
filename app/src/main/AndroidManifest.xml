@@ -47,7 +47,7 @@
 
         <!--  Daily Notif Receiver  -->
         <receiver
-            android:name=".notification.QuizActionReceiver"
+            android:name=".core.notification.QuizActionReceiver"
             android:exported="false"/>
 
         <!-- WorkManager initializer with Hilt -->

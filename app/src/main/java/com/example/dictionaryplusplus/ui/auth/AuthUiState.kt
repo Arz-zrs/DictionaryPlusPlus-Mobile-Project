@@ -1,7 +1,7 @@
 package com.example.dictionaryplusplus.ui.auth
 
 import com.example.dictionaryplusplus.domain.model.UserProfile
-import com.example.dictionaryplusplus.util.ErrorMessage
+import com.example.dictionaryplusplus.core.util.ErrorMessage
 
 sealed interface AuthUiState {
     data object Idle : AuthUiState

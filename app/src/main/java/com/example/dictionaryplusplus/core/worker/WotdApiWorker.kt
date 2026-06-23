@@ -1,13 +1,13 @@
-package com.example.dictionaryplusplus.worker
+package com.example.dictionaryplusplus.core.worker
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.dictionaryplusplus.BuildConfig
-import com.example.dictionaryplusplus.data.remote.ApiResponse
-import com.example.dictionaryplusplus.data.remote.ErrorType
 import com.example.dictionaryplusplus.data.remote.WordnikApiService
+import com.example.dictionaryplusplus.domain.model.DefinitionResult
+import com.example.dictionaryplusplus.domain.model.DefinitionErrorType
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
 import com.example.dictionaryplusplus.domain.repository.WotdRepository
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -25,7 +25,7 @@ class WotdApiWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         return try {
             val apiKey = BuildConfig.WORDNIK_API_KEY
-            if (apiKey.isEmpty()) return Result.failure()
+            if (apiKey.isBlank()) return Result.failure()
 
             val response = wordnikApiService.fetchWordOfTheDay(apiKey)
             val word = response.word.trim().lowercase()
@@ -35,15 +35,15 @@ class WotdApiWorker @AssistedInject constructor(
             wotdRepository.setWordOfTheDay(word)
             
             when (val definitionResult = definitionRepository.getDefinition(word)) {
-                is ApiResponse.Success -> Result.success()
-                is ApiResponse.Error -> {
-                    if (definitionResult.errorType == ErrorType.NOT_FOUND) {
+                is DefinitionResult.Success -> Result.success()
+                is DefinitionResult.Error -> {
+                    if (definitionResult.type == DefinitionErrorType.NOT_FOUND) {
                         Result.failure()
                     } else {
                         Result.retry()
                     }
                 }
-                ApiResponse.Loading -> Result.retry()
+                DefinitionResult.Loading -> Result.retry()
             }
         } catch (e: Exception) {
             FirebaseCrashlytics.getInstance().recordException(e)

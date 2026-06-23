@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.R
+import com.example.dictionaryplusplus.domain.model.HistoryFilter
 import com.example.dictionaryplusplus.ui.components.MasteryChip
 
 @Composable
@@ -26,7 +27,7 @@ fun WordHistoryScreen(
 ) {
     val currentFilter by viewModel.currentFilter.collectAsStateWithLifecycle()
     val historyList by viewModel.historyList.collectAsStateWithLifecycle()
-    val filters = listOf("All", "Learning", "Mastered")
+    val filters = HistoryFilter.entries
 
     Column(
         modifier = Modifier
@@ -46,10 +47,9 @@ fun WordHistoryScreen(
         ) {
             filters.forEach { filter ->
                 val label = when (filter) {
-                    "All" -> stringResource(R.string.filter_all)
-                    "Learning" -> stringResource(R.string.filter_learning)
-                    "Mastered" -> stringResource(R.string.filter_mastered)
-                    else -> filter
+                    HistoryFilter.ALL -> stringResource(R.string.filter_all)
+                    HistoryFilter.LEARNING -> stringResource(R.string.filter_learning)
+                    HistoryFilter.MASTERED -> stringResource(R.string.filter_mastered)
                 }
                 FilterChip(
                     selected = currentFilter == filter,

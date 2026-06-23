@@ -7,10 +7,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
-data class QuizHubUiState(
-    val isDailyQuizAvailable: Boolean = true
-)
-
 @HiltViewModel
 class QuizHubViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow(QuizHubUiState())

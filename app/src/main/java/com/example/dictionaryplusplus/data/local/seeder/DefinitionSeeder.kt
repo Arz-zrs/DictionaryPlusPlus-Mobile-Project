@@ -5,7 +5,7 @@ import com.example.dictionaryplusplus.data.local.UserPreferences
 import com.example.dictionaryplusplus.data.local.dao.DefinitionDao
 import com.example.dictionaryplusplus.data.local.entity.DefinitionEntity
 import com.example.dictionaryplusplus.data.local.seeder.dto.DefinitionSeedDto
-import com.example.dictionaryplusplus.util.ContentSanitizer
+import com.example.dictionaryplusplus.core.util.ContentSanitizer
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken

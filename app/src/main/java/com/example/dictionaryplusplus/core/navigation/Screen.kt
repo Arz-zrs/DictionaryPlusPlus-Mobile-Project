@@ -1,4 +1,4 @@
-package com.example.dictionaryplusplus.navigation
+package com.example.dictionaryplusplus.core.navigation
 
 sealed class Screen(val route: String) {
     object Onboarding : Screen("onboarding")
@@ -10,7 +10,9 @@ sealed class Screen(val route: String) {
     object QuizHub : Screen("quiz_hub")
 
     object SynonymQuiz : Screen("synonym_quiz?word={word}") {
-        fun createRoute(word: String?) = "synonym_quiz?word=$word" //TODO
+        fun createRoute(word: String?) =
+            if (word != null) "synonym_quiz?word=$word"
+            else "synonym_quiz"
     }
 
     object DailyQuiz : Screen("daily_quiz")

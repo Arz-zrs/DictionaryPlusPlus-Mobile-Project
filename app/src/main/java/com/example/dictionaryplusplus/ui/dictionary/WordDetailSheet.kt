@@ -1,4 +1,4 @@
-package com.example.dictionaryplusplus.ui.dictionary.components
+package com.example.dictionaryplusplus.ui.dictionary
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,8 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.R
-import com.example.dictionaryplusplus.ui.dictionary.DefinitionState
-import com.example.dictionaryplusplus.util.ErrorMessage
+import com.example.dictionaryplusplus.core.util.ErrorMessage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

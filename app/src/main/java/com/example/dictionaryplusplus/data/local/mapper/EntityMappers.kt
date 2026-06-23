@@ -2,6 +2,7 @@ package com.example.dictionaryplusplus.data.local.mapper
 
 import com.example.dictionaryplusplus.data.local.entity.DefinitionEntity
 import com.example.dictionaryplusplus.domain.model.Definition
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 
 fun DefinitionEntity.toDomain(gson: Gson): Definition {
@@ -10,6 +11,11 @@ fun DefinitionEntity.toDomain(gson: Gson): Definition {
         definition = definition,
         phonetic = phonetic,
         exampleSentence = exampleSentence,
-        synonyms = gson.fromJson(relatedWordsJson, Array<String>::class.java).toList()
+        synonyms = try {
+            gson.fromJson(relatedWordsJson, Array<String>::class.java)?.toList() ?: emptyList()
+        } catch (e: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(e)
+            emptyList()
+        }
     )
 }

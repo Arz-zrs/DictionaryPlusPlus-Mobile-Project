@@ -1,6 +1,7 @@
 package com.example.dictionaryplusplus.data.repository
 
 import com.example.dictionaryplusplus.data.local.dao.SeenEventDao
+import com.example.dictionaryplusplus.domain.model.HistoryFilter
 import com.example.dictionaryplusplus.domain.model.MasteryStatus
 import com.example.dictionaryplusplus.domain.model.SeenEvent
 import com.example.dictionaryplusplus.domain.repository.HistoryRepository
@@ -13,12 +14,12 @@ import javax.inject.Singleton
 class HistoryRepositoryImpl @Inject constructor(
     private val seenEventDao: SeenEventDao
 ) : HistoryRepository {
-    override fun observeSeenEvents(filter: String): Flow<List<SeenEvent>> {
-        val flow = if (filter.equals("All", ignoreCase = true)) {
-                seenEventDao.getAllSeenEvents()
-            } else {
-                seenEventDao.getSeenEventsByMasteryStatus(MasteryStatus.fromString(filter))
-            }
+    override fun observeSeenEvents(filter: HistoryFilter): Flow<List<SeenEvent>> {
+        val flow = when (filter) {
+            HistoryFilter.ALL -> seenEventDao.getAllSeenEvents()
+            HistoryFilter.LEARNING -> seenEventDao.getSeenEventsByMasteryStatus(MasteryStatus.LEARNING)
+            HistoryFilter.MASTERED -> seenEventDao.getSeenEventsByMasteryStatus(MasteryStatus.MASTERED)
+        }
 
         return flow.map { list ->
             list.map { entity ->

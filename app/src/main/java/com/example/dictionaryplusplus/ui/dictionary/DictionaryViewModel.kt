@@ -3,7 +3,7 @@ package com.example.dictionaryplusplus.ui.dictionary
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.domain.model.Word
-import com.example.dictionaryplusplus.domain.repository.WordRepository
+import com.example.dictionaryplusplus.domain.usecase.SearchWordsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -22,7 +22,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class DictionaryViewModel @Inject constructor(
-    private val wordRepository: WordRepository
+    private val searchWordsUseCase: SearchWordsUseCase
 ) : ViewModel() {
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
@@ -35,7 +35,7 @@ class DictionaryViewModel @Inject constructor(
         .distinctUntilChanged()
         .flatMapLatest { query ->
             if (query.isBlank()) flowOf(emptyList())
-            else wordRepository.searchWords(query)
+            else searchWordsUseCase(query)
         }
         .stateIn(
             scope = viewModelScope,

@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.domain.usecase.LoginUseCase
 import com.example.dictionaryplusplus.domain.usecase.RegisterUseCase
-import com.example.dictionaryplusplus.util.ErrorMessage
-import com.example.dictionaryplusplus.util.asErrorMessage
+import com.example.dictionaryplusplus.core.util.ErrorMessage
+import com.example.dictionaryplusplus.core.util.asErrorMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
