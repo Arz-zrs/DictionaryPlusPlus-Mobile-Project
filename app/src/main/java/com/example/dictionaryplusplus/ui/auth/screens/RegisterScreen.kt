@@ -85,33 +85,32 @@ fun RegisterScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
 
-            when (val state = uiState) {
-                is AuthUiState.Loading -> {
-                    CircularProgressIndicator()
+            if (uiState is AuthUiState.Error) {
+                val errorText = when (val error = (uiState as AuthUiState.Error).errorMessage) {
+                    is ErrorMessage.Known -> stringResource(error.messageRes)
+                    ErrorMessage.None -> ""
                 }
-                is AuthUiState.Error -> {
-                    val errorText = when (val error = state.errorMessage) {
-                        is ErrorMessage.Known -> stringResource(error.messageRes)
-                        ErrorMessage.None -> ""
-                    }
-                    if (errorText.isNotEmpty()) {
-                        Text(
-                            text = errorText,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
+                if (errorText.isNotEmpty()) {
+                    Text(
+                        text = errorText,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
-                else -> {
-                    Button(
-                        onClick = { viewModel.onAction(AuthAction.Register) },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = stringResource(R.string.btn_register))
-                    }
-                    TextButton(onClick = onNavigateBack) {
-                        Text(text = stringResource(R.string.btn_back_to_login))
-                    }
+            }
+
+            if (uiState is AuthUiState.Loading) {
+                CircularProgressIndicator()
+            } else {
+                Button(
+                    onClick = { viewModel.onAction(AuthAction.Register) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = stringResource(R.string.btn_register))
+                }
+
+                TextButton(onClick = onNavigateBack) {
+                    Text(text = stringResource(R.string.btn_back_to_login))
                 }
             }
         }

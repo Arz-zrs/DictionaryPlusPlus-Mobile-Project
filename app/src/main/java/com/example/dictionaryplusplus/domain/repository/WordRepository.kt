@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface WordRepository {
     fun searchWords(query: String): Flow<List<Word>>
+    suspend fun getRandomDistractors(excludedWord: String, limit: Int): List<String>
 }

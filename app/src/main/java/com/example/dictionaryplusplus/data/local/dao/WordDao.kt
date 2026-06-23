@@ -14,4 +14,10 @@ interface WordDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertWords(words: List<WordEntity>)
+
+    @Query("SELECT * FROM word_bank WHERE word NOT IN (SELECT word FROM seen_event) ORDER BY RANDOM() LIMIT 1")
+    suspend fun getRandomUnseenWord(): WordEntity?
+
+    @Query("SELECT word FROM word_bank WHERE word != :excludedWord ORDER BY RANDOM() LIMIT :limit")
+    suspend fun getRandomDistractors(excludedWord: String, limit: Int): List<String>
 }

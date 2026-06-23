@@ -17,4 +17,11 @@ class WordRepositoryImpl @Inject constructor(
             entities.map { Word(it.word, it.frequency) }
         }
     }
+
+    override suspend fun getRandomDistractors(
+        excludedWord: String,
+        limit: Int
+    ): List<String> {
+        return wordDao.getRandomDistractors(excludedWord, limit)
+    }
 }

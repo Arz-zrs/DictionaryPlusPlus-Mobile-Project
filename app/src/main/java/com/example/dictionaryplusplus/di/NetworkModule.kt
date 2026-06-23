@@ -1,6 +1,8 @@
 package com.example.dictionaryplusplus.di
 
 import com.example.dictionaryplusplus.data.remote.DictionaryApiService
+import com.example.dictionaryplusplus.data.remote.WordnikApiService
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,7 +17,14 @@ import java.util.concurrent.TimeUnit
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    const val BASE_URL = "https://api.dictionaryapi.dev/api/v2/entries/en/"
+    const val DICTIONARY_API_BASE_URL = "https://api.dictionaryapi.dev/api/v2/entries/en/"
+    const val WORDNIK_API_BASE_URL = "https://api.wordnik.com/v4/"
+
+    @Provides
+    @Singleton
+    fun provideGson(): Gson {
+        return Gson()
+    }
 
     @Provides
     @Singleton
@@ -32,17 +41,39 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    @DictionaryRetrofit
+    fun provideDictionaryRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(DICTIONARY_API_BASE_URL)
             .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
 
     @Provides
     @Singleton
-    fun provideDictionaryApiService(retrofit: Retrofit): DictionaryApiService {
+    @WordnikRetrofit
+    fun provideWordnikRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(WORDNIK_API_BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideDictionaryApiService(
+        @DictionaryRetrofit retrofit: Retrofit
+    ): DictionaryApiService {
         return retrofit.create(DictionaryApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWordnikApiService(
+        @WordnikRetrofit retrofit: Retrofit
+    ): WordnikApiService {
+        return retrofit.create(WordnikApiService::class.java)
     }
 }

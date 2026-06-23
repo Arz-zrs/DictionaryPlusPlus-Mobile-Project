@@ -93,4 +93,12 @@
     <string name="label_recent_words">RECENT WORDS</string>
     <string name="dashboard_no_recent_words">No recent words</string>
     <string name="dashboard_wotd_unavailable">Word of the Day is not available due to fetching issue</string>
+
+    <!-- Quiz Screens -->
+    <string name="quiz_hub_title">Quiz Hub</string>
+    <string name="quiz_synonym_practice_title">SYNONYM PRACTICE</string>
+    <string name="quiz_synonym_practice_desc">Practice vocabulary context with synonym matching. No score penalties.</string>
+    <string name="quiz_match_definition">Match the Definition</string>
+    <string name="quiz_find_synonym">Find the Synonym</string>
+    <string name="quiz_back_to_hub">Back to Hub</string>
 </resources>

@@ -18,7 +18,7 @@ import com.example.dictionaryplusplus.ui.leaderboard.LeaderboardScreen
 import com.example.dictionaryplusplus.ui.onboarding.OnboardingScreen
 import com.example.dictionaryplusplus.ui.quiz.DailyQuizScreen
 import com.example.dictionaryplusplus.ui.quiz.QuizScreen
-import com.example.dictionaryplusplus.ui.quiz.SynonymQuizScreen
+import com.example.dictionaryplusplus.ui.quiz.synonymquiz.SynonymQuizScreen
 import com.example.dictionaryplusplus.ui.settings.SettingsScreen
 
 @Composable
@@ -87,8 +87,8 @@ fun NavigationGraph(
 
         composable(route = Screen.QuizHub.route) {
             QuizScreen(
-                onNavigateToSynonymQuiz = { word ->
-                    navController.navigate(Screen.SynonymQuiz.createRoute(word))
+                onNavigateToDefaultSynonymQuiz = {
+                    navController.navigate(Screen.SynonymQuiz.createRoute(null))
                 },
                 onNavigateToDailyQuiz = {
                     navController.navigate(Screen.DailyQuiz.route)
@@ -108,10 +108,8 @@ fun NavigationGraph(
             deepLinks = listOf(
                 navDeepLink { uriPattern = "dictionaryplusplus://quiz/{word}" }
             )
-        ) { backStackEntry ->
-            val word = backStackEntry.arguments?.getString("word")
+        ) { _ ->
             SynonymQuizScreen(
-                word = word,
                 onNavigateBack = {
                     navController.popBackStack()
                 }
