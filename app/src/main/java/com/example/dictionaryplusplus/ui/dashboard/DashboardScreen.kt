@@ -16,6 +16,7 @@ import com.example.dictionaryplusplus.ui.components.DailyQuizEntryCard
 import com.example.dictionaryplusplus.ui.components.LeaderboardPreviewCard
 import com.example.dictionaryplusplus.ui.components.ScoreBanner
 import com.example.dictionaryplusplus.ui.components.WordOfTheDayCard
+import com.example.dictionaryplusplus.ui.dictionary.WordDetailSheet
 import com.example.dictionaryplusplus.ui.history.WordHistoryItem
 
 @Composable
@@ -66,7 +67,10 @@ fun DashboardScreen(
             }
             is WotdState.Available -> {
                 item {
-                    WordOfTheDayCard(wotd = wotd.definition)
+                    WordOfTheDayCard(
+                        wotd = wotd.definition,
+                        onCardClick = { viewModel.onWotdClicked(wotd.definition.word) }
+                    )
                 }
             }
         }
@@ -106,5 +110,12 @@ fun DashboardScreen(
                 WordHistoryItem(event = event)
             }
         }
+    }
+
+    uiState.selectedWotd?.let { word ->
+        WordDetailSheet(
+            word = word,
+            onDismiss = { viewModel.onSheetDismissed() }
+        )
     }
 }

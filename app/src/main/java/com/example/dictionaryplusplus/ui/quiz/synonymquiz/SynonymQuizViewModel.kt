@@ -59,16 +59,8 @@ class SynonymQuizViewModel @Inject constructor(
     private fun mapToSuccessState(question: QuizQuestion): SynonymQuizUiState.Success {
         return SynonymQuizUiState.Success(
             question = question,
-            titleRes = if (question.isFallbackToDefinition) {
-                R.string.quiz_match_definition
-            } else {
-                R.string.quiz_find_synonym
-            },
-            displayWordOrDefinition = if (question.isFallbackToDefinition) {
-                "\"${question.originalDefinition}\""
-            } else {
-                question.word.uppercase()
-            }
+            titleRes = R.string.quiz_find_synonym,
+            displayWordOrDefinition = question.word.uppercase()
         )
     }
 }

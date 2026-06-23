@@ -6,7 +6,7 @@ import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class GetDailyQuizUseCase @Inject constructor(
-    private val getSynonymQuizUseCase: GetSynonymQuizUseCase,
+    private val getDefinitionQuizUseCase: GetDefinitionQuizUseCase,
     private val wordRepository: WordRepository,
 ) {
     suspend operator fun invoke(
@@ -24,7 +24,7 @@ class GetDailyQuizUseCase @Inject constructor(
             }
 
             for (word in anchorWords) {
-                getSynonymQuizUseCase(word).onSuccess { question ->
+                getDefinitionQuizUseCase(word).onSuccess { question ->
                     if (!excludedWords.contains(question.word)) {
                         questions.add(question)
                         excludedWords.add(question.word)

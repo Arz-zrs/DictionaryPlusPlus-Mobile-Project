@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.dictionaryplusplus.R
 
@@ -28,9 +29,9 @@ fun DailyQuizEntryCard(
             .clickable(enabled = isAvailable) { onStartClick() },
         colors = CardDefaults.cardColors(
             containerColor = if (isAvailable) {
-                MaterialTheme.colorScheme.primary
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
             } else {
-                MaterialTheme.colorScheme.surfaceVariant
+                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
             }
         )
     ) {
@@ -58,4 +59,13 @@ fun DailyQuizEntryCard(
             )
         }
     }
+}
+
+@Composable
+@Preview
+fun DailyQuizEntryCardPreview() {
+    DailyQuizEntryCard(
+        isAvailable = false,
+        onStartClick = {}
+    )
 }

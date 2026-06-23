@@ -12,13 +12,28 @@ class GetSynonymQuizUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(word: String?): Result<QuizQuestion> {
         return try {
-            val anchorWord = word ?: wordRepository.getRandomSeenWord() ?: "abandon"
-            val definitionResult = definitionRepository.getDefinition(anchorWord)
+            var anchorWord = word ?: wordRepository.getRandomSeenWord() ?: "abandon"
+            var definitionResult = definitionRepository.getDefinition(anchorWord)
             
-            val definition = when (definitionResult) {
+            var definition = when (definitionResult) {
                 is DefinitionResult.Success -> definitionResult.definition
-                is DefinitionResult.Error -> return Result.failure(Exception("API Error: ${definitionResult.type}"))
-                DefinitionResult.Loading -> return Result.failure(Exception("API is still loading"))
+                else -> {
+                    if (word != null) return Result.failure(Exception("Could not fetch definition for $word"))
+
+                    val fallbackResult = definitionRepository.getDefinition("abandon")
+                    if (fallbackResult is DefinitionResult.Success) fallbackResult.definition
+                    else return Result.failure(Exception("Could not fetch definition"))
+                }
+            }
+
+            var attempts = 0
+            while (definition.synonyms.isEmpty() && attempts < 5 && word == null) {
+                attempts++
+                anchorWord = wordRepository.getRandomSeenWord() ?: wordRepository.getRandomWords(1).firstOrNull() ?: "abandon"
+                definitionResult = definitionRepository.getDefinition(anchorWord)
+                if (definitionResult is DefinitionResult.Success) {
+                    definition = definitionResult.definition
+                }
             }
 
             val rawSynonyms = definition.synonyms
@@ -39,18 +54,7 @@ class GetSynonymQuizUseCase @Inject constructor(
                     )
                 )
             } else {
-                val choicesList = (distractors + anchorWord).shuffled()
-                val correctIndex = choicesList.indexOf(anchorWord)
-
-                Result.success(
-                    QuizQuestion(
-                        word = anchorWord,
-                        choices = choicesList,
-                        correctAnswerIndex = correctIndex,
-                        originalDefinition = definition.definition,
-                        isFallbackToDefinition = true
-                    )
-                )
+                Result.failure(Exception("No synonyms found for $anchorWord"))
             }
         } catch (e: Exception) {
             Result.failure(e)

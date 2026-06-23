@@ -1,5 +1,6 @@
 package com.example.dictionaryplusplus.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,10 +20,13 @@ import com.example.dictionaryplusplus.domain.model.Definition
 @Composable
 fun WordOfTheDayCard(
     wotd: Definition,
+    onCardClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onCardClick() },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         )
