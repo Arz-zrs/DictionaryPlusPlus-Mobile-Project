@@ -27,6 +27,21 @@ class DailyQuizViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<DailyQuizUiState>(DailyQuizUiState.Loading)
     val uiState: StateFlow<DailyQuizUiState> = _uiState.asStateFlow()
 
+    private var pausedAtMillis: Long? = null
+    private var accumulatedPauseMillis: Long = 0L
+
+    fun onPause() {
+        if (pausedAtMillis == null)
+            pausedAtMillis = System.currentTimeMillis()
+    }
+
+    fun onResume() {
+        pausedAtMillis?.let { pausedAt ->
+            accumulatedPauseMillis += System.currentTimeMillis() - pausedAt
+            pausedAtMillis = null
+        }
+    }
+
     fun startQuiz(wordList: List<String> = emptyList()) {
         _uiState.value = DailyQuizUiState.Loading
         viewModelScope.launch {
@@ -51,7 +66,10 @@ class DailyQuizViewModel @Inject constructor(
             val currentQuestionState = currentState.questions[currentState.currentIndex]
             if (currentQuestionState.selectedIndex != null) return
 
-            val answerTime = System.currentTimeMillis() - currentState.currentQuestionStartTime
+            val rawElapsed = System.currentTimeMillis() - currentState.currentQuestionStartTime
+            val answerTime = (rawElapsed - accumulatedPauseMillis).coerceAtLeast(0L)
+            accumulatedPauseMillis = 0L
+
             val isCorrect = index == currentQuestionState.question.correctAnswerIndex
             val score = scoreAnswerUseCase(isCorrect, answerTime)
 
@@ -71,6 +89,7 @@ class DailyQuizViewModel @Inject constructor(
         val currentState = _uiState.value
         if (currentState is DailyQuizUiState.Playing) {
             if (currentState.currentIndex < (currentState.questions.size - 1)) {
+                accumulatedPauseMillis = 0L
                 _uiState.value = currentState.copy(
                     currentIndex = currentState.currentIndex + 1,
                     currentQuestionStartTime = System.currentTimeMillis()
