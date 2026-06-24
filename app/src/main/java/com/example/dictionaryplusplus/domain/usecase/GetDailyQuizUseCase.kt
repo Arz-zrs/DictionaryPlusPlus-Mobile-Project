@@ -16,16 +16,23 @@ class GetDailyQuizUseCase @Inject constructor(
         try {
             val questions = mutableListOf<QuizQuestion>()
             val excludedWords = mutableSetOf<String>()
-            
-            val anchorWords = if (wordList.isNotEmpty()) {
-                wordList.take(count)
-            } else {
-                wordRepository.getRandomWords(count)
-            }
+            val maxAttempts = count * 4
 
-            for (word in anchorWords) {
+            val seededWords = wordList.ifEmpty {
+                wordRepository.getRandomWords(limit = count)
+            }
+            val queue = ArrayDeque(seededWords)
+            var attempts = 0
+            
+            while (questions.size < count && attempts < maxAttempts) {
+                val word = queue.removeFirstOrNull()
+                    ?: wordRepository.getRandomWords(limit = 1).firstOrNull()
+                    ?: break
+                attempts++
+
+                if (word in excludedWords) continue
                 getDefinitionQuizUseCase(word).onSuccess { question ->
-                    if (!excludedWords.contains(question.word)) {
+                    if (question.word !in excludedWords) {
                         questions.add(question)
                         excludedWords.add(question.word)
                     }

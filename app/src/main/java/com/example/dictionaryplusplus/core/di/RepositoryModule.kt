@@ -5,6 +5,7 @@ import com.example.dictionaryplusplus.data.repository.AuthRepositoryImpl
 import com.example.dictionaryplusplus.data.repository.DefinitionRepositoryImpl
 import com.example.dictionaryplusplus.data.repository.FavouriteRepositoryImpl
 import com.example.dictionaryplusplus.data.repository.HistoryRepositoryImpl
+import com.example.dictionaryplusplus.data.repository.NotificationSchedulerImpl
 import com.example.dictionaryplusplus.domain.repository.UserRepository
 import com.example.dictionaryplusplus.data.repository.OnboardingRepositoryImpl
 import com.example.dictionaryplusplus.data.repository.QuizRepositoryImpl
@@ -16,6 +17,7 @@ import com.example.dictionaryplusplus.data.repository.WotdRepositoryImpl
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
 import com.example.dictionaryplusplus.domain.repository.FavouriteRepository
 import com.example.dictionaryplusplus.domain.repository.HistoryRepository
+import com.example.dictionaryplusplus.domain.repository.NotificationScheduler
 import com.example.dictionaryplusplus.domain.repository.OnboardingRepository
 import com.example.dictionaryplusplus.domain.repository.QuizRepository
 import com.example.dictionaryplusplus.domain.repository.WordNoteRepository
@@ -88,4 +90,10 @@ abstract class RepositoryModule {
     abstract fun bindQuizRepository(
         quizRepositoryImpl: QuizRepositoryImpl
     ): QuizRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindNotificationScheduler(
+        notificationSchedulerImpl: NotificationSchedulerImpl
+    ): NotificationScheduler
 }

@@ -4,15 +4,12 @@ import com.example.dictionaryplusplus.domain.repository.NotificationScheduler
 import com.example.dictionaryplusplus.domain.repository.OnboardingRepository
 import javax.inject.Inject
 
-class CompleteOnboardingUseCase @Inject constructor(
+// TODO use this for Settings on NotifTimePicker save
+class RescheduleDailyWordUseCase @Inject constructor(
     private val onboardingRepository: OnboardingRepository,
     private val notificationScheduler: NotificationScheduler
 ) {
-    suspend operator fun invoke(notificationTime: String) {
-        onboardingRepository.completeOnboarding(notificationTime)
-
-        val (hour, minute) = notificationTime.split(":").map { it.toInt() }
+    suspend operator fun invoke(hour: Int, minute: Int) {
         notificationScheduler.scheduleDailyWord(hour, minute)
-        notificationScheduler.scheduleWotd()
     }
 }
