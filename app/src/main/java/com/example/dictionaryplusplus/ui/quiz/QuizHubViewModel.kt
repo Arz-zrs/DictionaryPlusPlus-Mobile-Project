@@ -19,6 +19,6 @@ class QuizHubViewModel @Inject constructor(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = QuizHubUiState()
+            initialValue = QuizHubUiState(isDailyQuizAvailable = false)
         )
 }

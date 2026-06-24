@@ -26,7 +26,7 @@ class DashboardViewModel @Inject constructor(
     observeQuizAvailabilityUseCase: ObserveQuizAvailabilityUseCase
 ): ViewModel() {
 
-    private val _selectedWotd = MutableStateFlow<String?>(null)
+    private val _sheetState = MutableStateFlow<DashboardSheetState>(DashboardSheetState.Hidden)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<DashboardUiState> = combine(
@@ -37,8 +37,8 @@ class DashboardViewModel @Inject constructor(
         },
         observeSeenEventsUseCase(HistoryFilter.ALL).map { it.take(5) },
         observeQuizAvailabilityUseCase(),
-        _selectedWotd
-    ) { score, wotd, recentList, isQuizAvailable, selectedWotd ->
+        _sheetState
+    ) { score, wotd, recentList, isQuizAvailable, sheetState ->
         DashboardUiState(
             userScore = score,
             wordOfTheDay = wotd,
@@ -51,7 +51,7 @@ class DashboardViewModel @Inject constructor(
                 )
             },
             isQuizAvailable = isQuizAvailable,
-            selectedWotd = selectedWotd
+            sheetState = sheetState
         )
     }
         .stateIn(
@@ -61,10 +61,10 @@ class DashboardViewModel @Inject constructor(
         )
 
     fun onWotdClicked(word: String) {
-        _selectedWotd.value = word
+        _sheetState.value = DashboardSheetState.WordDetail(word)
     }
 
     fun onSheetDismissed() {
-        _selectedWotd.value = null
+        _sheetState.value = DashboardSheetState.Hidden
     }
 }

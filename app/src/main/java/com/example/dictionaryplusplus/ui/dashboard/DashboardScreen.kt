@@ -112,10 +112,13 @@ fun DashboardScreen(
         }
     }
 
-    uiState.selectedWotd?.let { word ->
-        WordDetailSheet(
-            word = word,
-            onDismiss = { viewModel.onSheetDismissed() }
-        )
+    when (val sheetState = uiState.sheetState) {
+        is DashboardSheetState.WordDetail -> {
+            WordDetailSheet(
+                word = sheetState.word,
+                onDismiss = { viewModel.onSheetDismissed() }
+            )
+        }
+        DashboardSheetState.Hidden -> {}
     }
 }
