@@ -73,6 +73,17 @@ fun DailyQuizScreen(
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
 
+                        val quizAnswerDisplayState = when (val quizAnswer = currentQuestionState.answerState) {
+                            is AnswerState.Unanswered -> QuizAnswerDisplayState.Unanswered
+                            is AnswerState.Answered -> {
+                                QuizAnswerDisplayState.Answered(
+                                    selectedIndex = quizAnswer.selectedIndex,
+                                    isCorrect = quizAnswer.selectedIndex == currentQuestionState.question.correctAnswerIndex,
+                                    correctIndex = currentQuestionState.question.correctAnswerIndex
+                                )
+                            }
+                        }
+
                         val displayData = QuestionDisplayData(
                             title = stringResource(
                                 R.string.label_question_count,
@@ -81,15 +92,7 @@ fun DailyQuizScreen(
                             ),
                             prompt = currentQuestionState.question.word.uppercase(),
                             choices = currentQuestionState.question.choices,
-                            answerState = if (currentQuestionState.selectedIndex == null) {
-                                QuizAnswerDisplayState.Unanswered
-                            } else {
-                                QuizAnswerDisplayState.Answered(
-                                    selectedIndex = currentQuestionState.selectedIndex,
-                                    isCorrect = currentQuestionState.selectedIndex == currentQuestionState.question.correctAnswerIndex,
-                                    correctIndex = currentQuestionState.question.correctAnswerIndex
-                                )
-                            }
+                            answerState = quizAnswerDisplayState
                         )
 
                         QuizQuestionLayout(
