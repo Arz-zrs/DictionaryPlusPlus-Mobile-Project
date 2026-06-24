@@ -13,12 +13,13 @@ data class HistoryUiState(
     val masteryStatus: MasteryStatus
 ) {
     companion object {
+        const val DEFAULT_PATTERN = "dd MMM yyyy, HH:mm"
         fun fromDomain(
             id: Long,
             word: String,
             timestamp: Long,
             masteryStatus: MasteryStatus,
-            pattern: String = "dd MMM yyyy"
+            pattern: String = DEFAULT_PATTERN
         ): HistoryUiState {
             val formatter = DateTimeFormatter.ofPattern(pattern, Locale.getDefault())
                 .withZone(ZoneId.systemDefault())

@@ -10,6 +10,5 @@ interface UserRepository {
     suspend fun createProfile(uid: String, displayName: String, email: String): Result<UserProfile>
     suspend fun updateLocalScore(points: Int): Result<Unit>
     suspend fun syncScoreToCloud(): Result<Unit>
-    suspend fun enqueueScoreSync()
     suspend fun clearLocalProfile()
 }

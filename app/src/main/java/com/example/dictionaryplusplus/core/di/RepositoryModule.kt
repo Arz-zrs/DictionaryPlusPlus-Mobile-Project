@@ -9,6 +9,7 @@ import com.example.dictionaryplusplus.data.repository.NotificationSchedulerImpl
 import com.example.dictionaryplusplus.domain.repository.UserRepository
 import com.example.dictionaryplusplus.data.repository.OnboardingRepositoryImpl
 import com.example.dictionaryplusplus.data.repository.QuizRepositoryImpl
+import com.example.dictionaryplusplus.data.repository.ScoreSyncSchedulerImpl
 import com.example.dictionaryplusplus.data.repository.UserRepositoryImpl
 import com.example.dictionaryplusplus.data.repository.WordNoteRepositoryImpl
 import com.example.dictionaryplusplus.domain.repository.WordRepository
@@ -20,6 +21,7 @@ import com.example.dictionaryplusplus.domain.repository.HistoryRepository
 import com.example.dictionaryplusplus.domain.repository.NotificationScheduler
 import com.example.dictionaryplusplus.domain.repository.OnboardingRepository
 import com.example.dictionaryplusplus.domain.repository.QuizRepository
+import com.example.dictionaryplusplus.domain.repository.ScoreSyncScheduler
 import com.example.dictionaryplusplus.domain.repository.WordNoteRepository
 import com.example.dictionaryplusplus.domain.repository.WotdRepository
 import dagger.Binds
@@ -96,4 +98,10 @@ abstract class RepositoryModule {
     abstract fun bindNotificationScheduler(
         notificationSchedulerImpl: NotificationSchedulerImpl
     ): NotificationScheduler
+
+    @Binds
+    @Singleton
+    abstract fun bindScoreSyncScheduler(
+        scoreSyncSchedulerImpl: ScoreSyncSchedulerImpl
+    ): ScoreSyncScheduler
 }

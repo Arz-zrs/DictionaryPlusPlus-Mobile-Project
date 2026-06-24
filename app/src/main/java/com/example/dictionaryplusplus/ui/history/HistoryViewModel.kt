@@ -37,8 +37,7 @@ class HistoryViewModel @Inject constructor(
                     id = event.id,
                     word = event.word,
                     timestamp = event.seenAtTimestamp,
-                    masteryStatus = event.masteryStatus,
-                    pattern = "dd MM yyyy, HH:mm"
+                    masteryStatus = event.masteryStatus
                 )
             }
         }
