@@ -97,7 +97,7 @@
 
     <!-- Quiz Screens -->
     <string name="quiz_hub_title">Quiz Hub</string>
-    <string name="quiz_synonym_practice_title">SYNONYM PRACTICE</string>
+    <string name="quiz_synonym_practice_title">VOCABULARY PRACTICE</string>
     <string name="quiz_synonym_practice_desc">Practice vocabulary context with synonym matching. No score penalties.</string>
     <string name="quiz_match_definition">Match the Definition</string>
     <string name="quiz_find_synonym">Find the Synonym</string>
