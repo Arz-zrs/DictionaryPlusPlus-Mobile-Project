@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.domain.model.LeaderboardUser
-
+// TODO extract hardcoded strings here
 @Composable
 fun LeaderboardScreen(viewModel: LeaderboardViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
