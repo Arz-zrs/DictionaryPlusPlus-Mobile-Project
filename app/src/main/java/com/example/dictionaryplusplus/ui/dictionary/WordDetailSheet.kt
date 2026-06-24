@@ -152,7 +152,7 @@ fun WordDetailSheet(
                 value = noteInput,
                 onValueChange = { newValue ->
                     noteInput = newValue
-                    viewModel.saveWordNote(newValue)
+                    viewModel.onNoteChanged(newValue)
                 },
                 label = { Text(stringResource(R.string.label_personal_notes)) },
                 placeholder = { Text(stringResource(R.string.placeholder_personal_notes)) },

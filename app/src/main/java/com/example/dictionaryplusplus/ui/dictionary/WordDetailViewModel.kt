@@ -14,16 +14,23 @@ import com.example.dictionaryplusplus.core.util.ErrorMessage
 import com.example.dictionaryplusplus.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class WordDetailViewModel @Inject constructor(
     private val observeDefinitionUseCase: ObserveDefinitionUseCase,
@@ -35,6 +42,7 @@ class WordDetailViewModel @Inject constructor(
 ) : ViewModel() {
     private val _currentWord = MutableStateFlow("")
     private val _definitionError = MutableStateFlow<ErrorMessage>(ErrorMessage.None)
+    private val _noteInput = MutableStateFlow<String?>(null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<WordDetailUiState> = _currentWord
@@ -65,6 +73,18 @@ class WordDetailViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = WordDetailUiState()
         )
+
+    init {
+        _noteInput
+            .filterNotNull()
+            .debounce(500.milliseconds)
+            .onEach { noteInput -> saveWordNoteUseCase(_currentWord.value, noteInput) }
+            .launchIn(viewModelScope)
+    }
+
+    fun onNoteChanged(note: String) {
+        _noteInput.value = note
+    }
 
     fun loadWordDetails(word: String) {
         _definitionError.value = ErrorMessage.None
