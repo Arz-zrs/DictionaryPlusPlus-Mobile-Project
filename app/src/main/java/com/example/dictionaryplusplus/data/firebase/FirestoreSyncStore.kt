@@ -1,5 +1,7 @@
 package com.example.dictionaryplusplus.data.firebase
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -7,7 +9,8 @@ import javax.inject.Singleton
 
 @Singleton
 class FirestoreSyncStore @Inject constructor(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val authStore: FirebaseAuthSource
 ) {
     suspend fun createUserDocument(
         uid: String,
@@ -49,6 +52,31 @@ class FirestoreSyncStore @Inject constructor(
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    suspend fun syncFavouriteChange(word: String, isAdded: Boolean) {
+        val uid = authStore.currentUserUid ?: return
+        try {
+            val updateValue =
+                if (isAdded) FieldValue.arrayUnion(word)
+                else FieldValue.arrayRemove(word)
+            firestore.collection("users").document(uid)
+                .update("favourites", updateValue)
+                .await()
+        } catch (e: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
+    }
+
+    suspend fun syncNoteChange(word: String, note: String) {
+        val uid = authStore.currentUserUid ?: return
+        try {
+            firestore.collection("users").document(uid)
+                .update("notes.$word", note)
+                .await()
+        } catch (e: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
 }
