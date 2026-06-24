@@ -8,7 +8,8 @@ import javax.inject.Inject
 
 class GetSynonymQuizUseCase @Inject constructor(
     private val definitionRepository: DefinitionRepository,
-    private val wordRepository: WordRepository
+    private val wordRepository: WordRepository,
+    private val getDefinitionQuizUseCase: GetDefinitionQuizUseCase
 ) {
     suspend operator fun invoke(word: String?): Result<QuizQuestion> {
         return try {
@@ -17,13 +18,8 @@ class GetSynonymQuizUseCase @Inject constructor(
             
             var definition = when (definitionResult) {
                 is DefinitionResult.Success -> definitionResult.definition
-                else -> {
-                    if (word != null) return Result.failure(Exception("Could not fetch definition for $word"))
-
-                    val fallbackResult = definitionRepository.getDefinition("abandon")
-                    if (fallbackResult is DefinitionResult.Success) fallbackResult.definition
-                    else return Result.failure(Exception("Could not fetch definition"))
-                }
+                else -> return getDefinitionQuizUseCase(word)
+                    .map { it.copy(isFallbackToDefinition = true) }
             }
 
             var attempts = 0
@@ -37,25 +33,24 @@ class GetSynonymQuizUseCase @Inject constructor(
             }
 
             val rawSynonyms = definition.synonyms
-            val distractors = wordRepository.getRandomDistractors(anchorWord, 3)
-
-            if (rawSynonyms.isNotEmpty()) {
-                val correctAnswer = rawSynonyms.first()
-                val choicesList = (distractors + correctAnswer).shuffled()
-                val correctIndex = choicesList.indexOf(correctAnswer)
-
-                Result.success(
-                    QuizQuestion(
-                        word = anchorWord,
-                        choices = choicesList,
-                        correctAnswerIndex = correctIndex,
-                        originalDefinition = definition.definition,
-                        isFallbackToDefinition = false
-                    )
-                )
-            } else {
-                Result.failure(Exception("No synonyms found for $anchorWord"))
+            if (rawSynonyms.isEmpty()) {
+                return getDefinitionQuizUseCase(word)
+                    .map { it.copy(isFallbackToDefinition = true) }
             }
+            val distractors = wordRepository.getRandomDistractors(anchorWord, 3)
+            val correctAnswer = rawSynonyms.first()
+            val choicesList = (distractors + correctAnswer).shuffled()
+            val correctIndex = choicesList.indexOf(correctAnswer)
+
+            Result.success(
+                QuizQuestion(
+                    word = anchorWord,
+                    choices = choicesList,
+                    correctAnswerIndex = correctIndex,
+                    originalDefinition = definition.definition,
+                    isFallbackToDefinition = false
+                )
+            )
         } catch (e: Exception) {
             Result.failure(e)
         }
