@@ -64,7 +64,7 @@ class DailyQuizViewModel @Inject constructor(
         val currentState = _uiState.value
         if (currentState is DailyQuizUiState.Playing) {
             val currentQuestionState = currentState.questions[currentState.currentIndex]
-            if (currentQuestionState.selectedIndex != null) return
+            if (currentQuestionState.answerState is AnswerState.Answered) return
 
             val rawElapsed = System.currentTimeMillis() - currentState.currentQuestionStartTime
             val answerTime = (rawElapsed - accumulatedPauseMillis).coerceAtLeast(0L)
@@ -75,8 +75,10 @@ class DailyQuizViewModel @Inject constructor(
 
             val updatedQuestions = currentState.questions.toMutableList()
             updatedQuestions[currentState.currentIndex] = currentQuestionState.copy(
-                selectedIndex = index,
-                scoreResult = score
+                answerState = AnswerState.Answered(
+                    selectedIndex = index,
+                    scoreResult = score
+                )
             )
 
             _uiState.value = currentState.copy(
@@ -95,7 +97,9 @@ class DailyQuizViewModel @Inject constructor(
                     currentQuestionStartTime = System.currentTimeMillis()
                 )
             } else {
-                val totalScore = currentState.questions.sumOf { it.scoreResult?.totalPoints ?: 0 }
+                val totalScore = currentState.questions.sumOf {
+                    (it.answerState as? AnswerState.Answered)?.scoreResult?.totalPoints ?: 0
+                }
                 
                 viewModelScope.launch {
                     completeDailyQuizUseCase(totalScore)
