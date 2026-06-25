@@ -133,7 +133,13 @@ fun NavigationGraph(
         }
 
         composable(route = Screen.Settings.route) {
-            SettingsScreen()
+            SettingsScreen(
+                onLogoutSuccess = {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(Screen.Dashboard.route) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }
