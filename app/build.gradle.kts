@@ -48,8 +48,8 @@ android {
         if (localPropertiesFile.exists()) {
             properties.load(localPropertiesFile.inputStream())
         }
-        val apiKey = properties.getProperty("WORDNIK_API_KEY") ?: "\"\""
-        buildConfigField("String", "WORDNIK_API_KEY", apiKey)
+        val apiKey = properties.getProperty("WORDNIK_API_KEY") ?: ""
+        buildConfigField("String", "WORDNIK_API_KEY", "\"$apiKey\"")
     }
     buildFeatures {
         compose = true

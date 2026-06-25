@@ -10,6 +10,7 @@ import com.example.dictionaryplusplus.domain.model.DefinitionResult
 import com.example.dictionaryplusplus.domain.model.DefinitionErrorType
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
 import com.example.dictionaryplusplus.core.util.ContentSanitizer
+import com.example.dictionaryplusplus.domain.model.WordMeaning
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -59,23 +60,35 @@ class DefinitionRepositoryImpl @Inject constructor(
             val firstEntry = apiResponse.firstOrNull() ?: throw Exception("Empty Response")
 
             val phoneticText = firstEntry.phonetics?.firstOrNull { !it.text.isNullOrEmpty() }?.text
-            val firstMeaning = firstEntry.meanings?.firstOrNull()
-            val firstDefinition = firstMeaning?.definitions?.firstOrNull()
 
-            val rawDefinition = firstDefinition?.definition ?: "No definition available"
-            val rawExample = firstDefinition?.example ?: "No example available"
-            val rawSynonyms = firstMeaning?.synonyms ?: emptyList()
+            val rawMeanings = firstEntry.meanings
+                ?.take(3)
+                ?.mapNotNull { meaning ->
+                    val pos = meaning.partOfSpeech ?: return@mapNotNull null
+                    val def = meaning.definitions?.firstOrNull()?.definition ?: return@mapNotNull null
+                    Triple(pos, def, meaning.definitions.firstOrNull()?.example)
+                } ?: emptyList()
+
+            val rawDefinition = rawMeanings.firstOrNull()?.second ?: "No definition available"
+            val rawExample = rawMeanings.firstOrNull()?.third ?: "No example available"
+            val rawSynonyms = firstEntry.meanings?.firstOrNull()?.synonyms ?: emptyList()
 
             val sanitizedDefinition = sanitizer.sanitizeText(rawDefinition, denyList, "Offensive definition omitted.")
             val sanitizedExample = sanitizer.sanitizeText(rawExample, denyList, "Offensive example omitted.")
             val sanitizedSynonyms = sanitizer.sanitizeSynonyms(rawSynonyms, denyList)
+            val sanitizedMeanings = rawMeanings.map { (pos, def, ex) ->
+                Triple(pos, sanitizer.sanitizeText(def, denyList, ContentSanitizer.FALLBACK_DEFINITION),
+                    ex?.let { sanitizer.sanitizeText(it, denyList, "Example omitted.") })
+            }.filter { !ContentSanitizer.isFallbackDefinition(it.second) }
 
             val definitionEntity = DefinitionEntity(
                 word = word,
                 definition = sanitizedDefinition,
                 phonetic = phoneticText,
+                partOfSpeech = rawMeanings.firstOrNull()?.first,
                 exampleSentence = sanitizedExample,
                 relatedWordsJson = gson.toJson(sanitizedSynonyms),
+                meaningsJson = gson.toJson(sanitizedMeanings)
             )
             definitionDao.insertDefinition(definitionEntity)
 
@@ -83,8 +96,12 @@ class DefinitionRepositoryImpl @Inject constructor(
                 word = word,
                 definition = sanitizedDefinition,
                 phonetic = phoneticText,
+                partOfSpeech = rawMeanings.firstOrNull()?.first,
                 exampleSentence = sanitizedExample,
-                synonyms = sanitizedSynonyms
+                synonyms = sanitizedSynonyms,
+                meanings = sanitizedMeanings.map { (pos, def, ex) ->
+                    WordMeaning(pos, def, ex)
+                }
             )
             DefinitionResult.Success(domainModel)
         } catch (e: Exception) {

@@ -23,7 +23,7 @@ object DatabaseModule {
                 AppDatabase::class.java,
                 "dictionary_plus_plus_db"
             )
-            .fallbackToDestructiveMigration(false) // TODO: Remove fallback when migration is done
+            .fallbackToDestructiveMigration(true) // TODO: Remove fallback when migration is done
             .build()
     }
 

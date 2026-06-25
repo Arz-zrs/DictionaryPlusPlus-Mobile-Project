@@ -8,6 +8,8 @@ data class DefinitionEntity(
     @PrimaryKey val word: String,
     val definition: String,
     val phonetic: String?,
+    val partOfSpeech: String? = null,
     val exampleSentence: String?,
-    val relatedWordsJson: String
+    val relatedWordsJson: String,
+    val meaningsJson: String = "[]"
 )

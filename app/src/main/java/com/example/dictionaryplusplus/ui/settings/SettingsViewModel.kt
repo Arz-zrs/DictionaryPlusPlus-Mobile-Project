@@ -9,9 +9,11 @@ import com.example.dictionaryplusplus.domain.model.ThemeMode
 import com.example.dictionaryplusplus.domain.usecase.ChangePasswordUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetDailyQuizRefreshTimeUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetFontSizeUseCase
+import com.example.dictionaryplusplus.domain.usecase.GetNotificationTimeUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetQuizLengthUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetThemeModeUseCase
 import com.example.dictionaryplusplus.domain.usecase.LogoutUseCase
+import com.example.dictionaryplusplus.domain.usecase.RescheduleDailyWordUseCase
 import com.example.dictionaryplusplus.domain.usecase.SetDailyQuizRefreshTimeUseCase
 import com.example.dictionaryplusplus.domain.usecase.SetFontSizeUseCase
 import com.example.dictionaryplusplus.domain.usecase.SetQuizLengthUseCase
@@ -36,7 +38,9 @@ class SettingsViewModel @Inject constructor(
     getFontSizeUseCase: GetFontSizeUseCase,
     private val setFontSizeUseCase: SetFontSizeUseCase,
     private val logoutUseCase: LogoutUseCase,
-    private val changePasswordUseCase: ChangePasswordUseCase
+    private val changePasswordUseCase: ChangePasswordUseCase,
+    getNotificationTimeUseCase: GetNotificationTimeUseCase,
+    private val rescheduleDailyWordUseCase: RescheduleDailyWordUseCase
 ): ViewModel() {
     private val _uiState = MutableStateFlow<SettingsUiState>(SettingsUiState.Idle)
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
@@ -112,5 +116,14 @@ class SettingsViewModel @Inject constructor(
 
     fun resetPasswordState() {
         _uiState.value = SettingsUiState.Idle
+    }
+
+    val notificationTime: StateFlow<String> = getNotificationTimeUseCase()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), initialValue = "08:00")
+
+    fun updateNotificationTime(hour: Int, minute: Int) {
+        viewModelScope.launch {
+            rescheduleDailyWordUseCase(hour, minute)
+        }
     }
 }

@@ -64,6 +64,8 @@
     <string name="error_unknown">An unexpected error occurred.</string>
     <string name="label_personal_notes">Personal Notes</string>
     <string name="placeholder_personal_notes">Add your notes here…</string>
+    <string name="example_format">“%1$s”</string>
+
 
     <!-- Favourites Screen -->
     <string name="favourites_title">Favourites</string>
@@ -133,6 +135,9 @@
     <string name="settings_reset_time">Daily Quiz Reset Time</string>
     <string name="settings_reset_time_desc">Set the rolling window reset time.</string>
     <string name="settings_selected_time">Selected: %1$s</string>
+    <string name="settings_notification_time">Daily Notification Time</string>
+    <string name="settings_notification_time_desc">When will you receive your word of the day notification</string>
+    <string name="settings_notification_time_format">Notify at %1$s</string>
     <string name="settings_change_password">Change Password</string>
     <string name="settings_current_password">Current Password</string>
     <string name="settings_new_password_hint">New Password (Min 8 characters)</string>

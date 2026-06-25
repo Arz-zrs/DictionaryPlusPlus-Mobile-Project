@@ -25,7 +25,7 @@ import com.example.dictionaryplusplus.data.local.entity.WordNoteEntity
         FavouriteEntity::class,
         UserProfileEntity::class
     ],
-    version = 1,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(RoomConverters::class)

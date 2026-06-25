@@ -16,4 +16,10 @@ class OnboardingRepositoryImpl @Inject constructor(
         userPreferences.setNotificationTime(notificationTime)
         userPreferences.setHasSeenOnboarding(true)
     }
+
+    override val notificationTime: Flow<String> = userPreferences.notificationTime
+
+    override suspend fun updateNotificationTime(notificationTime: String) {
+        userPreferences.setNotificationTime(notificationTime)
+    }
 }

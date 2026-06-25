@@ -38,7 +38,6 @@ import com.example.dictionaryplusplus.core.util.ErrorMessage
 import com.example.dictionaryplusplus.domain.model.FontSize
 import com.example.dictionaryplusplus.domain.model.ThemeMode
 import com.example.dictionaryplusplus.ui.theme.Success
-import java.util.Locale
 
 @Composable
 fun SettingsScreen(
@@ -184,12 +183,42 @@ fun SettingsScreen(
                         val hour = parts.getOrNull(0)?.toIntOrNull() ?: 6
                         val minute = parts.getOrNull(1)?.toIntOrNull() ?: 0
                         TimePickerDialog(context, { _, h, m ->
-                            viewModel.updateQuizRefreshTime(String.format(Locale.getDefault(), "%02d:%02d", h, m))
+                            viewModel.updateQuizRefreshTime(context.getString(R.string.time_format, h, m))
                         }, hour, minute, true).show()
                     },
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     Text(stringResource(R.string.settings_selected_time, refreshTime))
+                }
+            }
+        }
+
+        val notificationTime by viewModel.notificationTime.collectAsStateWithLifecycle()
+
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+            ) {
+                Text(stringResource(R.string.settings_notification_time), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = stringResource(R.string.settings_notification_time_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Button(
+                    onClick = {
+                        val parts = notificationTime.split(":")
+                        val hour = parts.getOrNull(0)?.toIntOrNull() ?: 8
+                        val minute = parts.getOrNull(1)?.toIntOrNull() ?: 0
+                        TimePickerDialog(context, { _, h, m ->
+                            viewModel.updateNotificationTime(h, m)
+                        }, hour, minute, true).show()
+                    },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Text(stringResource(R.string.settings_notification_time_format, notificationTime))
                 }
             }
         }
