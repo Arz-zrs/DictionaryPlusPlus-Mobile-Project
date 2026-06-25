@@ -16,7 +16,7 @@ class WordRepositoryImpl @Inject constructor(
 ) : WordRepository {
     override fun searchWords(query: String): Flow<List<Word>> {
         return wordDao.searchWords(query).map { entities ->
-            entities.map { Word(it.word, it.frequency) }
+            entities.map { Word(it.word) }
         }
     }
 
