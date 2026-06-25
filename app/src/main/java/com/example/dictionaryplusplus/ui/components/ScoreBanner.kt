@@ -69,6 +69,12 @@ fun ScoreBanner(
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
+            Text(
+                text = stringResource(R.string.leaderboard_preview_cta),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary,
+                letterSpacing = 1.sp
+            )
         }
     }
 }

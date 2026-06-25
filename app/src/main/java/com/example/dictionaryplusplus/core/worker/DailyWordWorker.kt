@@ -9,7 +9,6 @@ import com.example.dictionaryplusplus.data.local.dao.WordDao
 import com.example.dictionaryplusplus.data.local.entity.SeenEventEntity
 import com.example.dictionaryplusplus.domain.model.DefinitionResult
 import com.example.dictionaryplusplus.domain.model.DefinitionErrorType
-import com.example.dictionaryplusplus.domain.model.MasteryStatus
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
 import com.example.dictionaryplusplus.core.notification.NotificationBuilder
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -48,8 +47,7 @@ class DailyWordWorker @AssistedInject constructor(
                 SeenEventEntity(
                     word = word,
                     seenAtTimestamp = System.currentTimeMillis(),
-                    isConfirmed = false,
-                    masteryStatus = MasteryStatus.LEARNING
+                    isConfirmed = false
                 )
             )
 

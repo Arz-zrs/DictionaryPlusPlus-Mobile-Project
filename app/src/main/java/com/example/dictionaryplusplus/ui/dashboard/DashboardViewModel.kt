@@ -2,7 +2,6 @@ package com.example.dictionaryplusplus.ui.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dictionaryplusplus.domain.model.HistoryFilter
 import com.example.dictionaryplusplus.domain.usecase.ObserveQuizAvailabilityUseCase
 import com.example.dictionaryplusplus.domain.usecase.ObserveUserProfileUseCase
 import com.example.dictionaryplusplus.domain.usecase.ObserveWordOfTheDayUseCase
@@ -35,7 +34,7 @@ class DashboardViewModel @Inject constructor(
             if (definition != null) WotdState.Available(definition)
             else WotdState.Unavailable
         },
-        observeSeenEventsUseCase(HistoryFilter.ALL).map { it.take(5) },
+        observeSeenEventsUseCase().map { it.take(5) },
         observeQuizAvailabilityUseCase(),
         _sheetState
     ) { score, wotd, recentList, isQuizAvailable, sheetState ->
@@ -46,8 +45,7 @@ class DashboardViewModel @Inject constructor(
                 HistoryUiState.fromDomain(
                     id = event.id,
                     word = event.word,
-                    timestamp = event.seenAtTimestamp,
-                    masteryStatus = event.masteryStatus
+                    timestamp = event.seenAtTimestamp
                 )
             },
             isQuizAvailable = isQuizAvailable,

@@ -57,8 +57,7 @@ class FavouriteRepositoryImpl @Inject constructor(
             list.map { dto ->
                 FavouriteWord(
                     word = dto.word,
-                    definition = dto.definition,
-                    masteryStatus = dto.masteryStatus
+                    definition = dto.definition
                 )
             }
         }

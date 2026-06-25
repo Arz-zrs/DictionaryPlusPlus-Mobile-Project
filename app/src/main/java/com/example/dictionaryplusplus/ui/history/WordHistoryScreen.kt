@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,16 +19,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.R
-import com.example.dictionaryplusplus.domain.model.HistoryFilter
-import com.example.dictionaryplusplus.ui.components.MasteryChip
 
 @Composable
 fun WordHistoryScreen(
     viewModel: HistoryViewModel = hiltViewModel()
 ) {
-    val currentFilter by viewModel.currentFilter.collectAsStateWithLifecycle()
     val historyList by viewModel.historyList.collectAsStateWithLifecycle()
-    val filters = HistoryFilter.entries
 
     Column(
         modifier = Modifier
@@ -40,24 +37,6 @@ fun WordHistoryScreen(
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(top = 8.dp)
         )
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            filters.forEach { filter ->
-                val label = when (filter) {
-                    HistoryFilter.ALL -> stringResource(R.string.filter_all)
-                    HistoryFilter.LEARNING -> stringResource(R.string.filter_learning)
-                    HistoryFilter.MASTERED -> stringResource(R.string.filter_mastered)
-                }
-                FilterChip(
-                    selected = currentFilter == filter,
-                    onClick = { viewModel.onFilterChanged(filter) },
-                    label = { Text(label) }
-                )
-            }
-        }
 
         if (historyList.isEmpty()) {
             Box(
@@ -82,10 +61,17 @@ fun WordHistoryScreen(
                 items(historyList, key = { it.id }) { item ->
                     val dismissState = rememberSwipeToDismissBoxState(
                         confirmValueChange = { value ->
-                            if (value == SwipeToDismissBoxValue.EndToStart) {
-                                viewModel.removeHistoryEntry(item.id)
-                                true
-                            } else false
+                            when (value) {
+                                SwipeToDismissBoxValue.EndToStart -> {
+                                    viewModel.removeHistoryEntry(item.id)
+                                    true
+                                }
+                                SwipeToDismissBoxValue.StartToEnd -> {
+                                    viewModel.toggleFavourite(item.word)
+                                    false
+                                }
+                                else -> false
+                            }
                         }
                     )
 
@@ -94,26 +80,51 @@ fun WordHistoryScreen(
                         backgroundContent = {
                             val color by animateColorAsState(
                                 when (dismissState.targetValue) {
-                                    SwipeToDismissBoxValue.EndToStart
-                                        -> MaterialTheme.colorScheme.error.copy(alpha = 0.2f)
+                                    SwipeToDismissBoxValue.EndToStart ->
+                                        MaterialTheme.colorScheme.error.copy(alpha = 0.2f)
+                                    SwipeToDismissBoxValue.StartToEnd ->
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                                     else -> Color.Transparent
                                 }
                             )
+                            val alignment = when (dismissState.targetValue) {
+                                SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
+                                SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
+                                else -> Alignment.Center
+                            }
+                            val icon = when (dismissState.targetValue) {
+                                SwipeToDismissBoxValue.EndToStart -> Icons.Default.Delete
+                                SwipeToDismissBoxValue.StartToEnd -> Icons.Default.Star
+                                else -> null
+                            }
+                            val contentDesc = when (dismissState.targetValue) {
+                                SwipeToDismissBoxValue.EndToStart -> stringResource(R.string.delete_content_description)
+                                SwipeToDismissBoxValue.StartToEnd -> stringResource(R.string.favourite_content_description)
+                                else -> ""
+                            }
+                            val tint = when (dismissState.targetValue) {
+                                SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.error
+                                SwipeToDismissBoxValue.StartToEnd -> MaterialTheme.colorScheme.primary
+                                else -> Color.Transparent
+                            }
+
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .background(color)
                                     .padding(horizontal = 24.dp),
-                                contentAlignment = Alignment.CenterEnd
+                                contentAlignment = alignment
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = stringResource(R.string.delete_content_description),
-                                    tint = MaterialTheme.colorScheme.error
-                                )
+                                if (icon != null) {
+                                    Icon(
+                                        imageVector = icon,
+                                        contentDescription = contentDesc,
+                                        tint = tint
+                                    )
+                                }
                             }
                         },
-                        enableDismissFromStartToEnd = false
+                        enableDismissFromStartToEnd = true
                     ) {
                         WordHistoryItem(event = item)
                     }
@@ -150,8 +161,6 @@ fun WordHistoryItem(event: HistoryUiState) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-
-            MasteryChip(status = event.masteryStatus)
         }
     }
 }

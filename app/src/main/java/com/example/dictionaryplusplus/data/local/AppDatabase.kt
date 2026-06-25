@@ -2,7 +2,6 @@ package com.example.dictionaryplusplus.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
 import com.example.dictionaryplusplus.data.local.dao.DefinitionDao
 import com.example.dictionaryplusplus.data.local.dao.FavouriteDao
 import com.example.dictionaryplusplus.data.local.dao.SeenEventDao
@@ -25,10 +24,9 @@ import com.example.dictionaryplusplus.data.local.entity.WordNoteEntity
         FavouriteEntity::class,
         UserProfileEntity::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
-@TypeConverters(RoomConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun wordDao(): WordDao
     abstract fun seenEventDao(): SeenEventDao

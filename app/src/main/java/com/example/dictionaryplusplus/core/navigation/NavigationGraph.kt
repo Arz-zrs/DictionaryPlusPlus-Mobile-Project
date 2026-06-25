@@ -73,6 +73,9 @@ fun NavigationGraph(
                 },
                 onNavigateToLeaderboard = {
                     navController.navigate(Screen.Leaderboard.route)
+                },
+                onNavigateToWordHistory = {
+                    navController.navigate(Screen.WordHistory.route)
                 }
             )
         }

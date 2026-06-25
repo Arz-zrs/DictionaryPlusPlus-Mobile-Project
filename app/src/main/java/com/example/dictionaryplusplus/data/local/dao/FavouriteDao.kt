@@ -20,14 +20,9 @@ interface FavouriteDao {
     suspend fun deleteFavourite(word: String)
 
     @Query("""
-        SELECT f.word, d.definition, s.masteryStatus
+        SELECT f.word, d.definition
         FROM favourite f
         LEFT JOIN definition_cache d ON f.word = d.word
-        LEFT JOIN (
-            SELECT word, MAX(seenAtTimestamp) as max_ts, masteryStatus
-            FROM seen_event
-            GROUP BY word
-        ) s ON f.word = s.word
         ORDER BY f.addedAtTimestamp DESC
     """)
     fun observeFavouriteWords(): Flow<List<FavouriteWordDto>>

@@ -1,8 +1,6 @@
 package com.example.dictionaryplusplus.data.repository
 
 import com.example.dictionaryplusplus.data.local.dao.SeenEventDao
-import com.example.dictionaryplusplus.domain.model.HistoryFilter
-import com.example.dictionaryplusplus.domain.model.MasteryStatus
 import com.example.dictionaryplusplus.domain.model.SeenEvent
 import com.example.dictionaryplusplus.domain.repository.HistoryRepository
 import kotlinx.coroutines.flow.Flow
@@ -14,12 +12,8 @@ import javax.inject.Singleton
 class HistoryRepositoryImpl @Inject constructor(
     private val seenEventDao: SeenEventDao
 ) : HistoryRepository {
-    override fun observeSeenEvents(filter: HistoryFilter): Flow<List<SeenEvent>> {
-        val flow = when (filter) {
-            HistoryFilter.ALL -> seenEventDao.getAllSeenEvents()
-            HistoryFilter.LEARNING -> seenEventDao.getSeenEventsByMasteryStatus(MasteryStatus.LEARNING)
-            HistoryFilter.MASTERED -> seenEventDao.getSeenEventsByMasteryStatus(MasteryStatus.MASTERED)
-        }
+    override fun observeSeenEvents(): Flow<List<SeenEvent>> {
+        val flow = seenEventDao.getAllSeenEvents()
 
         return flow.map { list ->
             list.map { entity ->
@@ -27,8 +21,7 @@ class HistoryRepositoryImpl @Inject constructor(
                     id = entity.id,
                     word = entity.word,
                     seenAtTimestamp = entity.seenAtTimestamp,
-                    isConfirmed = entity.isConfirmed,
-                    masteryStatus = entity.masteryStatus
+                    isConfirmed = entity.isConfirmed
                 )
             }
         }

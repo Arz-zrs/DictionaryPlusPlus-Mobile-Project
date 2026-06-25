@@ -19,7 +19,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.domain.model.FavouriteWord
-import com.example.dictionaryplusplus.ui.components.MasteryChip
 import com.example.dictionaryplusplus.ui.dictionary.WordDetailSheet
 
 @Composable
@@ -114,7 +113,6 @@ fun FavouriteItem(
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                    MasteryChip(status = favourite.masteryStatus)
                 }
 
                 Text(

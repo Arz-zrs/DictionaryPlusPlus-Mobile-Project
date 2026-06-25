@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.example.dictionaryplusplus.domain.model.MasteryStatus
 
 @Entity(
     tableName = "seen_event",
@@ -16,12 +15,11 @@ import com.example.dictionaryplusplus.domain.model.MasteryStatus
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index("word"), Index("masteryStatus")]
+    indices = [Index("word")]
 )
 data class SeenEventEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val word: String,
     val seenAtTimestamp: Long,
-    val isConfirmed: Boolean = false,
-    val masteryStatus: MasteryStatus = MasteryStatus.LEARNING
+    val isConfirmed: Boolean = false
 )

@@ -50,9 +50,7 @@
     <string name="history_title">Word History</string>
     <string name="history_empty_state">No history entries found.</string>
     <string name="delete_content_description">Delete</string>
-    <string name="filter_all">All</string>
-    <string name="filter_learning">Learning</string>
-    <string name="filter_mastered">Mastered</string>
+    <string name="favourite_content_description">Favourite</string>
 
     <!-- Word Detail Sheet -->
     <string name="favourite_toggle_desc">Favourite Toggle</string>
@@ -76,19 +74,12 @@
     <!-- Score Banner -->
     <string name="label_total_score">TOTAL SCORE</string>
     <string name="label_total_score_format">Final Score: %1$d</string>
+    <string name="leaderboard_preview_cta">Tap to see Leaderboard</string>
 
     <!-- Daily Quiz Card -->
     <string name="daily_quiz_title">DAILY QUIZ</string>
     <string name="daily_quiz_start">Start Quiz</string>
     <string name="daily_quiz_completed">You have completed today\'s quiz, wait until tomorrow!</string>
-
-    <!-- Leaderboard Preview Card -->
-    <string name="leaderboard_preview_title">RANKS</string>
-    <string name="leaderboard_preview_cta">Tap to see Leaderboard</string>
-
-    <!-- Mastery Status -->
-    <string name="status_learning">Learning</string>
-    <string name="status_mastered">Mastered</string>
 
     <!-- Dashboard Screen -->
     <string name="dashboard_title">Dashboard</string>
@@ -96,6 +87,8 @@
     <string name="label_recent_words">RECENT WORDS</string>
     <string name="dashboard_no_recent_words">No recent words</string>
     <string name="dashboard_wotd_unavailable">Word of the Day is not available due to fetching issue</string>
+    <string name="btn_see_all">See all</string>
+
 
     <!-- Quiz Screens -->
     <string name="quiz_hub_title">Quiz Hub</string>

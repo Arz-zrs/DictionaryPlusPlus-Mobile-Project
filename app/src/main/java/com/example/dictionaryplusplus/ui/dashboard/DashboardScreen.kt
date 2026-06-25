@@ -3,9 +3,12 @@ package com.example.dictionaryplusplus.ui.dashboard
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -13,7 +16,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.ui.components.DailyQuizEntryCard
-import com.example.dictionaryplusplus.ui.components.LeaderboardPreviewCard
 import com.example.dictionaryplusplus.ui.components.ScoreBanner
 import com.example.dictionaryplusplus.ui.components.WordOfTheDayCard
 import com.example.dictionaryplusplus.ui.dictionary.WordDetailSheet
@@ -23,6 +25,7 @@ import com.example.dictionaryplusplus.ui.history.WordHistoryItem
 fun DashboardScreen(
     onNavigateToQuizHub: () -> Unit,
     onNavigateToLeaderboard: () -> Unit,
+    onNavigateToWordHistory: () -> Unit,
     viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -83,17 +86,22 @@ fun DashboardScreen(
         }
 
         item {
-            LeaderboardPreviewCard(
-                onNavigateToLeaderboard = onNavigateToLeaderboard
-            )
-        }
-
-        item {
             Text(
                 text = stringResource(R.string.label_recent_words),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(top = 8.dp)
             )
+            TextButton(onClick = onNavigateToWordHistory) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = stringResource(R.string.btn_see_all))
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
         }
 
         if (uiState.recentWords.isEmpty()) {
