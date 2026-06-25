@@ -293,6 +293,13 @@ fun SettingsScreen(
                 }
             }
         }
+
+        DebugSection(
+            onTriggerWotd = { viewModel.triggerWotd() },
+            onTriggerDailyWord = { viewModel.triggerDailyWord() },
+            onResetQuiz = { viewModel.resetQuiz() }
+        )
+
         Spacer(modifier = Modifier.height(8.dp))
 
         Button(

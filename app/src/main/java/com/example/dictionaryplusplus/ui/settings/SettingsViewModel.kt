@@ -14,10 +14,13 @@ import com.example.dictionaryplusplus.domain.usecase.GetQuizLengthUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetThemeModeUseCase
 import com.example.dictionaryplusplus.domain.usecase.LogoutUseCase
 import com.example.dictionaryplusplus.domain.usecase.RescheduleDailyWordUseCase
+import com.example.dictionaryplusplus.domain.usecase.ResetQuizCompletionUseCase
 import com.example.dictionaryplusplus.domain.usecase.SetDailyQuizRefreshTimeUseCase
 import com.example.dictionaryplusplus.domain.usecase.SetFontSizeUseCase
 import com.example.dictionaryplusplus.domain.usecase.SetQuizLengthUseCase
 import com.example.dictionaryplusplus.domain.usecase.SetThemeModeUseCase
+import com.example.dictionaryplusplus.domain.usecase.TriggerDailyWordWorkerUseCase
+import com.example.dictionaryplusplus.domain.usecase.TriggerWotdWorkerUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -40,7 +43,10 @@ class SettingsViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val changePasswordUseCase: ChangePasswordUseCase,
     getNotificationTimeUseCase: GetNotificationTimeUseCase,
-    private val rescheduleDailyWordUseCase: RescheduleDailyWordUseCase
+    private val rescheduleDailyWordUseCase: RescheduleDailyWordUseCase,
+    private val triggerWotdWorkerUseCase: TriggerWotdWorkerUseCase,
+    private val triggerDailyWordWorkerUseCase: TriggerDailyWordWorkerUseCase,
+    private val resetQuizCompletionUseCase: ResetQuizCompletionUseCase
 ): ViewModel() {
     private val _uiState = MutableStateFlow<SettingsUiState>(SettingsUiState.Idle)
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
@@ -124,6 +130,20 @@ class SettingsViewModel @Inject constructor(
     fun updateNotificationTime(hour: Int, minute: Int) {
         viewModelScope.launch {
             rescheduleDailyWordUseCase(hour, minute)
+        }
+    }
+
+    fun triggerWotd() {
+        triggerWotdWorkerUseCase()
+    }
+
+    fun triggerDailyWord() {
+        triggerDailyWordWorkerUseCase()
+    }
+
+    fun resetQuiz() {
+        viewModelScope.launch {
+            resetQuizCompletionUseCase()
         }
     }
 }

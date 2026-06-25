@@ -187,4 +187,11 @@ class UserPreferences @Inject constructor(
             preferences[PreferencesKeys.FONT_SIZE] = size
         }
     }
+
+    suspend fun resetQuizCompletion() {
+        context.dataStore.edit { preferences ->
+            preferences.remove(PreferencesKeys.LAST_COMPLETED_AT_TIMESTAMP)
+            preferences.remove(PreferencesKeys.REFRESH_TIME_AT_LAST_COMPLETION)
+        }
+    }
 }

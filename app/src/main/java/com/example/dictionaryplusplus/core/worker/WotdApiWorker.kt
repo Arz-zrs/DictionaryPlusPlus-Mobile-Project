@@ -6,10 +6,13 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.dictionaryplusplus.BuildConfig
 import com.example.dictionaryplusplus.data.remote.WordnikApiService
+import com.example.dictionaryplusplus.data.local.dao.SeenEventDao
+import com.example.dictionaryplusplus.data.local.entity.SeenEventEntity
 import com.example.dictionaryplusplus.domain.model.DefinitionResult
 import com.example.dictionaryplusplus.domain.model.DefinitionErrorType
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
 import com.example.dictionaryplusplus.domain.repository.WotdRepository
+import com.example.dictionaryplusplus.core.notification.NotificationBuilder
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -20,12 +23,17 @@ class WotdApiWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val wotdRepository: WotdRepository,
     private val definitionRepository: DefinitionRepository,
-    private val wordnikApiService: WordnikApiService
+    private val wordnikApiService: WordnikApiService,
+    private val seenEventDao: SeenEventDao,
+    private val notificationBuilder: NotificationBuilder
 ): CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
         return try {
             val apiKey = BuildConfig.WORDNIK_API_KEY
-            if (apiKey.isBlank()) return Result.failure()
+            if (apiKey.isBlank()) {
+                FirebaseCrashlytics.getInstance().recordException(Exception("API key is blank or not detected"))
+                return Result.failure()
+            }
 
             val response = wordnikApiService.fetchWordOfTheDay(apiKey)
             val word = response.word.trim().lowercase()
@@ -34,6 +42,23 @@ class WotdApiWorker @AssistedInject constructor(
             return when (val definitionResult = definitionRepository.getDefinition(word)) {
                 is DefinitionResult.Success -> {
                     wotdRepository.setWordOfTheDay(word)
+                    
+                    val definition = definitionResult.definition
+                    val seenEventId = seenEventDao.insertSeenEvent(
+                        SeenEventEntity(
+                            word = word,
+                            seenAtTimestamp = System.currentTimeMillis(),
+                            isConfirmed = false
+                        )
+                    )
+
+                    notificationBuilder.showDailyNotification(
+                        eventId = seenEventId,
+                        word = word,
+                        phonetic = definition.phonetic ?: "",
+                        shortDefinition = definition.definition
+                    )
+                    
                     Result.success()
                 }
                 is DefinitionResult.Error -> {
