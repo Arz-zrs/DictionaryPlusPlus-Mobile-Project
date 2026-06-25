@@ -14,8 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.rememberNavController
-import com.example.dictionaryplusplus.core.navigation.NavigationGraph
+import com.example.dictionaryplusplus.ui.main.MainScreen
 import com.example.dictionaryplusplus.ui.theme.DictionaryPlusPlusTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -32,14 +31,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navController = rememberNavController()
                     val startDestination by viewModel.startDestination.collectAsStateWithLifecycle()
 
                     startDestination?.let { destination ->
-                        NavigationGraph(
-                            navController = navController,
-                            startDestination = destination
-                        )
+                        MainScreen(startDestination = destination)
                     } ?: Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
