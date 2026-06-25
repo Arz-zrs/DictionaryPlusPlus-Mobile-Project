@@ -4,12 +4,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.core.util.asErrorMessage
+import com.example.dictionaryplusplus.domain.model.FontSize
+import com.example.dictionaryplusplus.domain.model.ThemeMode
 import com.example.dictionaryplusplus.domain.usecase.ChangePasswordUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetDailyQuizRefreshTimeUseCase
+import com.example.dictionaryplusplus.domain.usecase.GetFontSizeUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetQuizLengthUseCase
+import com.example.dictionaryplusplus.domain.usecase.GetThemeModeUseCase
 import com.example.dictionaryplusplus.domain.usecase.LogoutUseCase
 import com.example.dictionaryplusplus.domain.usecase.SetDailyQuizRefreshTimeUseCase
+import com.example.dictionaryplusplus.domain.usecase.SetFontSizeUseCase
 import com.example.dictionaryplusplus.domain.usecase.SetQuizLengthUseCase
+import com.example.dictionaryplusplus.domain.usecase.SetThemeModeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,6 +31,10 @@ class SettingsViewModel @Inject constructor(
     private val setQuizLengthUseCase: SetQuizLengthUseCase,
     getDailyQuizRefreshTimeUseCase: GetDailyQuizRefreshTimeUseCase,
     private val setDailyQuizRefreshTimeUseCase: SetDailyQuizRefreshTimeUseCase,
+    getThemeModeUseCase: GetThemeModeUseCase,
+    private val setThemeModeUseCase: SetThemeModeUseCase,
+    getFontSizeUseCase: GetFontSizeUseCase,
+    private val setFontSizeUseCase: SetFontSizeUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val changePasswordUseCase: ChangePasswordUseCase
 ): ViewModel() {
@@ -44,6 +54,20 @@ class SettingsViewModel @Inject constructor(
             initialValue = "08:00"
         )
 
+    val themeMode: StateFlow<ThemeMode> = getThemeModeUseCase()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            initialValue = ThemeMode.SYSTEM
+        )
+
+    val fontSize: StateFlow<FontSize> = getFontSizeUseCase()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            initialValue = FontSize.MEDIUM
+        )
+
     fun updateQuizLength(length: Int) {
         viewModelScope.launch {
             setQuizLengthUseCase(length)
@@ -53,6 +77,18 @@ class SettingsViewModel @Inject constructor(
     fun updateQuizRefreshTime(time: String) {
         viewModelScope.launch {
             setDailyQuizRefreshTimeUseCase(time)
+        }
+    }
+
+    fun updateThemeMode(mode: ThemeMode) {
+        viewModelScope.launch {
+            setThemeModeUseCase(mode)
+        }
+    }
+
+    fun updateFontSize(size: FontSize) {
+        viewModelScope.launch {
+            setFontSizeUseCase(size)
         }
     }
 

@@ -5,15 +5,20 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.dictionaryplusplus.domain.model.ThemeMode
 import com.example.dictionaryplusplus.ui.main.MainScreen
 import com.example.dictionaryplusplus.ui.theme.DictionaryPlusPlusTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,20 +31,37 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            DictionaryPlusPlusTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val startDestination by viewModel.startDestination.collectAsStateWithLifecycle()
+            val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
+            val fontSize by viewModel.fontSize.collectAsStateWithLifecycle()
 
-                    startDestination?.let { destination ->
-                        MainScreen(startDestination = destination)
-                    } ?: Box(
+            val darkTheme = when (themeMode) {
+                ThemeMode.LIGHT -> false
+                ThemeMode.DARK -> true
+                ThemeMode.SYSTEM -> isSystemInDarkTheme()
+            }
+
+            DictionaryPlusPlusTheme(darkTheme = darkTheme) {
+                val currentDensity = LocalDensity.current
+                CompositionLocalProvider(
+                    LocalDensity provides Density(
+                        density = currentDensity.density,
+                        fontScale = currentDensity.fontScale * fontSize.scale
+                    )
+                ) {
+                    Surface(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        color = MaterialTheme.colorScheme.background
                     ) {
-                        CircularProgressIndicator()
+                        val startDestination by viewModel.startDestination.collectAsStateWithLifecycle()
+
+                        startDestination?.let { destination ->
+                            MainScreen(startDestination = destination)
+                        } ?: Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
                 }
             }

@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -34,6 +35,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.core.util.ErrorMessage
+import com.example.dictionaryplusplus.domain.model.FontSize
+import com.example.dictionaryplusplus.domain.model.ThemeMode
 import com.example.dictionaryplusplus.ui.theme.Success
 import java.util.Locale
 
@@ -47,6 +50,8 @@ fun SettingsScreen(
 
     val quizLength by viewModel.quizLength.collectAsStateWithLifecycle()
     val refreshTime by viewModel.dailyQuizRefreshTime.collectAsStateWithLifecycle()
+    val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
+    val fontSize by viewModel.fontSize.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     var currentPassword by remember { mutableStateOf("") }
@@ -73,7 +78,70 @@ fun SettingsScreen(
         )
 
         Card(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(stringResource(R.string.settings_appearance), style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(stringResource(R.string.settings_theme_mode), style = MaterialTheme.typography.bodyMedium)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    ThemeMode.entries.forEach { mode ->
+                        FilterChip(
+                            selected = themeMode == mode,
+                            onClick = { viewModel.updateThemeMode(mode) },
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            label = {
+                                Text(
+                                    when (mode) {
+                                        ThemeMode.SYSTEM -> stringResource(R.string.settings_theme_system)
+                                        ThemeMode.LIGHT -> stringResource(R.string.settings_theme_light)
+                                        ThemeMode.DARK -> stringResource(R.string.settings_theme_dark)
+                                    }
+                                )
+                            }
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(stringResource(R.string.settings_font_size), style = MaterialTheme.typography.bodyMedium)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    FontSize.entries.forEach { size ->
+                        FilterChip(
+                            selected = fontSize == size,
+                            onClick = { viewModel.updateFontSize(size) },
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            label = {
+                                Text(
+                                    when (size) {
+                                        FontSize.SMALL -> stringResource(R.string.settings_font_small)
+                                        FontSize.MEDIUM -> stringResource(R.string.settings_font_medium)
+                                        FontSize.LARGE -> stringResource(R.string.settings_font_large)
+                                    }
+                                )
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
                 Text(stringResource(R.string.settings_quiz_length), style = MaterialTheme.typography.titleMedium)
                 Text(
                     text = stringResource(R.string.settings_quiz_length_desc),
@@ -81,11 +149,15 @@ fun SettingsScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
                     listOf(3, 5, 7).forEach { length ->
                         FilterChip(
                             selected = quizLength == length,
                             onClick = { viewModel.updateQuizLength(length) },
+                            modifier = Modifier.padding(horizontal = 4.dp),
                             label = { Text(stringResource(R.string.settings_quiz_length_format, length)) }
                         )
                     }
@@ -94,7 +166,11 @@ fun SettingsScreen(
         }
 
         Card(modifier = Modifier.fillMaxWidth()) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
                 Text(stringResource(R.string.settings_reset_time), style = MaterialTheme.typography.titleMedium)
                 Text(
                     text = stringResource(R.string.settings_reset_time_desc),
@@ -105,12 +181,13 @@ fun SettingsScreen(
                 Button(
                     onClick = {
                         val parts = refreshTime.split(":")
-                        val hour = parts.getOrNull(0)?.toInt() ?: 6
-                        val minute = parts.getOrNull(1)?.toInt() ?: 0
+                        val hour = parts.getOrNull(0)?.toIntOrNull() ?: 6
+                        val minute = parts.getOrNull(1)?.toIntOrNull() ?: 0
                         TimePickerDialog(context, { _, h, m ->
-                            viewModel.updateQuizRefreshTime(String.format(Locale.getDefault().toString(), h, m))
+                            viewModel.updateQuizRefreshTime(String.format(Locale.getDefault(), "%02d:%02d", h, m))
                         }, hour, minute, true).show()
-                    }
+                    },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     Text(stringResource(R.string.settings_selected_time, refreshTime))
                 }
@@ -142,7 +219,7 @@ fun SettingsScreen(
                 OutlinedTextField(
                     value = newPassword,
                     onValueChange = {
-                        currentPassword = it
+                        newPassword = it
                         if (uiState is SettingsUiState.Idle) viewModel.resetPasswordState()
                     },
                     label = { Text(stringResource(R.string.settings_new_password_hint)) },

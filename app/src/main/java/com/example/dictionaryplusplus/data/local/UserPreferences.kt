@@ -26,12 +26,13 @@ class UserPreferences @Inject constructor(
     private object PreferencesKeys {
         val HAS_SEEN_ONBOARDING = booleanPreferencesKey("has_seen_onboarding")
         val NOTIFICATION_TIME = stringPreferencesKey("notification_time")
-        val THEME_MODE = stringPreferencesKey("theme_mode")
         val IS_WORD_BANK_SEEDED = booleanPreferencesKey("is_word_bank_seeded")
         val IS_DEFINITION_SEEDED = booleanPreferencesKey("is_definition_seeded")
         val WORD_OF_THE_DAY = stringPreferencesKey("word_of_the_day")
         val QUIZ_LENGTH = intPreferencesKey("quiz_length")
         val DAILY_QUIZ_REFRESH_TIME = stringPreferencesKey("daily_quiz_refresh_time")
+        val THEME_MODE = stringPreferencesKey("theme_mode")
+        val FONT_SIZE = stringPreferencesKey("font_size")
         val LAST_COMPLETED_AT_TIMESTAMP = longPreferencesKey("last_completed_at_timestamp")
         val REFRESH_TIME_AT_LAST_COMPLETION = stringPreferencesKey("refresh_time_at_last_completion")
     }
@@ -40,6 +41,8 @@ class UserPreferences @Inject constructor(
         const val WOTD_FALLBACK: String = "river"
         const val DEFAULT_QUIZ_LENGTH: Int = 5
         const val DEFAULT_TIMESTAMP: String = "06:00"
+        const val DEFAULT_THEME = "SYSTEM"
+        const val DEFAULT_FONT_SIZE = "MEDIUM"
     }
 
     val hasSeenOnboarding: Flow<Boolean> = context.dataStore.data
@@ -160,6 +163,28 @@ class UserPreferences @Inject constructor(
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.LAST_COMPLETED_AT_TIMESTAMP] = timestamp
             preferences[PreferencesKeys.REFRESH_TIME_AT_LAST_COMPLETION] = refreshTimeSnapshot
+        }
+    }
+
+    val themeMode: Flow<String> = context.dataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.THEME_MODE] ?: DEFAULT_THEME
+        }
+
+    suspend fun setThemeMode(mode: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.THEME_MODE] = mode
+        }
+    }
+
+    val fontSize: Flow<String> = context.dataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.FONT_SIZE] ?: DEFAULT_FONT_SIZE
+        }
+
+    suspend fun setFontSize(size: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.FONT_SIZE] = size
         }
     }
 }
