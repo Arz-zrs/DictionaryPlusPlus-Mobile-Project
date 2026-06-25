@@ -1,5 +1,6 @@
 package com.example.dictionaryplusplus.ui.history
 
+import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -10,21 +11,31 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.R
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun WordHistoryScreen(
     viewModel: HistoryViewModel = hiltViewModel()
 ) {
     val historyList by viewModel.historyList.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(viewModel) {
+        viewModel.toastMessage.collectLatest { message ->
+             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -63,7 +74,7 @@ fun WordHistoryScreen(
                         confirmValueChange = { value ->
                             when (value) {
                                 SwipeToDismissBoxValue.EndToStart -> {
-                                    viewModel.removeHistoryEntry(item.id)
+                                    viewModel.removeHistoryEntry(item.id, item.word)
                                     true
                                 }
                                 SwipeToDismissBoxValue.StartToEnd -> {
