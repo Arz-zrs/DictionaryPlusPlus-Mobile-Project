@@ -5,6 +5,5 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "word_bank")
 data class WordEntity(
-    @PrimaryKey val word: String,
-    val frequency: Int
+    @PrimaryKey val word: String
 )

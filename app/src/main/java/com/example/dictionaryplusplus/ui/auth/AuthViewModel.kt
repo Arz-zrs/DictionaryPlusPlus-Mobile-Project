@@ -102,7 +102,7 @@ class AuthViewModel @Inject constructor(
 
     private fun validateDisplayName(name: String): ErrorMessage {
         return if (name.isEmpty()) {
-            ErrorMessage.Known(R.string.error_username_empty)
+            ErrorMessage.Known(R.string.error_display_name_empty)
         } else {
             ErrorMessage.None
         }

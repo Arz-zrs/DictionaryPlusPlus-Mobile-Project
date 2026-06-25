@@ -26,4 +26,7 @@ interface FavouriteDao {
         ORDER BY f.addedAtTimestamp DESC
     """)
     fun observeFavouriteWords(): Flow<List<FavouriteWordDto>>
+
+    @Query("DELETE FROM favourite")
+    suspend fun clearAll()
 }

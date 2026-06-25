@@ -42,7 +42,7 @@ class WotdApiWorker @AssistedInject constructor(
 
             wotdRepository.setWordnikWordOfTheDay(word, wordnikDefinition)
             try {
-                wordDao.insertWords(listOf(WordEntity(word, 0)))
+                wordDao.insertWords(listOf(WordEntity(word)))
             } catch (e: Exception){
                 FirebaseCrashlytics.getInstance().recordException(e)
             }

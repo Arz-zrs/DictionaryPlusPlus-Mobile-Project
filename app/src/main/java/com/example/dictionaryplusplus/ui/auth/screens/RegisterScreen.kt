@@ -55,7 +55,7 @@ fun RegisterScreen(
             AuthTextField(
                 value = formState.displayName,
                 onValueChange = { viewModel.onAction(AuthAction.OnDisplayNameChange(it)) },
-                label = stringResource(R.string.label_username),
+                label = stringResource(R.string.label_display_name),
                 errorMessage = formState.displayNameError
             )
 

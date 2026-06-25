@@ -37,18 +37,17 @@ fun DashboardScreen(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         item {
-            Text(
-                text = stringResource(R.string.dashboard_title),
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-
-        item {
-            ScoreBanner(
-                score = uiState.userScore,
-                onBannerClick = onNavigateToLeaderboard
-            )
+            Column {
+                Text(
+                    text = stringResource(R.string.dashboard_greeting, uiState.displayName),
+                    style = MaterialTheme.typography.headlineMedium,
+                )
+                Text(
+                    text = stringResource(R.string.dashboard_subtitle),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
 
         when (val wotd = uiState.wordOfTheDay) {
@@ -77,6 +76,14 @@ fun DashboardScreen(
                 }
             }
         }
+
+        item {
+            ScoreBanner(
+                score = uiState.userScore,
+                onBannerClick = onNavigateToLeaderboard
+            )
+        }
+
 
         item {
             DailyQuizEntryCard(

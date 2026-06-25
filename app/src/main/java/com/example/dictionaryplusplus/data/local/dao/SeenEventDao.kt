@@ -23,4 +23,7 @@ interface SeenEventDao {
 
     @Query("SELECT word FROM seen_event ORDER BY RANDOM() LIMIT 1")
     suspend fun getRandomSeenWord(): String?
+
+    @Query("DELETE FROM seen_event")
+    suspend fun clearAll()
 }

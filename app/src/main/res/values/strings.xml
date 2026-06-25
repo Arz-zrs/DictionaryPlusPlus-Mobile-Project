@@ -2,7 +2,7 @@
     <string name="app_name">DictionaryPlusPlus</string>
     <string name="error_login_failed">Login Failed</string>
     <string name="error_registration_failed">Registration Failed</string>
-    <string name="error_username_empty">Username cannot be empty.</string>
+    <string name="error_display_name_empty">Display Name cannot be empty.</string>
     <string name="error_email_empty">Email cannot be empty.</string>
     <string name="error_email_invalid">Please enter a valid email address.</string>
     <string name="error_password_too_short">Password must be at least 8 characters.</string>
@@ -17,7 +17,7 @@
 
     <!-- Register Screen -->
     <string name="register_title">Create Account</string>
-    <string name="label_username">Username</string>
+    <string name="label_display_name">Display Name</string>
     <string name="label_password_hint">Password (Min 8 chars)</string>
     <string name="label_confirm_password">Confirm Password</string>
     <string name="btn_register">Register</string>
@@ -83,6 +83,8 @@
 
     <!-- Dashboard Screen -->
     <string name="dashboard_title">Dashboard</string>
+    <string name="dashboard_subtitle">Here\'s your Word of the Day</string>
+    <string name="dashboard_greeting">Welcome, %1$s</string>
     <string name="label_word_of_the_day">WORD OF THE DAY</string>
     <string name="label_recent_words">RECENT WORDS</string>
     <string name="dashboard_no_recent_words">No recent words</string>
@@ -93,7 +95,7 @@
     <!-- Quiz Screens -->
     <string name="quiz_hub_title">Quiz Hub</string>
     <string name="quiz_synonym_practice_title">VOCABULARY PRACTICE</string>
-    <string name="quiz_synonym_practice_desc">Practice vocabulary context with synonym matching. No score penalties.</string>
+    <string name="quiz_synonym_practice_desc">Practice vocabulary context with synonym / definition matching. No score penalties.</string>
     <string name="quiz_match_definition">Match the Definition</string>
     <string name="quiz_find_synonym">Find the Synonym</string>
     <string name="quiz_back_to_hub">Back to Hub</string>
@@ -138,4 +140,7 @@
     <string name="settings_update_password">Update Password</string>
     <string name="settings_logout">Logout</string>
     <string name="change_password_failed">Failed to change password.</string>
+    <string name="error_update_display_name_failed">Failed to update Display Name</string>
+    <string name="settings_save_display_name">Update Display Name</string>
+    <string name="settings_display_name">Change Display Name</string>
 </resources>

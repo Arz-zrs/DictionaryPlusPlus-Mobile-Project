@@ -13,6 +13,7 @@ import com.example.dictionaryplusplus.domain.usecase.GetNotificationTimeUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetQuizLengthUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetThemeModeUseCase
 import com.example.dictionaryplusplus.domain.usecase.LogoutUseCase
+import com.example.dictionaryplusplus.domain.usecase.ObserveUserProfileUseCase
 import com.example.dictionaryplusplus.domain.usecase.RescheduleDailyWordUseCase
 import com.example.dictionaryplusplus.domain.usecase.ResetQuizCompletionUseCase
 import com.example.dictionaryplusplus.domain.usecase.SetDailyQuizRefreshTimeUseCase
@@ -21,11 +22,13 @@ import com.example.dictionaryplusplus.domain.usecase.SetQuizLengthUseCase
 import com.example.dictionaryplusplus.domain.usecase.SetThemeModeUseCase
 import com.example.dictionaryplusplus.domain.usecase.TriggerDailyWordWorkerUseCase
 import com.example.dictionaryplusplus.domain.usecase.TriggerWotdWorkerUseCase
+import com.example.dictionaryplusplus.domain.usecase.UpdateDisplayNameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -46,7 +49,9 @@ class SettingsViewModel @Inject constructor(
     private val rescheduleDailyWordUseCase: RescheduleDailyWordUseCase,
     private val triggerWotdWorkerUseCase: TriggerWotdWorkerUseCase,
     private val triggerDailyWordWorkerUseCase: TriggerDailyWordWorkerUseCase,
-    private val resetQuizCompletionUseCase: ResetQuizCompletionUseCase
+    private val resetQuizCompletionUseCase: ResetQuizCompletionUseCase,
+    private val updateDisplayNameUseCase: UpdateDisplayNameUseCase,
+    observeUserProfileUseCase: ObserveUserProfileUseCase
 ): ViewModel() {
     private val _uiState = MutableStateFlow<SettingsUiState>(SettingsUiState.Idle)
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
@@ -105,6 +110,21 @@ class SettingsViewModel @Inject constructor(
     fun logout(onSuccess: () -> Unit) {
         viewModelScope.launch {
             logoutUseCase().onSuccess { onSuccess() }
+        }
+    }
+
+    val displayName: StateFlow<String> = observeUserProfileUseCase()
+        .map { it?.displayName ?: "" }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
+
+    fun updateDisplayName(name: String) {
+        viewModelScope.launch {
+            updateDisplayNameUseCase(name)
+                .onFailure {
+                    _uiState.value = SettingsUiState.Error(
+                        asErrorMessage(R.string.error_update_display_name_failed)
+                    )
+                }
         }
     }
 

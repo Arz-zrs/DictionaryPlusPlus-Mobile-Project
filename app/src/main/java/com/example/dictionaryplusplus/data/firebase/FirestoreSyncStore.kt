@@ -82,4 +82,30 @@ class FirestoreSyncStore @Inject constructor(
             FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
+
+    suspend fun syncSeenWordAdded(word: String) {
+        val uid = authStore.currentUserUid ?: return
+        try {
+            firestore.collection("users").document(uid)
+                .update("seen_words", FieldValue.arrayUnion(word))
+                .await()
+        } catch (e: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
+    }
+
+    suspend fun updateDisplayName(uid: String, displayName: String): Result<Unit> {
+        return try {
+            firestore.collection("users").document(uid)
+                .update("display_name", displayName)
+                .await()
+            firestore.collection("leaderboard").document(uid)
+                .update("display_name", displayName)
+                .await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(e)
+            Result.failure(e)
+        }
+    }
 }

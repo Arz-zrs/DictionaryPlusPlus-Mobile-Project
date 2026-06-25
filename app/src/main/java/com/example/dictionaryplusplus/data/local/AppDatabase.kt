@@ -24,7 +24,7 @@ import com.example.dictionaryplusplus.data.local.entity.WordNoteEntity
         FavouriteEntity::class,
         UserProfileEntity::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

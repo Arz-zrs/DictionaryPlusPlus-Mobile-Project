@@ -12,6 +12,7 @@ class LogoutUseCase @Inject constructor(
         return try {
             authRepository.logout()
             userRepository.clearLocalProfile()
+            userRepository.clearAllUserData()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

@@ -29,7 +29,9 @@ class DashboardViewModel @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<DashboardUiState> = combine(
-        observeUserProfileUseCase().map { it?.totalScore ?: 0 },
+        observeUserProfileUseCase().map { profile ->
+            Pair(profile?.displayName ?: "", profile?.totalScore ?: 0)
+        },
         observeWordOfTheDayUseCase().map { definition ->
             if (definition != null) WotdState.Available(definition)
             else WotdState.Unavailable
@@ -37,8 +39,9 @@ class DashboardViewModel @Inject constructor(
         observeSeenEventsUseCase().map { it.take(5) },
         observeQuizAvailabilityUseCase(),
         _sheetState
-    ) { score, wotd, recentList, isQuizAvailable, sheetState ->
+    ) { (displayName, score), wotd, recentList, isQuizAvailable, sheetState ->
         DashboardUiState(
+            displayName = displayName,
             userScore = score,
             wordOfTheDay = wotd,
             recentWords = recentList.map { event ->

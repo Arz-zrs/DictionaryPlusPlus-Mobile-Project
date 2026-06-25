@@ -23,4 +23,7 @@ interface UserProfileDao {
 
     @Query("UPDATE user_profile SET totalScore = totalScore + :points")
     suspend fun updateScore(points: Int)
+
+    @Query("UPDATE user_profile SET displayName = :displayName WHERE userId = :userId")
+    suspend fun updateDisplayName(userId: String, displayName: String)
 }

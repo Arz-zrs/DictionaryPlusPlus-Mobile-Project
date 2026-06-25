@@ -26,10 +26,9 @@ class WordBankSeeder @Inject constructor(
 
             val words = JSONArray(jsonString)
                 .let { array -> (0 until array.length()).map { array.getString(it) } }
-                .mapIndexed { index, word ->
+                .map { word ->
                     WordEntity(
-                        word = word,
-                        frequency = index + 1000
+                        word = word
                     )
                 }
 

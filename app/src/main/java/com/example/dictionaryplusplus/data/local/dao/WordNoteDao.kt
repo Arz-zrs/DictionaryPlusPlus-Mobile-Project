@@ -14,4 +14,7 @@ interface WordNoteDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWordNote(wordNote: WordNoteEntity)
+
+    @Query("DELETE FROM word_note")
+    suspend fun clearAll()
 }

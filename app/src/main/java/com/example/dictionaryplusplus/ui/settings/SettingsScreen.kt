@@ -55,6 +55,8 @@ fun SettingsScreen(
 
     var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
+    val displayName by viewModel.displayName.collectAsStateWithLifecycle()
+    var nameInput by remember(displayName) { mutableStateOf(displayName) }
 
     LaunchedEffect(uiState) {
         if (uiState is SettingsUiState.Success) {
@@ -219,6 +221,32 @@ fun SettingsScreen(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     Text(stringResource(R.string.settings_notification_time_format, notificationTime))
+                }
+            }
+        }
+
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.settings_display_name),
+                    style = MaterialTheme.typography.titleMedium
+                )
+                OutlinedTextField(
+                    value = nameInput,
+                    onValueChange = { nameInput = it },
+                    label = { Text(stringResource(R.string.label_display_name)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Button(
+                    onClick = { viewModel.updateDisplayName(nameInput) },
+                    enabled = nameInput.isNotBlank() && nameInput != displayName,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(stringResource(R.string.settings_save_display_name))
                 }
             }
         }
