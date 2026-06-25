@@ -1,6 +1,14 @@
 package com.example.dictionaryplusplus.ui.settings
 
+import android.Manifest
+import android.app.Activity
 import android.app.TimePickerDialog
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,17 +17,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +42,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.core.util.ErrorMessage
@@ -45,6 +60,7 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
+    val activity = LocalContext.current as Activity
     val scrollState = rememberScrollState()
 
     val quizLength by viewModel.quizLength.collectAsStateWithLifecycle()
@@ -52,16 +68,41 @@ fun SettingsScreen(
     val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
     val fontSize by viewModel.fontSize.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val notificationTime by viewModel.notificationTime.collectAsStateWithLifecycle()
+    val displayName by viewModel.displayName.collectAsStateWithLifecycle()
+    val isNotificationGranted by viewModel.isNotificationPermissionGranted.collectAsStateWithLifecycle()
 
     var currentPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
-    val displayName by viewModel.displayName.collectAsStateWithLifecycle()
     var nameInput by remember(displayName) { mutableStateOf(displayName) }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.refreshPermissionState()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     LaunchedEffect(uiState) {
         if (uiState is SettingsUiState.Success) {
             currentPassword = ""
             newPassword = ""
+        }
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        viewModel.refreshPermissionState()
+        if (isGranted) {
+            val parts = notificationTime.split(":")
+            val hour = parts.getOrNull(0)?.toIntOrNull() ?: 8
+            val minute = parts.getOrNull(1)?.toIntOrNull() ?: 0
+            viewModel.updateNotificationTime(hour, minute)
         }
     }
 
@@ -72,6 +113,27 @@ fun SettingsScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        if (!isNotificationGranted) {
+            PermissionBanner(
+                onEnableClick = {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        val shouldShowRationale = ActivityCompat.shouldShowRequestPermissionRationale(
+                            activity,
+                            Manifest.permission.POST_NOTIFICATIONS
+                        )
+                        if (shouldShowRationale) {
+                            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        } else {
+                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                data = Uri.fromParts("package", activity.packageName, null)
+                            }
+                            activity.startActivity(intent)
+                        }
+                    }
+                }
+            )
+        }
+
         Text(
             text = stringResource(R.string.settings_title),
             style = MaterialTheme.typography.headlineMedium,
@@ -166,36 +228,6 @@ fun SettingsScreen(
             }
         }
 
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(stringResource(R.string.settings_reset_time), style = MaterialTheme.typography.titleMedium)
-                Text(
-                    text = stringResource(R.string.settings_reset_time_desc),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Button(
-                    onClick = {
-                        val parts = refreshTime.split(":")
-                        val hour = parts.getOrNull(0)?.toIntOrNull() ?: 6
-                        val minute = parts.getOrNull(1)?.toIntOrNull() ?: 0
-                        TimePickerDialog(context, { _, h, m ->
-                            viewModel.updateQuizRefreshTime(context.getString(R.string.time_format, h, m))
-                        }, hour, minute, true).show()
-                    },
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                ) {
-                    Text(stringResource(R.string.settings_selected_time, refreshTime))
-                }
-            }
-        }
-
-        val notificationTime by viewModel.notificationTime.collectAsStateWithLifecycle()
 
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier
@@ -221,6 +253,35 @@ fun SettingsScreen(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     Text(stringResource(R.string.settings_notification_time_format, notificationTime))
+                }
+            }
+        }
+
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(stringResource(R.string.settings_reset_time), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = stringResource(R.string.settings_reset_time_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                Button(
+                    onClick = {
+                        val parts = refreshTime.split(":")
+                        val hour = parts.getOrNull(0)?.toIntOrNull() ?: 6
+                        val minute = parts.getOrNull(1)?.toIntOrNull() ?: 0
+                        TimePickerDialog(context, { _, h, m ->
+                            viewModel.updateQuizRefreshTime(context.getString(R.string.time_format, h, m))
+                        }, hour, minute, true).show()
+                    },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Text(stringResource(R.string.settings_selected_time, refreshTime))
                 }
             }
         }
@@ -342,6 +403,52 @@ fun SettingsScreen(
                 text = stringResource(R.string.settings_logout),
                 color = MaterialTheme.colorScheme.onError
             )
+        }
+    }
+}
+
+@Composable
+fun PermissionBanner(
+    onEnableClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.permission_banner_title),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onErrorContainer
+                )
+                Text(
+                    text = stringResource(R.string.permission_banner_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f)
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(
+                onClick = onEnableClick,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                Text(
+                    text = stringResource(R.string.permission_banner_btn),
+                    color = MaterialTheme.colorScheme.onError
+                )
+            }
         }
     }
 }

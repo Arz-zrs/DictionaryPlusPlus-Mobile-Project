@@ -2,10 +2,12 @@ package com.example.dictionaryplusplus.ui.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.dictionaryplusplus.data.local.UserPreferences
 import com.example.dictionaryplusplus.domain.usecase.ObserveQuizAvailabilityUseCase
 import com.example.dictionaryplusplus.domain.usecase.ObserveUserProfileUseCase
 import com.example.dictionaryplusplus.domain.usecase.ObserveWordOfTheDayUseCase
 import com.example.dictionaryplusplus.domain.usecase.ObserveSeenEventsUseCase
+import com.example.dictionaryplusplus.domain.usecase.TriggerWotdWorkerUseCase
 import com.example.dictionaryplusplus.ui.history.HistoryUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -13,8 +15,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,7 +26,9 @@ class DashboardViewModel @Inject constructor(
     observeUserProfileUseCase: ObserveUserProfileUseCase,
     observeWordOfTheDayUseCase: ObserveWordOfTheDayUseCase,
     observeSeenEventsUseCase: ObserveSeenEventsUseCase,
-    observeQuizAvailabilityUseCase: ObserveQuizAvailabilityUseCase
+    observeQuizAvailabilityUseCase: ObserveQuizAvailabilityUseCase,
+    private val triggerWotdWorkerUseCase: TriggerWotdWorkerUseCase,
+    private val userPreferences: UserPreferences
 ): ViewModel() {
 
     private val _sheetState = MutableStateFlow<DashboardSheetState>(DashboardSheetState.Hidden)
@@ -60,6 +66,15 @@ class DashboardViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = DashboardUiState()
         )
+
+    init {
+        viewModelScope.launch {
+            val currentWord = userPreferences.wordOfTheDay.first()
+            if (currentWord == UserPreferences.WOTD_FALLBACK || currentWord.isBlank()) {
+                triggerWotdWorkerUseCase()
+            }
+        }
+    }
 
     fun onWotdClicked(word: String) {
         _sheetState.value = DashboardSheetState.WordDetail(word)
