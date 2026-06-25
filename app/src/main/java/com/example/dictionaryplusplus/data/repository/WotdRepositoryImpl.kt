@@ -2,12 +2,14 @@ package com.example.dictionaryplusplus.data.repository
 
 import com.example.dictionaryplusplus.data.local.UserPreferences
 import com.example.dictionaryplusplus.data.local.dao.DefinitionDao
+import com.example.dictionaryplusplus.data.local.entity.DefinitionEntity
 import com.example.dictionaryplusplus.data.local.mapper.toDomain
 import com.example.dictionaryplusplus.domain.model.Definition
 import com.example.dictionaryplusplus.domain.repository.WotdRepository
 import com.google.gson.Gson
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -31,6 +33,24 @@ class WotdRepositoryImpl @Inject constructor(
     }
 
     override suspend fun setWordOfTheDay(word: String) {
+        userPreferences.setWordOfTheDay(word)
+    }
+
+    override suspend fun setWordnikWordOfTheDay(word: String, definition: String) {
+        val alreadyCached = definitionDao.observeDefinition(word).firstOrNull() != null
+        if (!alreadyCached) {
+            definitionDao.insertDefinition(
+                DefinitionEntity(
+                    word = word,
+                    definition = definition,
+                    phonetic = null,
+                    partOfSpeech = null,
+                    exampleSentence = null,
+                    relatedWordsJson = "[]",
+                    meaningsJson = "[]"
+                )
+            )
+        }
         userPreferences.setWordOfTheDay(word)
     }
 }
