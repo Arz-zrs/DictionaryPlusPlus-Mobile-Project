@@ -115,4 +115,20 @@
     <string name="rank_label">#%1$d</string>
     <string name="user_rank_label">You\'re ranked %1$d out of %2$d players</string>
     <string name="user_message_label">Keep completing the quiz to improve your rank!</string>
+
+    <!-- Setting Screens -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_quiz_length">Quiz Length</string>
+    <string name="settings_quiz_length_desc">Select how many words are loaded in your daily quiz.</string>
+    <string name="settings_quiz_length_format">%1$d words</string>
+    <string name="settings_reset_time">Daily Quiz Reset Time</string>
+    <string name="settings_reset_time_desc">Set the rolling window reset time.</string>
+    <string name="settings_selected_time">Selected: %1$s</string>
+    <string name="settings_change_password">Change Password</string>
+    <string name="settings_current_password">Current Password</string>
+    <string name="settings_new_password_hint">New Password (Min 8 characters)</string>
+    <string name="settings_password_changed_success">Password changed successfully!</string>
+    <string name="settings_update_password">Update Password</string>
+    <string name="settings_logout">Logout</string>
+    <string name="change_password_failed">Failed to change password.</string>
 </resources>

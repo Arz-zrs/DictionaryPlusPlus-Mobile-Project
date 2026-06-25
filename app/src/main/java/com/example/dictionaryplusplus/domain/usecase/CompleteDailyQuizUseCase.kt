@@ -9,6 +9,7 @@ import javax.inject.Inject
 class CompleteDailyQuizUseCase @Inject constructor(
     private val quizRepository: QuizRepository,
     private val userRepository: UserRepository,
+    private val getDailyQuizRefreshTimeUseCase: GetDailyQuizRefreshTimeUseCase,
     private val scoreSyncScheduler: ScoreSyncScheduler
 ) {
     suspend operator fun invoke(totalPoints: Int): Result<Unit> {
@@ -16,7 +17,7 @@ class CompleteDailyQuizUseCase @Inject constructor(
             userRepository.updateLocalScore(totalPoints).getOrThrow()
 
             val currentTimestamp = System.currentTimeMillis()
-            val currentRefreshTime = quizRepository.getDailyQuizRefreshTime().first()
+            val currentRefreshTime = getDailyQuizRefreshTimeUseCase().first()
             quizRepository.saveQuizCompletion(currentTimestamp, currentRefreshTime)
 
             scoreSyncScheduler.scheduleSync()

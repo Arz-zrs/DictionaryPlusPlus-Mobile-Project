@@ -27,6 +27,13 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun changePassword(
+        currentPassword: String,
+        newPassword: String
+    ): Result<Unit> {
+        return authSource.changePassword(currentPassword, newPassword)
+    }
+
     override suspend fun isUserSessionActive(): Boolean {
         return authSource.isUserLoggedIn()
     }
