@@ -6,4 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface HistoryRepository {
     fun observeSeenEvents(): Flow<List<SeenEvent>>
     suspend fun deleteSeenEvent(id: Long)
+    suspend fun addSeenEvent(word: String)
 }

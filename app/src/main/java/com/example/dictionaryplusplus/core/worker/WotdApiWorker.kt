@@ -10,6 +10,8 @@ import com.example.dictionaryplusplus.data.local.dao.SeenEventDao
 import com.example.dictionaryplusplus.data.local.entity.SeenEventEntity
 import com.example.dictionaryplusplus.domain.repository.WotdRepository
 import com.example.dictionaryplusplus.core.notification.NotificationBuilder
+import com.example.dictionaryplusplus.data.local.dao.WordDao
+import com.example.dictionaryplusplus.data.local.entity.WordEntity
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -21,6 +23,7 @@ class WotdApiWorker @AssistedInject constructor(
     private val wotdRepository: WotdRepository,
     private val wordnikApiService: WordnikApiService,
     private val seenEventDao: SeenEventDao,
+    private val wordDao: WordDao,
     private val notificationBuilder: NotificationBuilder
 ): CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
@@ -38,6 +41,11 @@ class WotdApiWorker @AssistedInject constructor(
                 return Result.failure()
 
             wotdRepository.setWordnikWordOfTheDay(word, wordnikDefinition)
+            try {
+                wordDao.insertWords(listOf(WordEntity(word, 0)))
+            } catch (e: Exception){
+                FirebaseCrashlytics.getInstance().recordException(e)
+            }
 
             val seenEventId = seenEventDao.insertSeenEvent(
                 SeenEventEntity(

@@ -1,6 +1,7 @@
 package com.example.dictionaryplusplus.data.repository
 
 import com.example.dictionaryplusplus.data.local.dao.SeenEventDao
+import com.example.dictionaryplusplus.data.local.entity.SeenEventEntity
 import com.example.dictionaryplusplus.domain.model.SeenEvent
 import com.example.dictionaryplusplus.domain.repository.HistoryRepository
 import kotlinx.coroutines.flow.Flow
@@ -29,5 +30,15 @@ class HistoryRepositoryImpl @Inject constructor(
 
     override suspend fun deleteSeenEvent(id: Long) {
         seenEventDao.deleteSeenEventById(id)
+    }
+
+    override suspend fun addSeenEvent(word: String) {
+        seenEventDao.insertSeenEvent(
+            SeenEventEntity(
+                word = word,
+                seenAtTimestamp = System.currentTimeMillis(),
+                isConfirmed = true
+            )
+        )
     }
 }
