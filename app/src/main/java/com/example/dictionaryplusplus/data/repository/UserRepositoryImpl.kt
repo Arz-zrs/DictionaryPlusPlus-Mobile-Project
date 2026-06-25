@@ -82,7 +82,7 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun syncScoreToCloud(): Result<Unit> {
         return try {
             val profile = userProfileDao.getUserProfile() ?: throw Exception("Profile not found")
-            firestoreSource.updateScore(profile.userId, profile.totalScore).getOrThrow()
+            firestoreSource.updateScore(profile.userId, profile.displayName, profile.totalScore).getOrThrow()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

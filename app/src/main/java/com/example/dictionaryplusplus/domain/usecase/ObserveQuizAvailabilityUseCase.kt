@@ -1,7 +1,6 @@
 package com.example.dictionaryplusplus.domain.usecase
 
 import com.example.dictionaryplusplus.domain.repository.QuizRepository
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import java.time.Instant
@@ -24,8 +23,7 @@ class ObserveQuizAvailabilityUseCase @Inject constructor(
             }
             val refreshTimeAtLastCompletion = try {
                 LocalTime.parse(refreshTimeAtLastCompletionStr)
-            } catch (e: Exception) {
-                FirebaseCrashlytics.getInstance().recordException(e)
+            } catch (_: Exception) {
                 LocalTime.of(6, 0)
             }
             val now = LocalDateTime.now()

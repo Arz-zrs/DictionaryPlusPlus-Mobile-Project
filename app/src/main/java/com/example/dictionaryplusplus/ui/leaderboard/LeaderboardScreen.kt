@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.domain.model.LeaderboardUser
+import com.example.dictionaryplusplus.R
 // TODO extract hardcoded strings here
 @Composable
 fun LeaderboardScreen(viewModel: LeaderboardViewModel = hiltViewModel()) {
@@ -56,7 +58,7 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = hiltViewModel()) {
                 ) {
                     item {
                         Text(
-                            text = "Global Leaderboard",
+                            text = stringResource(R.string.leaderboard_title),
                             style = MaterialTheme.typography.headlineMedium,
                             modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
                         )
@@ -66,6 +68,14 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = hiltViewModel()) {
                         item {
                             PodiumLayout(topThree = topThree)
                             Spacer(modifier = Modifier.height(16.dp))
+                        }
+                    } else {
+                        item {
+                            Text(
+                                text = stringResource(R.string.leaderboard_empty),
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(bottom = 16.dp)
+                            )
                         }
                     }
 
@@ -139,7 +149,7 @@ fun PodiumColumn(
             maxLines = 1
         )
         Text(
-            text = "${user.totalScore} points",
+            text = stringResource(R.string.score_label, user.totalScore),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(bottom = 8.dp)
@@ -157,7 +167,7 @@ fun PodiumColumn(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "#$rank",
+                text = stringResource(R.string.rank_label, rank),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -189,7 +199,7 @@ fun LeaderboardRow(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "#$rank",
+                    text = stringResource(R.string.rank_label, rank),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -200,7 +210,7 @@ fun LeaderboardRow(
                 )
             }
             Text(
-                text = "${user.totalScore} points",
+                text = stringResource(R.string.score_label, user.totalScore),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
@@ -231,18 +241,18 @@ fun UserRankCard(
         ) {
             Column {
                 Text(
-                    text = "You're ranked #$rank out of $total players",
+                    text = stringResource(R.string.user_rank_label, rank, total),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Keep completing the quiz to improve your rank!",
+                    text = stringResource(R.string.user_message_label),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Text(
-                text = "$score points",
+                text = stringResource(R.string.score_label, score),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary

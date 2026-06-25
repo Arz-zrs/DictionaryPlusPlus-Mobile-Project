@@ -3,6 +3,7 @@ package com.example.dictionaryplusplus.data.firebase
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -23,7 +24,6 @@ class FirestoreSyncStore @Inject constructor(
                 "display_name" to displayName,
                 "email" to email,
                 "total_score" to 0,
-                "last_quiz_completed_at" to null,
                 "seen_words" to emptyList<String>(),
                 "favourites" to emptyList<String>(),
                 "notes" to emptyList<String>()
@@ -46,9 +46,12 @@ class FirestoreSyncStore @Inject constructor(
         }
     }
 
-    suspend fun updateScore(uid: String, totalScore: Int): Result<Unit> {
+    suspend fun updateScore(uid: String, displayName: String, totalScore: Int): Result<Unit> {
         return try {
             firestore.collection("users").document(uid).update("total_score", totalScore).await()
+            firestore.collection("leaderboard").document(uid)
+                .set(mapOf("uid" to uid, "display_name" to displayName, "total_score" to totalScore), SetOptions.merge())
+                .await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

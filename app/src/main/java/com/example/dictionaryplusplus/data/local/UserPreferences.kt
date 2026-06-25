@@ -131,7 +131,7 @@ class UserPreferences @Inject constructor(
 
     suspend fun setQuizLength(length: Int) {
         context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.QUIZ_LENGTH]
+            preferences[PreferencesKeys.QUIZ_LENGTH] = length
         }
     }
 

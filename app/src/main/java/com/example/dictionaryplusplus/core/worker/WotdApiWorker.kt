@@ -29,13 +29,13 @@ class WotdApiWorker @AssistedInject constructor(
 
             val response = wordnikApiService.fetchWordOfTheDay(apiKey)
             val word = response.word.trim().lowercase()
-            
             if (word.isEmpty()) return Result.failure()
 
-            wotdRepository.setWordOfTheDay(word)
-            
-            when (val definitionResult = definitionRepository.getDefinition(word)) {
-                is DefinitionResult.Success -> Result.success()
+            return when (val definitionResult = definitionRepository.getDefinition(word)) {
+                is DefinitionResult.Success -> {
+                    wotdRepository.setWordOfTheDay(word)
+                    Result.success()
+                }
                 is DefinitionResult.Error -> {
                     if (definitionResult.type == DefinitionErrorType.NOT_FOUND) {
                         Result.failure()

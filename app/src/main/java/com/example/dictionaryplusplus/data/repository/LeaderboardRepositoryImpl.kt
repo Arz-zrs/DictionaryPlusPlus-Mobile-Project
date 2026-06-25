@@ -28,7 +28,7 @@ class LeaderboardRepositoryImpl @Inject constructor(
             }
             val users = snapshots?.documents?.mapNotNull { document ->
                 val uid = document.getString("uid") ?: return@mapNotNull null
-                val name = document.getString("name") ?: "Anonymous"
+                val name = document.getString("display_name") ?: "Anonymous"
                 val score = document.getLong("total_score")?.toInt() ?: 0
                 LeaderboardUser(uid, name, score)
             } ?: emptyList()

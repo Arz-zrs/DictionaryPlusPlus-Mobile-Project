@@ -12,4 +12,12 @@ class ContentSanitizer @Inject constructor() {
     fun sanitizeSynonyms(synonyms: List<String>, denyList: Set<String>): List<String> {
         return synonyms.filter { !denyList.contains(it.lowercase()) }
     }
+
+    companion object {
+        const val FALLBACK_DEFINITION = "Offensive definition omitted."
+
+        fun isFallbackDefinition(text: String): Boolean {
+            return text == FALLBACK_DEFINITION
+        }
+    }
 }

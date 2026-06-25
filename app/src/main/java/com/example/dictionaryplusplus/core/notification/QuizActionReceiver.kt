@@ -9,7 +9,6 @@ import com.example.dictionaryplusplus.data.local.dao.SeenEventDao
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,11 +33,7 @@ class QuizActionReceiver : BroadcastReceiver() {
             val pendingResult = goAsync()
             applicationScope.launch(Dispatchers.IO) {
                 try {
-                    val matchingList = seenEventDao.getAllSeenEvents().firstOrNull() ?: emptyList()
-                    val targetEvent = matchingList.find { it.id == eventId }
-                    if (targetEvent != null) {
-                        seenEventDao.confirmSeenEvent(eventId)
-                    }
+                    seenEventDao.confirmSeenEvent(eventId)
                 } finally {
                     pendingResult.finish()
                 }

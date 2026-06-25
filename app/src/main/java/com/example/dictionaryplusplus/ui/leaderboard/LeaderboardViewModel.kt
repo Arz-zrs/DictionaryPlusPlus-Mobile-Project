@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -28,10 +29,25 @@ class LeaderboardViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            observeLeaderboardUseCase().collectLatest { list ->
-                _uiState.update { it.copy(leaderboardList = list, isLoading = false) }
+            combine(
+                observeLeaderboardUseCase(),
+                observeUserProfileUseCase()
+            ) { leaderboardList, userProfile ->
+                Pair(leaderboardList, userProfile)
+            }.collectLatest { (leaderboardList, userProfile) ->
+                _uiState.update { it.copy(leaderboardList = leaderboardList, isLoading = false) }
+                val score = userProfile?.totalScore ?: return@collectLatest
+                val rank = getUserRankUseCase(score).getOrDefault(0)
+                val total = getTotalParticipantCountUseCase().getOrDefault(0).toInt()
+
+                _uiState.update { it.copy(
+                    currentUserRank = rank,
+                    totalParticipants = total,
+                    currentUserScore = score
+                )}
             }
-            calculateUserRank()
+
+
         }
     }
 

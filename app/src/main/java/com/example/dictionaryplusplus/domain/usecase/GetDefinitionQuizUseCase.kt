@@ -1,5 +1,6 @@
 package com.example.dictionaryplusplus.domain.usecase
 
+import com.example.dictionaryplusplus.core.util.ContentSanitizer
 import com.example.dictionaryplusplus.domain.model.DefinitionResult
 import com.example.dictionaryplusplus.domain.model.QuizQuestion
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
@@ -20,6 +21,11 @@ class GetDefinitionQuizUseCase @Inject constructor(
                 else -> return Result.failure(Exception("Could not fetch definition for $anchorWord"))
             }
 
+            val anchorDefinitionText = definition.definition
+            if (ContentSanitizer.isFallbackDefinition(anchorDefinitionText)) {
+                return Result.failure(Exception("Anchor definition was sanitized, skipping"))
+            }
+
             val choices = mutableListOf(definition.definition)
             var attempts = 0
             while (choices.size < 4 && attempts < 10) {
@@ -29,7 +35,9 @@ class GetDefinitionQuizUseCase @Inject constructor(
                     val dResult = definitionRepository.getDefinition(dWord)
                     if (dResult is DefinitionResult.Success) {
                         val dDef = dResult.definition.definition
-                        if (dDef.isNotBlank() && !choices.contains(dDef)) {
+                        if (dDef.isNotBlank()
+                            && !ContentSanitizer.isFallbackDefinition(dDef)
+                            && !choices.contains(dDef)) {
                             choices.add(dDef)
                         }
                     }
