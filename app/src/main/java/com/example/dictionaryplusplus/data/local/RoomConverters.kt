@@ -10,7 +10,7 @@ class RoomConverters {
     }
 
     @TypeConverter
-    fun toMasteryStatus(status: String): MasteryStatus {
-        return MasteryStatus.fromString(status)
+    fun toMasteryStatus(status: String?): MasteryStatus {
+        return status?.let { MasteryStatus.fromString(it) } ?: MasteryStatus.LEARNING
     }
 }
