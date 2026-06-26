@@ -72,8 +72,8 @@ class NotificationBuilder @Inject constructor(
             )
             .setAutoCancel(true)
             .setContentIntent(quizPendingIntent)
-            .addAction(0, "GOT IT", gotItPendingIntent)
-            .addAction(0, "QUIZ ME", quizPendingIntent)
+            .addAction(0, "Got It", gotItPendingIntent)
+            .addAction(0, "Quiz Me", quizPendingIntent)
             .build()
 
         notificationManager.notify(notificationId, notification)
