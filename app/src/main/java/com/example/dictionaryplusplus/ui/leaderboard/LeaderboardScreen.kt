@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,9 +23,12 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.domain.model.LeaderboardUser
 import com.example.dictionaryplusplus.R
-// TODO extract hardcoded strings here
+
 @Composable
-fun LeaderboardScreen(viewModel: LeaderboardViewModel = hiltViewModel()) {
+fun LeaderboardScreen(
+    onNavigateBack: () -> Unit,
+    viewModel: LeaderboardViewModel = hiltViewModel()
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
@@ -40,7 +45,6 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = hiltViewModel()) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
                 .padding(horizontal = 16.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -52,16 +56,25 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = hiltViewModel()) {
                 val remaining = users.drop(3)
 
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     item {
-                        Text(
-                            text = stringResource(R.string.leaderboard_title),
-                            style = MaterialTheme.typography.headlineMedium,
-                            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                        )
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                IconButton(onClick = onNavigateBack) {
+                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.btn_back))
+                                }
+                                Spacer(Modifier.width(4.dp))
+                                Text(
+                                    text = stringResource(R.string.leaderboard_title),
+                                    style = MaterialTheme.typography.headlineMedium
+                                )
+                            }
+                        }
                     }
 
                     if (topThree.isNotEmpty()) {

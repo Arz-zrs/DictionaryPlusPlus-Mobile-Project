@@ -128,7 +128,11 @@ fun NavigationGraph(
         }
 
         composable(route = Screen.Leaderboard.route) {
-            LeaderboardScreen()
+            LeaderboardScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         composable(route = Screen.Favourites.route) {
