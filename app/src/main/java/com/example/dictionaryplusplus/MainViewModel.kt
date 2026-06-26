@@ -10,12 +10,7 @@ import com.example.dictionaryplusplus.domain.usecase.GetFontSizeUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetThemeModeUseCase
 import com.example.dictionaryplusplus.domain.usecase.ObserveHasSeenOnboardingUseCase
 import com.example.dictionaryplusplus.core.navigation.Screen
-import com.example.dictionaryplusplus.data.local.dao.SeenEventDao
-import com.example.dictionaryplusplus.data.local.dao.WordDao
-import com.example.dictionaryplusplus.data.local.entity.SeenEventEntity
-import com.example.dictionaryplusplus.data.local.entity.WordEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -30,8 +25,6 @@ class MainViewModel @Inject constructor(
     private val observeHasSeenOnboardingUseCase: ObserveHasSeenOnboardingUseCase,
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
-    private val seenEventDao: SeenEventDao,
-    private val wordDao: WordDao,
     getThemeModeUseCase: GetThemeModeUseCase,
     getFontSizeUseCase: GetFontSizeUseCase
 ) : ViewModel() {
@@ -55,20 +48,6 @@ class MainViewModel @Inject constructor(
 
     init {
         determineStartDestination()
-    }
-
-    fun handleNotificationWord(word: String?) {
-        if (word.isNullOrBlank()) return
-        viewModelScope.launch(Dispatchers.IO) {
-            wordDao.insertWords(listOf(WordEntity(word)))
-            seenEventDao.insertSeenEvent(
-                SeenEventEntity(
-                    word = word,
-                    seenAtTimestamp = System.currentTimeMillis(),
-                    isConfirmed = true
-                )
-            )
-        }
     }
 
     private fun determineStartDestination() {

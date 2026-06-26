@@ -55,9 +55,7 @@ class NotificationBuilder @Inject constructor(
             context, 100, actionIntent, pendingIntentFlags
         )
 
-        // Content intent (main tap) should open an Activity to satisfy lint/best practices
         val contentIntent = Intent(context, MainActivity::class.java).apply {
-            putExtra("EXTRA_WORD_TO_SAVE", word)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         val contentPendingIntent = PendingIntent.getActivity(
@@ -74,8 +72,8 @@ class NotificationBuilder @Inject constructor(
 
         val wotdTitle = "Word of the Day: $word"
         val wotdText: String =
-            if (!phonetic.isBlank())  "$phonetic - Tap to save to history"
-            else "Tap to save to history"
+            if (!phonetic.isBlank())  "$phonetic - Tap to open app"
+            else "Tap to open app"
         val wotdTextLong = "$word $phonetic\n\nDefinition:\n$shortDefinition"
 
         val notification = NotificationCompat.Builder(context, channelId)
