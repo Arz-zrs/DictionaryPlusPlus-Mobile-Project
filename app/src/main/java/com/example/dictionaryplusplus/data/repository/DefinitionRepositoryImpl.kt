@@ -10,6 +10,8 @@ import com.example.dictionaryplusplus.domain.model.DefinitionResult
 import com.example.dictionaryplusplus.domain.model.DefinitionErrorType
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
 import com.example.dictionaryplusplus.core.util.ContentSanitizer
+import com.example.dictionaryplusplus.data.local.dao.WordDao
+import com.example.dictionaryplusplus.data.local.entity.WordEntity
 import com.example.dictionaryplusplus.domain.model.WordMeaning
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
@@ -26,6 +28,7 @@ class DefinitionRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val definitionDao: DefinitionDao,
     private val apiService: DictionaryApiService,
+    private val wordDao: WordDao,
     private val sanitizer: ContentSanitizer
 ) : DefinitionRepository {
     private val gson = Gson()
@@ -93,6 +96,12 @@ class DefinitionRepositoryImpl @Inject constructor(
             )
             definitionDao.insertDefinition(definitionEntity)
 
+            try {
+                wordDao.insertWords(listOf(WordEntity(word)))
+            } catch (e: Exception) {
+                FirebaseCrashlytics.getInstance().recordException(e)
+            }
+
             val domainModel = Definition(
                 word = word,
                 definition = sanitizedDefinition,
@@ -110,7 +119,8 @@ class DefinitionRepositoryImpl @Inject constructor(
                 is java.net.UnknownHostException -> DefinitionErrorType.NO_INTERNET
                 is java.net.SocketTimeoutException -> DefinitionErrorType.TIMEOUT
                 is retrofit2.HttpException -> {
-                    if (e.code() == 404) DefinitionErrorType.NOT_FOUND else DefinitionErrorType.UNKNOWN
+                    if (e.code() == 404) DefinitionErrorType.NOT_FOUND
+                    else DefinitionErrorType.UNKNOWN
                 }
                 else -> DefinitionErrorType.UNKNOWN
             }

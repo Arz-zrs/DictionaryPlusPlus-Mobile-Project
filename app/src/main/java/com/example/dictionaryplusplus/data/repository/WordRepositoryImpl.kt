@@ -16,7 +16,13 @@ class WordRepositoryImpl @Inject constructor(
 ) : WordRepository {
     override fun searchWords(query: String): Flow<List<Word>> {
         return wordDao.searchWords(query).map { entities ->
-            entities.map { Word(it.word) }
+            val localResults = entities.map { Word(it.word) }.toMutableList()
+            val trimmedQuery = query.trim().lowercase()
+
+            if (trimmedQuery.isNotEmpty() && localResults.none { it.word.lowercase() == trimmedQuery }) {
+                localResults.add(0, Word(trimmedQuery))
+            }
+            localResults
         }
     }
 

@@ -3,7 +3,9 @@ package com.example.dictionaryplusplus.data.repository
 import com.example.dictionaryplusplus.core.di.ApplicationScope
 import com.example.dictionaryplusplus.data.firebase.FirestoreSyncStore
 import com.example.dictionaryplusplus.data.local.dao.SeenEventDao
+import com.example.dictionaryplusplus.data.local.dao.WordDao
 import com.example.dictionaryplusplus.data.local.entity.SeenEventEntity
+import com.example.dictionaryplusplus.data.local.entity.WordEntity
 import com.example.dictionaryplusplus.domain.model.SeenEvent
 import com.example.dictionaryplusplus.domain.repository.HistoryRepository
 import kotlinx.coroutines.CoroutineScope
@@ -17,6 +19,7 @@ import javax.inject.Singleton
 @Singleton
 class HistoryRepositoryImpl @Inject constructor(
     private val seenEventDao: SeenEventDao,
+    private val wordDao: WordDao,
     private val firestoreSyncStore: FirestoreSyncStore,
     @ApplicationScope private val applicationScope: CoroutineScope
 ) : HistoryRepository {
@@ -40,6 +43,7 @@ class HistoryRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addSeenEvent(word: String) {
+        wordDao.insertWords(listOf(WordEntity(word)))
         seenEventDao.insertSeenEvent(
             SeenEventEntity(
                 word = word,

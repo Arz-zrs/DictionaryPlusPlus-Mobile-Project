@@ -7,7 +7,9 @@ import android.content.Intent
 import androidx.core.net.toUri
 import com.example.dictionaryplusplus.core.di.ApplicationScope
 import com.example.dictionaryplusplus.data.local.dao.SeenEventDao
+import com.example.dictionaryplusplus.data.local.dao.WordDao
 import com.example.dictionaryplusplus.data.local.entity.SeenEventEntity
+import com.example.dictionaryplusplus.data.local.entity.WordEntity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +20,9 @@ import javax.inject.Inject
 class QuizActionReceiver : BroadcastReceiver() {
     @Inject
     lateinit var seenEventDao: SeenEventDao
+
+    @Inject
+    lateinit var wordDao: WordDao
 
     @Inject
     @ApplicationScope
@@ -42,6 +47,7 @@ class QuizActionReceiver : BroadcastReceiver() {
         val pendingResult = goAsync()
         applicationScope.launch(Dispatchers.IO) {
             try {
+                wordDao.insertWords(listOf(WordEntity(word)))
                 seenEventDao.insertSeenEvent(
                     SeenEventEntity(
                         word = word,
