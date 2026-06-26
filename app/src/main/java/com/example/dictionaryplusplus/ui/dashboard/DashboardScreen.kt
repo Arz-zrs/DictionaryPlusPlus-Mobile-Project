@@ -90,13 +90,13 @@ fun DashboardScreen(
                 isAvailable = uiState.isQuizAvailable,
                 onStartClick = onNavigateToQuizHub
             )
+            HorizontalDivider(Modifier.padding(vertical = 16.dp))
         }
 
         item {
             Text(
                 text = stringResource(R.string.label_recent_words),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(top = 8.dp)
+                style = MaterialTheme.typography.titleMedium
             )
             TextButton(onClick = onNavigateToWordHistory) {
                 Row(verticalAlignment = Alignment.CenterVertically) {

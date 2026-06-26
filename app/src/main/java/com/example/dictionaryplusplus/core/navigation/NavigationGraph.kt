@@ -69,7 +69,7 @@ fun NavigationGraph(
         composable(route = Screen.Dashboard.route) {
             DashboardScreen(
                 onNavigateToQuizHub = {
-                    navController.navigate(Screen.QuizHub.route)
+                    navController.navigate(Screen.DailyQuiz.route)
                 },
                 onNavigateToLeaderboard = {
                     navController.navigate(Screen.Leaderboard.route)
