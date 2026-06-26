@@ -8,8 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
-import com.example.dictionaryplusplus.ui.auth.screens.LoginScreen
-import com.example.dictionaryplusplus.ui.auth.screens.RegisterScreen
+import com.example.dictionaryplusplus.ui.auth.LoginScreen
+import com.example.dictionaryplusplus.ui.auth.RegisterScreen
 import com.example.dictionaryplusplus.ui.dashboard.DashboardScreen
 import com.example.dictionaryplusplus.ui.dictionary.DictionaryScreen
 import com.example.dictionaryplusplus.ui.favourites.FavouritesScreen

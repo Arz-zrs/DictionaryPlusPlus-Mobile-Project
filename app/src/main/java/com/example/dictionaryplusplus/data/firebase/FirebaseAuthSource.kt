@@ -13,9 +13,6 @@ class FirebaseAuthSource @Inject constructor(
     val currentUserUid: String?
         get() = firebaseAuth.currentUser?.uid
 
-    val currentUserEmail: String?
-        get() = firebaseAuth.currentUser?.email
-
     fun isUserLoggedIn(): Boolean {
         return firebaseAuth.currentUser != null
     }
@@ -58,6 +55,15 @@ class FirebaseAuthSource @Inject constructor(
             val credential = EmailAuthProvider.getCredential(email, currentPassword)
             user.reauthenticate(credential).await()
             user.updatePassword(newPassword).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun sendPasswordResetEmail(email: String): Result<Unit> {
+        return try {
+            firebaseAuth.sendPasswordResetEmail(email).await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

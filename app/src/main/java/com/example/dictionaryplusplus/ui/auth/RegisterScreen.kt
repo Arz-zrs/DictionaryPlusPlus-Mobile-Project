@@ -1,4 +1,4 @@
-package com.example.dictionaryplusplus.ui.auth.screens
+package com.example.dictionaryplusplus.ui.auth
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,15 +16,12 @@ import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.ui.components.AuthTextField
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.dictionaryplusplus.ui.auth.AuthAction
-import com.example.dictionaryplusplus.ui.auth.AuthUiState
-import com.example.dictionaryplusplus.ui.auth.AuthViewModel
 import com.example.dictionaryplusplus.core.util.ErrorMessage
 
 @Composable
-fun LoginScreen(
-    onLoginSuccess: () -> Unit,
-    onNavigateToRegister: () -> Unit,
+fun RegisterScreen(
+    onRegisterSuccess: () -> Unit,
+    onNavigateBack: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -32,24 +29,31 @@ fun LoginScreen(
 
     LaunchedEffect(uiState) {
         if (uiState is AuthUiState.Success) {
-            onLoginSuccess()
+            onRegisterSuccess()
         }
     }
 
     Box(
         modifier = Modifier
-        .fillMaxSize()
-        .padding(24.dp),
+            .fillMaxSize()
+            .padding(24.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = stringResource(R.string.login_welcome),
+                text = stringResource(R.string.register_title),
                 style = MaterialTheme.typography.headlineMedium
+            )
+
+            AuthTextField(
+                value = formState.displayName,
+                onValueChange = { viewModel.onAction(AuthAction.OnDisplayNameChange(it)) },
+                label = stringResource(R.string.label_display_name),
+                errorMessage = formState.displayNameError
             )
 
             AuthTextField(
@@ -63,8 +67,17 @@ fun LoginScreen(
             AuthTextField(
                 value = formState.password,
                 onValueChange = { viewModel.onAction(AuthAction.OnPasswordChange(it)) },
-                label = stringResource(R.string.label_password),
+                label = stringResource(R.string.label_password_hint),
                 errorMessage = formState.passwordError,
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+            )
+
+            AuthTextField(
+                value = formState.confirmPassword,
+                onValueChange = { viewModel.onAction(AuthAction.OnConfirmPasswordChange(it)) },
+                label = stringResource(R.string.label_confirm_password),
+                errorMessage = formState.confirmPasswordError,
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
@@ -87,14 +100,14 @@ fun LoginScreen(
                 CircularProgressIndicator()
             } else {
                 Button(
-                    onClick = { viewModel.onAction(AuthAction.Login) },
+                    onClick = { viewModel.onAction(AuthAction.Register) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(text = stringResource(R.string.btn_login))
+                    Text(text = stringResource(R.string.btn_register))
                 }
 
-                TextButton(onClick = onNavigateToRegister) {
-                    Text(text = stringResource(R.string.btn_no_account_register))
+                TextButton(onClick = onNavigateBack) {
+                    Text(text = stringResource(R.string.btn_back_to_login))
                 }
             }
         }

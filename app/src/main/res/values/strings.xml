@@ -22,6 +22,13 @@
     <string name="label_confirm_password">Confirm Password</string>
     <string name="btn_register">Register</string>
     <string name="btn_back_to_login">Back to Login</string>
+    <string name="btn_forgot_password">Forgot password?</string>
+    <string name="reset_password_title">Reset Password</string>
+    <string name="reset_password_desc">Enter your email address and we\'ll send you a link to reset your password.</string>
+    <string name="reset_password_sent">Reset link sent! Check your email.</string>
+    <string name="reset_password_error">Failed to send reset email. Check the address and try again.</string>
+    <string name="reset_password_send">Send Link</string>
+    <string name="btn_cancel">Cancel</string>
 
     <!-- Onboarding Screen -->
     <string name="onboarding_welcome_title">Welcome to Dictionary++</string>

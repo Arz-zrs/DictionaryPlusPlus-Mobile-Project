@@ -8,6 +8,7 @@ import com.example.dictionaryplusplus.domain.usecase.LoginUseCase
 import com.example.dictionaryplusplus.domain.usecase.RegisterUseCase
 import com.example.dictionaryplusplus.core.util.ErrorMessage
 import com.example.dictionaryplusplus.core.util.asErrorMessage
+import com.example.dictionaryplusplus.domain.usecase.SendPasswordResetEmailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,13 +20,18 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    private val registerUseCase: RegisterUseCase
+    private val registerUseCase: RegisterUseCase,
+    private val sendPasswordResetEmailUseCase: SendPasswordResetEmailUseCase
 ): ViewModel() {
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
     private val _formState = MutableStateFlow(AuthFormState())
     val formState: StateFlow<AuthFormState> = _formState.asStateFlow()
+
+    private val _resetEmailState = MutableStateFlow<ResetEmailState>(ResetEmailState.Idle)
+    val resetEmailState: StateFlow<ResetEmailState> = _resetEmailState.asStateFlow()
+
 
     fun onAction(action: AuthAction) {
         when (action) {
@@ -132,5 +138,18 @@ class AuthViewModel @Inject constructor(
         } else {
             ErrorMessage.None
         }
+    }
+
+    fun sendPasswordReset(email: String) {
+        viewModelScope.launch {
+            _resetEmailState.value = ResetEmailState.Loading
+            sendPasswordResetEmailUseCase(email)
+                .onSuccess { _resetEmailState.value = ResetEmailState.Sent }
+                .onFailure { _resetEmailState.value = ResetEmailState.Error }
+        }
+    }
+
+    fun resetPasswordResetState() {
+        _resetEmailState.value = ResetEmailState.Idle
     }
 }
