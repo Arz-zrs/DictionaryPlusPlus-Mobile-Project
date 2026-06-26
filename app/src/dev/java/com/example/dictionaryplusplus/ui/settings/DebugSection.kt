@@ -11,7 +11,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.dictionaryplusplus.R
 
 @Composable
 fun DebugSection(
@@ -30,7 +32,7 @@ fun DebugSection(
                 .padding(16.dp)
         ) {
             Text(
-                text = "Debug Tools (Dev Flavor)",
+                text = stringResource(R.string.debug_title),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -40,7 +42,7 @@ fun DebugSection(
                 onClick = onTriggerWotd,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Trigger WotD Worker (API)")
+                Text(stringResource(R.string.debug_trigger_wotd_api))
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -49,7 +51,7 @@ fun DebugSection(
                 onClick = onTriggerDailyWord,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Trigger Daily Word Worker (Local)")
+                Text(stringResource(R.string.debug_trigger_wotd_local))
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -58,7 +60,7 @@ fun DebugSection(
                 onClick = onResetQuiz,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Reset Quiz Completion Timestamp")
+                Text(stringResource(R.string.debug_reset_quiz))
             }
         }
     }

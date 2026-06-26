@@ -37,8 +37,8 @@ fun WordHistoryScreen(
     val context = LocalContext.current
 
     LaunchedEffect(viewModel) {
-        viewModel.toastMessage.collectLatest { message ->
-             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        viewModel.toastMessage.collectLatest { uiText ->
+             Toast.makeText(context, uiText.asString(context), Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -6,7 +6,7 @@ import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
 import com.example.dictionaryplusplus.domain.repository.WordRepository
 import javax.inject.Inject
 
-class GetSynonymQuizUseCase @Inject constructor(
+class GetPracticeQuizUseCase @Inject constructor(
     private val definitionRepository: DefinitionRepository,
     private val wordRepository: WordRepository
 ) {

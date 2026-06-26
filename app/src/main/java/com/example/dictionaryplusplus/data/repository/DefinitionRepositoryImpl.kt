@@ -73,12 +73,13 @@ class DefinitionRepositoryImpl @Inject constructor(
             val rawExample = rawMeanings.firstOrNull()?.third ?: "No example available"
             val rawSynonyms = firstEntry.meanings?.firstOrNull()?.synonyms ?: emptyList()
 
-            val sanitizedDefinition = sanitizer.sanitizeText(rawDefinition, denyList, "Offensive definition omitted.")
-            val sanitizedExample = sanitizer.sanitizeText(rawExample, denyList, "Offensive example omitted.")
+            val sanitizedDefinition = sanitizer.sanitizeText(rawDefinition, denyList,
+                ContentSanitizer.FALLBACK_DEFINITION)
+            val sanitizedExample = sanitizer.sanitizeText(rawExample, denyList, ContentSanitizer.FALLBACK_EXAMPLE)
             val sanitizedSynonyms = sanitizer.sanitizeSynonyms(rawSynonyms, denyList)
             val sanitizedMeanings = rawMeanings.map { (pos, def, ex) ->
                 Triple(pos, sanitizer.sanitizeText(def, denyList, ContentSanitizer.FALLBACK_DEFINITION),
-                    ex?.let { sanitizer.sanitizeText(it, denyList, "Example omitted.") })
+                    ex?.let { sanitizer.sanitizeText(it, denyList, ContentSanitizer.FALLBACK_EXAMPLE) })
             }.filter { !ContentSanitizer.isFallbackDefinition(it.second) }
 
             val definitionEntity = DefinitionEntity(

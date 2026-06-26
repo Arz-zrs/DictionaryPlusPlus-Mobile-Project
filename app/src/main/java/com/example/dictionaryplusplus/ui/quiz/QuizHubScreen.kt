@@ -14,7 +14,7 @@ import com.example.dictionaryplusplus.ui.components.DailyQuizEntryCard
 
 @Composable
 fun QuizScreen(
-    onNavigateToDefaultSynonymQuiz: () -> Unit,
+    onNavigateToPracticeQuiz: () -> Unit,
     onNavigateToDailyQuiz: () -> Unit,
     viewModel: QuizHubViewModel = hiltViewModel()
 ) {
@@ -34,20 +34,20 @@ fun QuizScreen(
 
         Card(
             modifier = Modifier.fillMaxWidth(),
-            onClick = onNavigateToDefaultSynonymQuiz,
+            onClick = onNavigateToPracticeQuiz,
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
             )
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = stringResource(R.string.quiz_synonym_practice_title),
+                    text = stringResource(R.string.quiz_practice_title),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = stringResource(R.string.quiz_synonym_practice_desc),
+                    text = stringResource(R.string.quiz_practice_desc),
                     style = MaterialTheme.typography.bodyLarge
                 )
             }

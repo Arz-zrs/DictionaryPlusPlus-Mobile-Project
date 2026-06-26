@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 interface FavouriteRepository {
     fun observeIsFavourite(word: String): Flow<Boolean>
     fun observeFavouriteWord(): Flow<List<FavouriteWord>>
-    suspend fun toggleFavourite(word: String)
+    suspend fun toggleFavourite(word: String): Boolean
 }

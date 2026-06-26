@@ -94,8 +94,8 @@ fun NavigationGraph(
 
         composable(route = Screen.QuizHub.route) {
             QuizScreen(
-                onNavigateToDefaultSynonymQuiz = {
-                    navController.navigate(Screen.SynonymQuiz.createRoute(null))
+                onNavigateToPracticeQuiz = {
+                    navController.navigate(Screen.PracticeQuiz.createRoute(null))
                 },
                 onNavigateToDailyQuiz = {
                     navController.navigate(Screen.DailyQuiz.route)
@@ -104,7 +104,7 @@ fun NavigationGraph(
         }
 
         composable(
-            route = Screen.SynonymQuiz.route,
+            route = Screen.PracticeQuiz.route,
             arguments = listOf(
                 navArgument("word") {
                     type = NavType.StringType

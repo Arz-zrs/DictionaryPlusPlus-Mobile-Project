@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.domain.usecase.ObserveSeenEventsUseCase
 import com.example.dictionaryplusplus.domain.usecase.DeleteSeenEventUseCase
 import com.example.dictionaryplusplus.domain.usecase.ToggleFavouriteUseCase
+import com.example.dictionaryplusplus.core.util.UiText
+import com.example.dictionaryplusplus.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +25,7 @@ class HistoryViewModel @Inject constructor(
     private val deleteSeenEventUseCase: DeleteSeenEventUseCase,
     private val toggleFavouriteUseCase: ToggleFavouriteUseCase
 ) : ViewModel() {
-    private val _toastMessage = Channel<String>()
+    private val _toastMessage = Channel<UiText>()
     val toastMessage = _toastMessage.receiveAsFlow()
     private val _uiState = MutableStateFlow<HistorySheetState>(HistorySheetState.Hidden)
     val uiState: StateFlow<HistorySheetState> = _uiState.asStateFlow()
@@ -47,14 +49,15 @@ class HistoryViewModel @Inject constructor(
     fun removeHistoryEntry(id: Long, word: String) {
         viewModelScope.launch {
             deleteSeenEventUseCase(id)
-            _toastMessage.send("Removed $word from history")
+            _toastMessage.send(UiText.StringResource(R.string.history_removed_message, word))
         }
     }
 
     fun toggleFavourite(word: String) {
         viewModelScope.launch {
-            toggleFavouriteUseCase(word)
-            _toastMessage.send("Favourite status updated for $word")
+            val isAdded = toggleFavouriteUseCase(word)
+            val resId = if (isAdded) R.string.favourite_added_message else R.string.favourite_removed_message
+            _toastMessage.send(UiText.StringResource(resId, word))
         }
     }
 

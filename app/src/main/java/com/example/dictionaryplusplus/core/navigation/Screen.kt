@@ -9,10 +9,10 @@ sealed class Screen(val route: String) {
     object Dictionary : Screen("dictionary")
     object QuizHub : Screen("quiz_hub")
 
-    object SynonymQuiz : Screen("synonym_quiz?word={word}") {
+    object PracticeQuiz : Screen("practice_quiz?word={word}") {
         fun createRoute(word: String?) =
-            if (word != null) "synonym_quiz?word=$word"
-            else "synonym_quiz"
+            if (word != null) "practice_quiz?word=$word"
+            else "practice_quiz"
     }
 
     object DailyQuiz : Screen("daily_quiz")

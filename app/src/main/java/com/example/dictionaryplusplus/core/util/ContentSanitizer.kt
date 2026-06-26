@@ -15,6 +15,7 @@ class ContentSanitizer @Inject constructor() {
 
     companion object {
         const val FALLBACK_DEFINITION = "Offensive definition omitted."
+        const val FALLBACK_EXAMPLE = "Offensive example omitted."
 
         fun isFallbackDefinition(text: String): Boolean {
             return text == FALLBACK_DEFINITION

@@ -6,8 +6,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.dictionaryplusplus.BuildConfig
 import com.example.dictionaryplusplus.data.remote.WordnikApiService
-import com.example.dictionaryplusplus.data.local.dao.SeenEventDao
-import com.example.dictionaryplusplus.data.local.entity.SeenEventEntity
 import com.example.dictionaryplusplus.domain.repository.WotdRepository
 import com.example.dictionaryplusplus.core.notification.NotificationBuilder
 import com.example.dictionaryplusplus.data.local.dao.WordDao
@@ -22,7 +20,6 @@ class WotdApiWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val wotdRepository: WotdRepository,
     private val wordnikApiService: WordnikApiService,
-    private val seenEventDao: SeenEventDao,
     private val wordDao: WordDao,
     private val notificationBuilder: NotificationBuilder
 ): CoroutineWorker(context, params) {
@@ -47,16 +44,7 @@ class WotdApiWorker @AssistedInject constructor(
                 FirebaseCrashlytics.getInstance().recordException(e)
             }
 
-            val seenEventId = seenEventDao.insertSeenEvent(
-                SeenEventEntity(
-                    word = word,
-                    seenAtTimestamp = System.currentTimeMillis(),
-                    isConfirmed = false
-                )
-            )
-
             notificationBuilder.showDailyNotification(
-                eventId = seenEventId,
                 word = word,
                 phonetic = "",
                 shortDefinition = wordnikDefinition

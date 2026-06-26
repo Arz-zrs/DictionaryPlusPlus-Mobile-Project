@@ -6,7 +6,7 @@ import javax.inject.Inject
 class ToggleFavouriteUseCase @Inject constructor(
     private val favouriteRepository: FavouriteRepository
 ) {
-    suspend operator fun invoke(word: String) {
-        favouriteRepository.toggleFavourite(word)
+    suspend operator fun invoke(word: String): Boolean {
+        return favouriteRepository.toggleFavourite(word)
     }
 }

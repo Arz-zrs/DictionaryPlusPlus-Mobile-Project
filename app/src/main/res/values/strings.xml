@@ -58,6 +58,9 @@
     <string name="history_empty_state">No history entries found.</string>
     <string name="delete_content_description">Delete</string>
     <string name="favourite_content_description">Favourite</string>
+    <string name="history_removed_message">Removed %1$s from history</string>
+    <string name="favourite_added_message">Added %1$s to favourites</string>
+    <string name="favourite_removed_message">Removed %1$s from favourites</string>
 
     <!-- Word Detail Sheet -->
     <string name="favourite_toggle_desc">Favourite Toggle</string>
@@ -101,8 +104,8 @@
 
     <!-- Quiz Screens -->
     <string name="quiz_hub_title">Quiz Hub</string>
-    <string name="quiz_synonym_practice_title">VOCABULARY PRACTICE</string>
-    <string name="quiz_synonym_practice_desc">Practice vocabulary context with synonym / definition matching. No score penalties.</string>
+    <string name="quiz_practice_title">VOCABULARY PRACTICE</string>
+    <string name="quiz_practice_desc">Practice vocabulary context with synonym / definition matching. No score penalties.</string>
     <string name="quiz_match_definition">Match the Definition</string>
     <string name="quiz_find_synonym">Find the Synonym</string>
     <string name="quiz_back_to_hub">Back to Hub</string>
@@ -160,4 +163,10 @@
     <string name="quiz_quit_desc">Are you sure you want to quit?</string>
     <string name="quiz_quit_confirm">Yes</string>
     <string name="quiz_quit_cancel">No</string>
+
+    <!-- Debug Section -->
+    <string name="debug_title">Debug Tools</string>
+    <string name="debug_trigger_wotd_api">Trigger WotD Worker (API)</string>
+    <string name="debug_trigger_wotd_local">Trigger WotD Worker (Local Fallback)</string>
+    <string name="debug_reset_quiz">Reset Quiz Completion Timestamp</string>
 </resources>

@@ -27,11 +27,12 @@ class FavouriteRepositoryImpl @Inject constructor(
         return favouriteDao.observeIsFavourite(word)
     }
 
-    override suspend fun toggleFavourite(word: String) {
-        try {
+    override suspend fun toggleFavourite(word: String): Boolean {
+        return try {
             val isFavourite =
                 favouriteDao.observeIsFavourite(word).map { it }.firstOrNull() ?: false
 
+            val newState = !isFavourite
             if (isFavourite) {
                 favouriteDao.deleteFavourite(word)
             } else {
@@ -43,12 +44,14 @@ class FavouriteRepositoryImpl @Inject constructor(
                 )
             }
             applicationScope.launch(Dispatchers.IO) {
-                firestoreSyncStore.syncFavouriteChange(word, isAdded = !isFavourite)
+                firestoreSyncStore.syncFavouriteChange(word, isAdded = newState)
             }
+            newState
         } catch (e: SQLiteConstraintException) {
             FirebaseCrashlytics.getInstance().recordException(
                 Exception("Foreign Key Violation: can't toggle favourite on non-existent word: $word", e)
             )
+            false
         }
     }
 

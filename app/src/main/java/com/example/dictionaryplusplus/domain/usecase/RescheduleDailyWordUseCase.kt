@@ -5,7 +5,7 @@ import com.example.dictionaryplusplus.domain.repository.OnboardingRepository
 import java.util.Locale
 import javax.inject.Inject
 
-// TODO use this for Settings on NotifTimePicker save
+
 class RescheduleDailyWordUseCase @Inject constructor(
     private val onboardingRepository: OnboardingRepository,
     private val notificationScheduler: NotificationScheduler

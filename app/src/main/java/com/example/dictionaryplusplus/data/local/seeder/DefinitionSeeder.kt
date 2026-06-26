@@ -47,7 +47,7 @@ class DefinitionSeeder @Inject constructor(
             val seedEntries: List<DefinitionSeedDto> = gson.fromJson(jsonString, type)
 
             val entities = seedEntries.map {
-                val safeDefinition = sanitizer.sanitizeText(it.definition, denyList, "Definition omitted")
+                val safeDefinition = sanitizer.sanitizeText(it.definition, denyList, ContentSanitizer.FALLBACK_DEFINITION)
                 val safeExample = it.exampleSentence?.let { example ->
                     sanitizer.sanitizeText(example, denyList, "Example omitted")
                 }

@@ -7,10 +7,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import com.example.dictionaryplusplus.MainActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
-import androidx.core.net.toUri
 
 @Singleton
 class NotificationBuilder @Inject constructor(
@@ -38,7 +38,6 @@ class NotificationBuilder @Inject constructor(
     }
 
     fun showDailyNotification(
-        eventId: Long,
         word: String,
         phonetic: String,
         shortDefinition: String
@@ -48,32 +47,49 @@ class NotificationBuilder @Inject constructor(
         val pendingIntentFlags =
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
 
-        val gotItIntent = Intent(context, QuizActionReceiver::class.java).apply {
-            action = "ACTION_GOT_IT"
-            putExtra("EXTRA_SEEN_EVENT_ID", eventId)
+        val actionIntent = Intent(context, QuizActionReceiver::class.java).apply {
+            putExtra("EXTRA_WORD", word)
         }
-        val gotItPendingIntent = PendingIntent.getBroadcast(
-            context, 100, gotItIntent, pendingIntentFlags
+        
+        val actionPendingIntent = PendingIntent.getBroadcast(
+            context, 100, actionIntent, pendingIntentFlags
         )
 
-        val quizUri = "dictionaryplusplus://quiz/$word".toUri()
-        val quizIntent = Intent(Intent.ACTION_VIEW, quizUri)
-        val quizPendingIntent = PendingIntent.getActivity(
-            context, 200, quizIntent, pendingIntentFlags
+        // Content intent (main tap) should open an Activity to satisfy lint/best practices
+        val contentIntent = Intent(context, MainActivity::class.java).apply {
+            putExtra("EXTRA_WORD_TO_SAVE", word)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val contentPendingIntent = PendingIntent.getActivity(
+            context, 0, contentIntent, pendingIntentFlags
         )
+
+        val quizMeIntent = Intent(context, QuizActionReceiver::class.java).apply {
+            putExtra("EXTRA_WORD", word)
+            putExtra("EXTRA_NAVIGATE_TO_QUIZ", true)
+        }
+        val quizMePendingIntent = PendingIntent.getBroadcast(
+            context, 200, quizMeIntent, pendingIntentFlags
+        )
+
+        val wotdTitle = "Word of the Day: $word"
+        val wotdText: String =
+            if (!phonetic.isBlank())  "$phonetic - Tap to save to history"
+            else "Tap to save to history"
+        val wotdTextLong = "$word $phonetic\n\nDefinition:\n$shortDefinition"
 
         val notification = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(android.R.drawable.ic_popup_reminder)
-            .setContentTitle("Word of the Day: $word")
-            .setContentText("$phonetic - Tap to learn more")
+            .setContentTitle(wotdTitle)
+            .setContentText(wotdText)
             .setStyle(
                 NotificationCompat.BigTextStyle()
-                    .bigText("$word $phonetic\n\nDefinition:\n$shortDefinition")
+                    .bigText(wotdTextLong)
             )
             .setAutoCancel(true)
-            .setContentIntent(quizPendingIntent)
-            .addAction(0, "Got It", gotItPendingIntent)
-            .addAction(0, "Quiz Me", quizPendingIntent)
+            .setContentIntent(contentPendingIntent)
+            .addAction(0, "Got It", actionPendingIntent)
+            .addAction(0, "Quiz Me", quizMePendingIntent)
             .build()
 
         notificationManager.notify(notificationId, notification)

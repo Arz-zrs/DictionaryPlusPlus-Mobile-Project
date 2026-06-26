@@ -11,7 +11,7 @@ data class HistoryUiState(
     val formattedDate: String
 ) {
     companion object {
-        const val DEFAULT_PATTERN = "dd MMM yyyy, HH:mm"
+        const val DEFAULT_PATTERN = "dd MMM yyyy, HH:mm:ss"
         fun fromDomain(
             id: Long,
             word: String,

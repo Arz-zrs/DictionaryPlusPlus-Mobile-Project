@@ -4,9 +4,7 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.example.dictionaryplusplus.data.local.dao.SeenEventDao
 import com.example.dictionaryplusplus.data.local.dao.WordDao
-import com.example.dictionaryplusplus.data.local.entity.SeenEventEntity
 import com.example.dictionaryplusplus.domain.model.DefinitionResult
 import com.example.dictionaryplusplus.domain.model.DefinitionErrorType
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
@@ -20,7 +18,6 @@ class DailyWordWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val wordDao: WordDao,
-    private val seenEventDao: SeenEventDao,
     private val definitionRepository: DefinitionRepository,
     private val notificationBuilder: NotificationBuilder
 ): CoroutineWorker(context, params) {
@@ -43,16 +40,7 @@ class DailyWordWorker @AssistedInject constructor(
                 DefinitionResult.Loading -> return Result.retry()
             }
 
-            val seenEventId = seenEventDao.insertSeenEvent(
-                SeenEventEntity(
-                    word = word,
-                    seenAtTimestamp = System.currentTimeMillis(),
-                    isConfirmed = false
-                )
-            )
-
             notificationBuilder.showDailyNotification(
-                eventId = seenEventId,
                 word = word,
                 phonetic = definition.phonetic ?: "",
                 shortDefinition = definition.definition

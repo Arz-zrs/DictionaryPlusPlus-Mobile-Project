@@ -104,7 +104,7 @@ fun DashboardScreen(
                     Spacer(modifier = Modifier.width(4.dp))
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = null,
+                        contentDescription = stringResource(R.string.btn_see_all),
                         modifier = Modifier.size(16.dp)
                     )
                 }
