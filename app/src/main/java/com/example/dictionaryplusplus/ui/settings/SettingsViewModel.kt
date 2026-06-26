@@ -55,8 +55,11 @@ class SettingsViewModel @Inject constructor(
     observeUserProfileUseCase: ObserveUserProfileUseCase,
     private val getNotificationPermissionStatusUseCase: GetNotificationPermissionStatusUseCase
 ): ViewModel() {
-    private val _uiState = MutableStateFlow<SettingsUiState>(SettingsUiState.Idle)
-    val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
+    private val _passwordUiState = MutableStateFlow<SettingsUiState>(SettingsUiState.Idle)
+    val passwordUiState: StateFlow<SettingsUiState> = _passwordUiState.asStateFlow()
+
+    private val _displayNameUiState = MutableStateFlow<SettingsUiState>(SettingsUiState.Idle)
+    val displayNameUiState: StateFlow<SettingsUiState> = _displayNameUiState.asStateFlow()
 
     val quizLength: StateFlow<Int> = getQuizLengthUseCase()
         .stateIn(
@@ -121,9 +124,13 @@ class SettingsViewModel @Inject constructor(
 
     fun updateDisplayName(name: String) {
         viewModelScope.launch {
+            _displayNameUiState.value = SettingsUiState.Loading
             updateDisplayNameUseCase(name)
+                .onSuccess {
+                    _displayNameUiState.value = SettingsUiState.Success
+                }
                 .onFailure {
-                    _uiState.value = SettingsUiState.Error(
+                    _displayNameUiState.value = SettingsUiState.Error(
                         asErrorMessage(R.string.error_update_display_name_failed)
                     )
                 }
@@ -132,18 +139,23 @@ class SettingsViewModel @Inject constructor(
 
     fun changePassword(currentPassword: String, newPassword: String) {
         viewModelScope.launch {
+            _passwordUiState.value = SettingsUiState.Loading
             changePasswordUseCase(currentPassword, newPassword)
                 .onSuccess {
-                    _uiState.value = SettingsUiState.Success
+                    _passwordUiState.value = SettingsUiState.Success
                 }
                 .onFailure {
-                    _uiState.value = SettingsUiState.Error(asErrorMessage(R.string.change_password_failed))
+                    _passwordUiState.value = SettingsUiState.Error(asErrorMessage(R.string.change_password_failed))
                 }
         }
     }
 
     fun resetPasswordState() {
-        _uiState.value = SettingsUiState.Idle
+        _passwordUiState.value = SettingsUiState.Idle
+    }
+
+    fun resetDisplayNameState() {
+        _displayNameUiState.value = SettingsUiState.Idle
     }
 
     val notificationTime: StateFlow<String> = getNotificationTimeUseCase()

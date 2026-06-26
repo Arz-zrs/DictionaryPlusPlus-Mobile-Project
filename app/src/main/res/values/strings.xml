@@ -149,6 +149,7 @@
     <string name="settings_logout">Logout</string>
     <string name="change_password_failed">Failed to change password.</string>
     <string name="error_update_display_name_failed">Failed to update Display Name</string>
+    <string name="settings_display_name_updated_success">Display Name updated successfully!</string>
     <string name="settings_save_display_name">Update Display Name</string>
     <string name="settings_display_name">Change Display Name</string>
     <string name="permission_banner_title">Notifications Disabled\n</string>

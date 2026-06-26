@@ -48,11 +48,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.delay
 import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.core.util.ErrorMessage
 import com.example.dictionaryplusplus.domain.model.FontSize
 import com.example.dictionaryplusplus.domain.model.ThemeMode
 import com.example.dictionaryplusplus.ui.theme.Success
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun SettingsScreen(
@@ -67,7 +69,8 @@ fun SettingsScreen(
     val refreshTime by viewModel.dailyQuizRefreshTime.collectAsStateWithLifecycle()
     val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
     val fontSize by viewModel.fontSize.collectAsStateWithLifecycle()
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val passwordUiState by viewModel.passwordUiState.collectAsStateWithLifecycle()
+    val displayNameUiState by viewModel.displayNameUiState.collectAsStateWithLifecycle()
     val notificationTime by viewModel.notificationTime.collectAsStateWithLifecycle()
     val displayName by viewModel.displayName.collectAsStateWithLifecycle()
     val isNotificationGranted by viewModel.isNotificationPermissionGranted.collectAsStateWithLifecycle()
@@ -87,10 +90,22 @@ fun SettingsScreen(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    LaunchedEffect(uiState) {
-        if (uiState is SettingsUiState.Success) {
+    LaunchedEffect(passwordUiState) {
+        if (passwordUiState is SettingsUiState.Success) {
             currentPassword = ""
             newPassword = ""
+            delay(3000.milliseconds)
+            viewModel.resetPasswordState()
+        } else if (passwordUiState is SettingsUiState.Error) {
+            delay(3000.milliseconds)
+            viewModel.resetPasswordState()
+        }
+    }
+
+    LaunchedEffect(displayNameUiState) {
+        if (displayNameUiState is SettingsUiState.Success || displayNameUiState is SettingsUiState.Error) {
+            delay(3000.milliseconds)
+            viewModel.resetDisplayNameState()
         }
     }
 
@@ -297,11 +312,38 @@ fun SettingsScreen(
                 )
                 OutlinedTextField(
                     value = nameInput,
-                    onValueChange = { nameInput = it },
+                    onValueChange = {
+                        nameInput = it
+                        if (displayNameUiState !is SettingsUiState.Idle) viewModel.resetDisplayNameState()
+                    },
                     label = { Text(stringResource(R.string.label_display_name)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
+
+                when (displayNameUiState) {
+                    is SettingsUiState.Loading -> {
+                        CircularProgressIndicator()
+                    }
+                    is SettingsUiState.Success -> {
+                        Text(
+                            text = stringResource(R.string.settings_display_name_updated_success),
+                            color = Success
+                        )
+                    }
+                    is SettingsUiState.Error -> {
+                        val message = when (val state = (displayNameUiState as SettingsUiState.Error).errorMessage) {
+                            is ErrorMessage.Known -> stringResource(state.messageRes)
+                            ErrorMessage.None -> ""
+                        }
+                        Text(
+                            text = message,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                    else -> {}
+                }
+
                 Button(
                     onClick = { viewModel.updateDisplayName(nameInput) },
                     enabled = nameInput.isNotBlank() && nameInput != displayName,
@@ -326,7 +368,7 @@ fun SettingsScreen(
                     value = currentPassword,
                     onValueChange = {
                         currentPassword = it
-                        if (uiState is SettingsUiState.Idle) viewModel.resetPasswordState()
+                        if (passwordUiState !is SettingsUiState.Idle) viewModel.resetPasswordState()
                     },
                     label = { Text(stringResource(R.string.settings_current_password)) },
                     visualTransformation = PasswordVisualTransformation(),
@@ -338,7 +380,7 @@ fun SettingsScreen(
                     value = newPassword,
                     onValueChange = {
                         newPassword = it
-                        if (uiState is SettingsUiState.Idle) viewModel.resetPasswordState()
+                        if (passwordUiState !is SettingsUiState.Idle) viewModel.resetPasswordState()
                     },
                     label = { Text(stringResource(R.string.settings_new_password_hint)) },
                     visualTransformation = PasswordVisualTransformation(),
@@ -346,7 +388,7 @@ fun SettingsScreen(
                     singleLine = true
                 )
 
-                when (uiState) {
+                when (passwordUiState) {
                     is SettingsUiState.Loading -> {
                         CircularProgressIndicator()
                     }
@@ -357,7 +399,7 @@ fun SettingsScreen(
                         )
                     }
                     is SettingsUiState.Error -> {
-                        val message = when (val state = (uiState as SettingsUiState.Error).errorMessage) {
+                        val message = when (val state = (passwordUiState as SettingsUiState.Error).errorMessage) {
                             is ErrorMessage.Known -> stringResource(state.messageRes)
                             ErrorMessage.None -> ""
                         }
