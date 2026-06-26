@@ -50,7 +50,7 @@
             android:name=".core.notification.QuizActionReceiver"
             android:exported="false"/>
 
-        <!-- WorkManager initializer with Hilt -->
+        <!-- Disable Jetpack WorkManager to Use Hilt's -->
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"

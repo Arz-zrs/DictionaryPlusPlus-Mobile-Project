@@ -7,8 +7,10 @@ import com.example.dictionaryplusplus.domain.usecase.DeleteSeenEventUseCase
 import com.example.dictionaryplusplus.domain.usecase.ToggleFavouriteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
@@ -23,6 +25,8 @@ class HistoryViewModel @Inject constructor(
 ) : ViewModel() {
     private val _toastMessage = Channel<String>()
     val toastMessage = _toastMessage.receiveAsFlow()
+    private val _uiState = MutableStateFlow<HistorySheetState>(HistorySheetState.Hidden)
+    val uiState: StateFlow<HistorySheetState> = _uiState.asStateFlow()
 
     val historyList: StateFlow<List<HistoryUiState>> = observeSeenEventsUseCase()
         .map { events ->
@@ -52,5 +56,13 @@ class HistoryViewModel @Inject constructor(
             toggleFavouriteUseCase(word)
             _toastMessage.send("Favourite status updated for $word")
         }
+    }
+
+    fun onWordSelected(word: String) {
+        _uiState.value = HistorySheetState.WordDetail(word)
+    }
+
+    fun onSheetDismissed() {
+        _uiState.value = HistorySheetState.Hidden
     }
 }

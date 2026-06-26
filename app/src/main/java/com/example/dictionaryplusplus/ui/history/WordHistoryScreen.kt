@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
@@ -22,12 +23,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.R
+import com.example.dictionaryplusplus.ui.dictionary.WordDetailSheet
 import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WordHistoryScreen(
+    onNavigateBack: () -> Unit,
     viewModel: HistoryViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val historyList by viewModel.historyList.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
@@ -37,121 +42,148 @@ fun WordHistoryScreen(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.history_title),
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(top = 8.dp)
-        )
-
-        if (historyList.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = stringResource(R.string.history_empty_state),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(historyList, key = { it.id }) { item ->
-                    val dismissState = rememberSwipeToDismissBoxState(
-                        confirmValueChange = { value ->
-                            when (value) {
-                                SwipeToDismissBoxValue.EndToStart -> {
-                                    viewModel.removeHistoryEntry(item.id, item.word)
-                                    true
-                                }
-                                SwipeToDismissBoxValue.StartToEnd -> {
-                                    viewModel.toggleFavourite(item.word)
-                                    false
-                                }
-                                else -> false
-                            }
-                        }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = stringResource(R.string.history_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                            contentDescription = stringResource(R.string.back_content_description)
+                        )
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            if (historyList.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.history_empty_state),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(historyList, key = { it.id }) { item ->
+                        val dismissState = rememberSwipeToDismissBoxState(
+                            confirmValueChange = { value ->
+                                when (value) {
+                                    SwipeToDismissBoxValue.EndToStart -> {
+                                        viewModel.removeHistoryEntry(item.id, item.word)
+                                        true
+                                    }
+                                    SwipeToDismissBoxValue.StartToEnd -> {
+                                        viewModel.toggleFavourite(item.word)
+                                        false
+                                    }
+                                    else -> false
+                                }
+                            }
+                        )
 
-                    SwipeToDismissBox(
-                        state = dismissState,
-                        backgroundContent = {
-                            val color by animateColorAsState(
-                                when (dismissState.targetValue) {
-                                    SwipeToDismissBoxValue.EndToStart ->
-                                        MaterialTheme.colorScheme.error.copy(alpha = 0.2f)
-                                    SwipeToDismissBoxValue.StartToEnd ->
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                        SwipeToDismissBox(
+                            state = dismissState,
+                            backgroundContent = {
+                                val color by animateColorAsState(
+                                    when (dismissState.targetValue) {
+                                        SwipeToDismissBoxValue.EndToStart ->
+                                            MaterialTheme.colorScheme.error.copy(alpha = 0.2f)
+                                        SwipeToDismissBoxValue.StartToEnd ->
+                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                                        else -> Color.Transparent
+                                    }
+                                )
+                                val alignment = when (dismissState.targetValue) {
+                                    SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
+                                    SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
+                                    else -> Alignment.Center
+                                }
+                                val icon = when (dismissState.targetValue) {
+                                    SwipeToDismissBoxValue.EndToStart -> Icons.Default.Delete
+                                    SwipeToDismissBoxValue.StartToEnd -> Icons.Default.Star
+                                    else -> null
+                                }
+                                val contentDesc = when (dismissState.targetValue) {
+                                    SwipeToDismissBoxValue.EndToStart -> stringResource(R.string.delete_content_description)
+                                    SwipeToDismissBoxValue.StartToEnd -> stringResource(R.string.favourite_content_description)
+                                    else -> ""
+                                }
+                                val tint = when (dismissState.targetValue) {
+                                    SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.error
+                                    SwipeToDismissBoxValue.StartToEnd -> MaterialTheme.colorScheme.primary
                                     else -> Color.Transparent
                                 }
-                            )
-                            val alignment = when (dismissState.targetValue) {
-                                SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
-                                SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
-                                else -> Alignment.Center
-                            }
-                            val icon = when (dismissState.targetValue) {
-                                SwipeToDismissBoxValue.EndToStart -> Icons.Default.Delete
-                                SwipeToDismissBoxValue.StartToEnd -> Icons.Default.Star
-                                else -> null
-                            }
-                            val contentDesc = when (dismissState.targetValue) {
-                                SwipeToDismissBoxValue.EndToStart -> stringResource(R.string.delete_content_description)
-                                SwipeToDismissBoxValue.StartToEnd -> stringResource(R.string.favourite_content_description)
-                                else -> ""
-                            }
-                            val tint = when (dismissState.targetValue) {
-                                SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.error
-                                SwipeToDismissBoxValue.StartToEnd -> MaterialTheme.colorScheme.primary
-                                else -> Color.Transparent
-                            }
 
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(color)
-                                    .padding(horizontal = 24.dp),
-                                contentAlignment = alignment
-                            ) {
-                                if (icon != null) {
-                                    Icon(
-                                        imageVector = icon,
-                                        contentDescription = contentDesc,
-                                        tint = tint
-                                    )
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(color)
+                                        .padding(horizontal = 24.dp),
+                                    contentAlignment = alignment
+                                ) {
+                                    if (icon != null) {
+                                        Icon(
+                                            imageVector = icon,
+                                            contentDescription = contentDesc,
+                                            tint = tint
+                                        )
+                                    }
                                 }
-                            }
-                        },
-                        enableDismissFromStartToEnd = true
-                    ) {
-                        WordHistoryItem(event = item)
+                            },
+                            enableDismissFromStartToEnd = true
+                        ) {
+                            WordHistoryItem(
+                                event = item,
+                                onItemClick = { viewModel.onWordSelected(item.word) }
+                            )
+                        }
                     }
                 }
             }
+        }
+        when (val state = uiState) {
+            is HistorySheetState.WordDetail -> {
+                WordDetailSheet(
+                    word = state.word,
+                    onDismiss = { viewModel.onSheetDismissed() }
+                )
+            }
+            HistorySheetState.Hidden -> {}
         }
     }
 }
 
 @Composable
-fun WordHistoryItem(event: HistoryUiState) {
+fun WordHistoryItem(
+    event: HistoryUiState,
+    onItemClick: () -> Unit
+) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-        )
+        ),
+        onClick = onItemClick
     ) {
         Row(
             modifier = Modifier

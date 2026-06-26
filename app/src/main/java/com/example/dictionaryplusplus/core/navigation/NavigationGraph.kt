@@ -81,7 +81,11 @@ fun NavigationGraph(
         }
 
         composable(route = Screen.WordHistory.route) {
-            WordHistoryScreen()
+            WordHistoryScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         composable(route = Screen.Dictionary.route) {

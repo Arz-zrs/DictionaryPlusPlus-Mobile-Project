@@ -122,7 +122,10 @@ fun DashboardScreen(
             }
         } else {
             items(uiState.recentWords, key = { it.id }) { event ->
-                WordHistoryItem(event = event)
+                WordHistoryItem(
+                    event = event,
+                    onItemClick = { viewModel.onRecentWordClicked(event.word) }
+                )
             }
         }
     }

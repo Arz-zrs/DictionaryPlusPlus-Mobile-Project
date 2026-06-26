@@ -7,6 +7,7 @@ import com.example.dictionaryplusplus.domain.usecase.ObserveQuizAvailabilityUseC
 import com.example.dictionaryplusplus.domain.usecase.ObserveUserProfileUseCase
 import com.example.dictionaryplusplus.domain.usecase.ObserveWordOfTheDayUseCase
 import com.example.dictionaryplusplus.domain.usecase.ObserveSeenEventsUseCase
+import com.example.dictionaryplusplus.domain.usecase.SetSeenEventUseCase
 import com.example.dictionaryplusplus.domain.usecase.TriggerWotdWorkerUseCase
 import com.example.dictionaryplusplus.ui.history.HistoryUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +29,8 @@ class DashboardViewModel @Inject constructor(
     observeSeenEventsUseCase: ObserveSeenEventsUseCase,
     observeQuizAvailabilityUseCase: ObserveQuizAvailabilityUseCase,
     private val triggerWotdWorkerUseCase: TriggerWotdWorkerUseCase,
-    private val userPreferences: UserPreferences
+    private val userPreferences: UserPreferences,
+    private val setSeenEventUseCase: SetSeenEventUseCase
 ): ViewModel() {
 
     private val _sheetState = MutableStateFlow<DashboardSheetState>(DashboardSheetState.Hidden)
@@ -77,10 +79,17 @@ class DashboardViewModel @Inject constructor(
     }
 
     fun onWotdClicked(word: String) {
+        viewModelScope.launch {
+            setSeenEventUseCase(word)
+        }
         _sheetState.value = DashboardSheetState.WordDetail(word)
     }
 
     fun onSheetDismissed() {
         _sheetState.value = DashboardSheetState.Hidden
+    }
+
+    fun onRecentWordClicked(word: String) {
+        _sheetState.value = DashboardSheetState.WordDetail(word)
     }
 }
