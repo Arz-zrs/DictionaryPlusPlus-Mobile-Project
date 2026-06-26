@@ -42,21 +42,25 @@ fun WordHistoryScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(text = stringResource(R.string.history_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = stringResource(R.string.back_content_description)
-                        )
-                    }
+    Scaffold { innerPadding ->
+        Column(modifier = Modifier.fillMaxSize()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            ) {
+                IconButton(onClick = onNavigateBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.btn_back)
+                    )
                 }
-            )
+                Spacer(Modifier.width(4.dp))
+                Text(
+                    text = stringResource(R.string.history_title),
+                    style = MaterialTheme.typography.headlineMedium
+                )
+            }
         }
-    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -104,34 +108,20 @@ fun WordHistoryScreen(
                         SwipeToDismissBox(
                             state = dismissState,
                             backgroundContent = {
+                                val targetValue = dismissState.targetValue
                                 val color by animateColorAsState(
-                                    when (dismissState.targetValue) {
+                                    targetValue = when (targetValue) {
                                         SwipeToDismissBoxValue.EndToStart ->
                                             MaterialTheme.colorScheme.error.copy(alpha = 0.2f)
                                         SwipeToDismissBoxValue.StartToEnd ->
                                             MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
-                                        else -> Color.Transparent
+                                        SwipeToDismissBoxValue.Settled -> Color.Transparent
                                     }
                                 )
-                                val alignment = when (dismissState.targetValue) {
+                                val alignment = when (targetValue) {
                                     SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
                                     SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
-                                    else -> Alignment.Center
-                                }
-                                val icon = when (dismissState.targetValue) {
-                                    SwipeToDismissBoxValue.EndToStart -> Icons.Default.Delete
-                                    SwipeToDismissBoxValue.StartToEnd -> Icons.Default.Star
-                                    else -> null
-                                }
-                                val contentDesc = when (dismissState.targetValue) {
-                                    SwipeToDismissBoxValue.EndToStart -> stringResource(R.string.delete_content_description)
-                                    SwipeToDismissBoxValue.StartToEnd -> stringResource(R.string.favourite_content_description)
-                                    else -> ""
-                                }
-                                val tint = when (dismissState.targetValue) {
-                                    SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.error
-                                    SwipeToDismissBoxValue.StartToEnd -> MaterialTheme.colorScheme.primary
-                                    else -> Color.Transparent
+                                    SwipeToDismissBoxValue.Settled -> Alignment.Center
                                 }
 
                                 Box(
@@ -141,12 +131,22 @@ fun WordHistoryScreen(
                                         .padding(horizontal = 24.dp),
                                     contentAlignment = alignment
                                 ) {
-                                    if (icon != null) {
-                                        Icon(
-                                            imageVector = icon,
-                                            contentDescription = contentDesc,
-                                            tint = tint
-                                        )
+                                    when (targetValue) {
+                                        SwipeToDismissBoxValue.EndToStart -> {
+                                            Icon(
+                                                imageVector = Icons.Default.Delete,
+                                                contentDescription = stringResource(R.string.delete_content_description),
+                                                tint = MaterialTheme.colorScheme.error
+                                            )
+                                        }
+                                        SwipeToDismissBoxValue.StartToEnd -> {
+                                            Icon(
+                                                imageVector = Icons.Default.Star,
+                                                contentDescription = stringResource(R.string.favourite_content_description),
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
+                                        SwipeToDismissBoxValue.Settled -> { }
                                     }
                                 }
                             },

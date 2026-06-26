@@ -66,7 +66,10 @@ fun LeaderboardScreen(
                         Column(modifier = Modifier.fillMaxSize()) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 IconButton(onClick = onNavigateBack) {
-                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.btn_back))
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                        contentDescription = stringResource(R.string.btn_back)
+                                    )
                                 }
                                 Spacer(Modifier.width(4.dp))
                                 Text(

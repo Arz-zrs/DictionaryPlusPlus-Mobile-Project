@@ -137,7 +137,8 @@ fun DailyQuizScreen(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = stringResource(R.string.btn_back))
+                contentDescription = stringResource(R.string.btn_back)
+            )
         }
     }
     if (showQuitDialog) {

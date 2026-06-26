@@ -1,10 +1,5 @@
 package com.example.dictionaryplusplus.ui.settings
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.R
@@ -14,6 +9,7 @@ import com.example.dictionaryplusplus.domain.model.ThemeMode
 import com.example.dictionaryplusplus.domain.usecase.ChangePasswordUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetDailyQuizRefreshTimeUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetFontSizeUseCase
+import com.example.dictionaryplusplus.domain.usecase.GetNotificationPermissionStatusUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetNotificationTimeUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetQuizLengthUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetThemeModeUseCase
@@ -29,7 +25,6 @@ import com.example.dictionaryplusplus.domain.usecase.TriggerDailyWordWorkerUseCa
 import com.example.dictionaryplusplus.domain.usecase.TriggerWotdWorkerUseCase
 import com.example.dictionaryplusplus.domain.usecase.UpdateDisplayNameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -58,7 +53,7 @@ class SettingsViewModel @Inject constructor(
     private val resetQuizCompletionUseCase: ResetQuizCompletionUseCase,
     private val updateDisplayNameUseCase: UpdateDisplayNameUseCase,
     observeUserProfileUseCase: ObserveUserProfileUseCase,
-    @ApplicationContext private val context: Context
+    private val getNotificationPermissionStatusUseCase: GetNotificationPermissionStatusUseCase
 ): ViewModel() {
     private val _uiState = MutableStateFlow<SettingsUiState>(SettingsUiState.Idle)
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
@@ -175,23 +170,12 @@ class SettingsViewModel @Inject constructor(
     }
 
     private val _isNotificationPermissionGranted = MutableStateFlow(
-        checkNotificationPermission(context)
+        getNotificationPermissionStatusUseCase()
     )
     val isNotificationPermissionGranted: StateFlow<Boolean> =
         _isNotificationPermissionGranted.asStateFlow()
 
     fun refreshPermissionState() {
-        _isNotificationPermissionGranted.value = checkNotificationPermission(context)
-    }
-
-    private fun checkNotificationPermission(context: Context): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED
-        } else {
-            true
-        }
+        _isNotificationPermissionGranted.value = getNotificationPermissionStatusUseCase()
     }
 }
