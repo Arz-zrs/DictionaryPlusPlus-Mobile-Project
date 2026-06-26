@@ -37,7 +37,7 @@ jobs:
 
       - name: Create local.properties
         run: |
-          echo "WORDNIK_API_KEY=${{ secrets.WORDNIK_API_KEY }}" >> local.properties"
+          echo "WORDNIK_API_KEY=${{ secrets.WORDNIK_API_KEY }}" >> local.properties
 
       - name: Create google-service.json
         run: |
