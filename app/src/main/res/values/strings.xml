@@ -111,6 +111,7 @@
     <string name="label_question_count">Question %1$d of %2$d</string>
     <string name="label_speed_bonus">+%1$d (Speed!)</string>
     <string name="quiz_find_definition">Match the Definition\n</string>
+    <string name="quiz_quit_title">Exit Quiz?</string>
 
     <!-- Leaderboard Screens -->
     <string name="leaderboard_title">Global Leaderboard</string>
@@ -155,4 +156,7 @@
     <string name="permission_banner_btn">Enable</string>
     <string name="btn_back">Back</string>
     <string name="back_content_description">back</string>
+    <string name="quiz_quit_desc">Are you sure you want to quit?</string>
+    <string name="quiz_quit_confirm">Yes</string>
+    <string name="quiz_quit_cancel">No</string>
 </resources>

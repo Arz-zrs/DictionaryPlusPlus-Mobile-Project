@@ -18,7 +18,7 @@ import com.example.dictionaryplusplus.ui.leaderboard.LeaderboardScreen
 import com.example.dictionaryplusplus.ui.onboarding.OnboardingScreen
 import com.example.dictionaryplusplus.ui.quiz.dailyquiz.DailyQuizScreen
 import com.example.dictionaryplusplus.ui.quiz.QuizScreen
-import com.example.dictionaryplusplus.ui.quiz.synonymquiz.SynonymQuizScreen
+import com.example.dictionaryplusplus.ui.quiz.practicequiz.PracticeQuizScreen
 import com.example.dictionaryplusplus.ui.settings.SettingsScreen
 
 @Composable
@@ -116,9 +116,11 @@ fun NavigationGraph(
                 navDeepLink { uriPattern = "dictionaryplusplus://quiz/{word}" }
             )
         ) { _ ->
-            SynonymQuizScreen(
+            PracticeQuizScreen(
                 onNavigateBack = {
-                    navController.popBackStack()
+                    if (!navController.popBackStack()) {
+                        navController.navigate(Screen.Dashboard.route)
+                    }
                 }
             )
         }

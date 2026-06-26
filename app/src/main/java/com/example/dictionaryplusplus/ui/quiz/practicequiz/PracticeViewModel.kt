@@ -1,4 +1,4 @@
-package com.example.dictionaryplusplus.ui.quiz.synonymquiz
+package com.example.dictionaryplusplus.ui.quiz.practicequiz
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -16,12 +16,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SynonymQuizViewModel @Inject constructor(
+class PracticeViewModel @Inject constructor(
     private val getSynonymQuizUseCase: GetSynonymQuizUseCase,
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
-    private val _uiState = MutableStateFlow<SynonymQuizUiState>(SynonymQuizUiState.Loading)
-    val uiState: StateFlow<SynonymQuizUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<PracticeQuizUiState>(PracticeQuizUiState.Loading)
+    val uiState: StateFlow<PracticeQuizUiState> = _uiState.asStateFlow()
 
     init {
         val word: String? = savedStateHandle["word"]
@@ -29,21 +29,21 @@ class SynonymQuizViewModel @Inject constructor(
     }
 
     fun loadQuiz(word: String?) {
-        _uiState.value = SynonymQuizUiState.Loading
+        _uiState.value = PracticeQuizUiState.Loading
         viewModelScope.launch {
             getSynonymQuizUseCase(word)
                 .onSuccess { question ->
                     _uiState.value = mapToSuccessState(question)
                 }
                 .onFailure {
-                    _uiState.value = SynonymQuizUiState.Error(asErrorMessage(R.string.error_unknown))
+                    _uiState.value = PracticeQuizUiState.Error(asErrorMessage(R.string.error_unknown))
                 }
         }
     }
 
     fun submitAnswer(index: Int) {
         _uiState.update { state ->
-            if (state is SynonymQuizUiState.Success && state.answerState is QuizAnswerState.Unanswered) {
+            if (state is PracticeQuizUiState.Success && state.answerState is QuizAnswerState.Unanswered) {
                 state.copy(
                     answerState = QuizAnswerState.Answered(
                         selectedIndex = index,
@@ -56,15 +56,15 @@ class SynonymQuizViewModel @Inject constructor(
         }
     }
 
-    private fun mapToSuccessState(question: QuizQuestion): SynonymQuizUiState.Success {
+    private fun mapToSuccessState(question: QuizQuestion): PracticeQuizUiState.Success {
         return if (question.isFallbackToDefinition) {
-            SynonymQuizUiState.Success(
+            PracticeQuizUiState.Success(
                 question = question,
                 titleRes = R.string.quiz_find_definition,
                 displayWordOrDefinition = question.originalDefinition
             )
         } else {
-            SynonymQuizUiState.Success(
+            PracticeQuizUiState.Success(
                 question = question,
                 titleRes = R.string.quiz_find_synonym,
                 displayWordOrDefinition = question.word.uppercase()

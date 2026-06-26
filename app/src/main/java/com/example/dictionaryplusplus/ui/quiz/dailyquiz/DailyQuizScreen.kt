@@ -1,6 +1,9 @@
 package com.example.dictionaryplusplus.ui.quiz.dailyquiz
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,14 +20,31 @@ import com.example.dictionaryplusplus.core.util.ErrorMessage
 import com.example.dictionaryplusplus.ui.components.QuizProgressBar
 import com.example.dictionaryplusplus.ui.quiz.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DailyQuizScreen(
     onNavigateBack: () -> Unit,
     viewModel: DailyQuizViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showQuitDialog by remember { mutableStateOf(false) }
+    val isPlaying = uiState is DailyQuizUiState.Playing
 
     val lifecycleOwner = LocalLifecycleOwner.current
+
+    fun requestQuit() {
+        if (isPlaying) {
+            viewModel.onPause()
+            showQuitDialog = true
+        } else {
+            onNavigateBack()
+        }
+    }
+
+    BackHandler(enabled = isPlaying) {
+        requestQuit()
+    }
+
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
@@ -111,5 +131,41 @@ fun DailyQuizScreen(
                 }
             }
         }
+        IconButton(
+            onClick = { requestQuit() },
+            modifier = Modifier
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(R.string.btn_back))
+        }
+    }
+    if (showQuitDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showQuitDialog = false
+                viewModel.onResume()
+            },
+            title = { Text(stringResource(R.string.quiz_quit_title)) },
+            text = { Text(stringResource(R.string.quiz_quit_desc)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showQuitDialog = false
+                    onNavigateBack()
+                }) {
+                    Text(stringResource(R.string.quiz_quit_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showQuitDialog = false
+                        viewModel.onResume()
+                    }
+                ) {
+                    Text(stringResource(R.string.quiz_quit_cancel))
+                }
+            }
+        )
     }
 }

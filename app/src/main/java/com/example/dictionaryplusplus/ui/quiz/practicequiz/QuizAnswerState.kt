@@ -1,4 +1,4 @@
-package com.example.dictionaryplusplus.ui.quiz.synonymquiz
+package com.example.dictionaryplusplus.ui.quiz.practicequiz
 
 sealed interface QuizAnswerState {
     data object Unanswered : QuizAnswerState

@@ -1,18 +1,18 @@
-package com.example.dictionaryplusplus.ui.quiz.synonymquiz
+package com.example.dictionaryplusplus.ui.quiz.practicequiz
 
 import androidx.annotation.StringRes
 import com.example.dictionaryplusplus.domain.model.QuizQuestion
 import com.example.dictionaryplusplus.core.util.ErrorMessage
 
-sealed interface SynonymQuizUiState {
-    data object Loading: SynonymQuizUiState
+sealed interface PracticeQuizUiState {
+    data object Loading: PracticeQuizUiState
     
     data class Success(
         val question: QuizQuestion,
         val answerState: QuizAnswerState = QuizAnswerState.Unanswered,
         @StringRes val titleRes: Int,
         val displayWordOrDefinition: String
-    ): SynonymQuizUiState
+    ): PracticeQuizUiState
     
-    data class Error(val errorMessage: ErrorMessage): SynonymQuizUiState
+    data class Error(val errorMessage: ErrorMessage): PracticeQuizUiState
 }
