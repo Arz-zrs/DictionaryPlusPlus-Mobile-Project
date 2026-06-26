@@ -54,4 +54,3 @@ jobs:
         with:
           name: app-prod-release
           path: app/build/outputs/apk/prod/release/*.apk
-          retention-days: 7
