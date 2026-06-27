@@ -166,7 +166,6 @@
 
     <!-- Debug Section -->
     <string name="debug_title">Debug Tools</string>
-    <string name="debug_trigger_wotd_api">Trigger WotD Worker (API)</string>
-    <string name="debug_trigger_wotd_local">Trigger WotD Worker (Local Fallback)</string>
+    <string name="debug_trigger_wotd">Trigger WotD Notification</string>
     <string name="debug_reset_quiz">Reset Quiz Completion Timestamp</string>
 </resources>

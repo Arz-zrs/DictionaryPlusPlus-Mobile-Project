@@ -17,7 +17,6 @@ import com.example.dictionaryplusplus.R
 
 @Composable
 fun DebugSection(
-    onTriggerWotd: () -> Unit,
     onTriggerDailyWord: () -> Unit,
     onResetQuiz: () -> Unit
 ) {
@@ -38,20 +37,13 @@ fun DebugSection(
             )
             Spacer(modifier = Modifier.height(12.dp))
 
-            Button(
-                onClick = onTriggerWotd,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.debug_trigger_wotd_api))
-            }
-
             Spacer(modifier = Modifier.height(8.dp))
 
             Button(
                 onClick = onTriggerDailyWord,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(stringResource(R.string.debug_trigger_wotd_local))
+                Text(stringResource(R.string.debug_trigger_wotd))
             }
 
             Spacer(modifier = Modifier.height(8.dp))

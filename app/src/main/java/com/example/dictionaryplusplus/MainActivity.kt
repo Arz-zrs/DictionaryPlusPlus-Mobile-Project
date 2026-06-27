@@ -1,5 +1,6 @@
 package com.example.dictionaryplusplus
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,20 +19,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.dictionaryplusplus.domain.model.ThemeMode
 import com.example.dictionaryplusplus.ui.main.MainScreen
 import com.example.dictionaryplusplus.ui.theme.DictionaryPlusPlusTheme
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
+    private var navController: NavHostController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         setContent {
+            val controller = rememberNavController()
+            navController = controller
+
             val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
             val fontSize by viewModel.fontSize.collectAsStateWithLifecycle()
 
@@ -56,7 +64,10 @@ class MainActivity : ComponentActivity() {
                         val startDestination by viewModel.startDestination.collectAsStateWithLifecycle()
 
                         startDestination?.let { destination ->
-                            MainScreen(startDestination = destination)
+                            MainScreen(
+                                startDestination = destination,
+                                navController = controller
+                            )
                         } ?: Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
@@ -66,6 +77,16 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        try {
+            navController?.handleDeepLink(intent)
+        } catch (e: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
 }

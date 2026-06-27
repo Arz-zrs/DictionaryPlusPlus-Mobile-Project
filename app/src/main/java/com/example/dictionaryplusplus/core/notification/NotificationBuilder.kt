@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.net.toUri
 import com.example.dictionaryplusplus.MainActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -62,11 +63,12 @@ class NotificationBuilder @Inject constructor(
             context, 0, contentIntent, pendingIntentFlags
         )
 
-        val quizMeIntent = Intent(context, QuizActionReceiver::class.java).apply {
-            putExtra("EXTRA_WORD", word)
-            putExtra("EXTRA_NAVIGATE_TO_QUIZ", true)
+        val quizMeUri = "dictionaryplusplus://quiz/$word".toUri()
+        val quizMeIntent = Intent(Intent.ACTION_VIEW, quizMeUri).apply {
+            `package` = context.packageName
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-        val quizMePendingIntent = PendingIntent.getBroadcast(
+        val quizMePendingIntent = PendingIntent.getActivity(
             context, 200, quizMeIntent, pendingIntentFlags
         )
 

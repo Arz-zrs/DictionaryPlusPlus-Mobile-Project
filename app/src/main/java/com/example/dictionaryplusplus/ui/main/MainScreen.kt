@@ -13,14 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.example.dictionaryplusplus.core.navigation.BottomBarTab
 import com.example.dictionaryplusplus.core.navigation.NavigationGraph
 
 @Composable
 fun MainScreen(
     startDestination: String,
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController,
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
