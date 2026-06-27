@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.dictionaryplusplus.domain.model.PreferenceConstants
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -37,15 +38,6 @@ class UserPreferences @Inject constructor(
         val REFRESH_TIME_AT_LAST_COMPLETION = stringPreferencesKey("refresh_time_at_last_completion")
     }
 
-    companion object {
-        const val WOTD_FALLBACK: String = "river"
-        const val DEFAULT_QUIZ_LENGTH: Int = 5
-        const val DEFAULT_REFRESH_TIMESTAMP: String = "06:00"
-        const val DEFAULT_NOTIF_TIMESTAMP: String = "08:00"
-        const val DEFAULT_THEME = "SYSTEM"
-        const val DEFAULT_FONT_SIZE = "MEDIUM"
-    }
-
     val hasSeenOnboarding: Flow<Boolean> = context.dataStore.data
         .catch { exception ->
             if (exception is IOException) {
@@ -66,7 +58,7 @@ class UserPreferences @Inject constructor(
 
     val notificationTime: Flow<String> = context.dataStore.data
         .map { preferences ->
-            preferences[PreferencesKeys.NOTIFICATION_TIME] ?: DEFAULT_NOTIF_TIMESTAMP
+            preferences[PreferencesKeys.NOTIFICATION_TIME] ?: PreferenceConstants.DEFAULT_NOTIF_TIMESTAMP
         }
 
     suspend fun setNotificationTime(time: String) {
@@ -119,7 +111,7 @@ class UserPreferences @Inject constructor(
 
     val wordOfTheDay: Flow<String> = context.dataStore.data
         .map { preferences ->
-            preferences[PreferencesKeys.WORD_OF_THE_DAY] ?: WOTD_FALLBACK
+            preferences[PreferencesKeys.WORD_OF_THE_DAY] ?: PreferenceConstants.WOTD_FALLBACK
         }
 
     suspend fun setWordOfTheDay(word: String) {
@@ -130,7 +122,7 @@ class UserPreferences @Inject constructor(
 
     val quizLength: Flow<Int> = context.dataStore.data
         .map { preferences ->
-            preferences[PreferencesKeys.QUIZ_LENGTH] ?: DEFAULT_QUIZ_LENGTH
+            preferences[PreferencesKeys.QUIZ_LENGTH] ?: PreferenceConstants.DEFAULT_QUIZ_LENGTH
         }
 
     suspend fun setQuizLength(length: Int) {
@@ -141,7 +133,7 @@ class UserPreferences @Inject constructor(
 
     val dailyQuizRefreshTime: Flow<String> = context.dataStore.data
         .map { preferences ->
-            preferences[PreferencesKeys.DAILY_QUIZ_REFRESH_TIME] ?: DEFAULT_REFRESH_TIMESTAMP
+            preferences[PreferencesKeys.DAILY_QUIZ_REFRESH_TIME] ?: PreferenceConstants.DEFAULT_REFRESH_TIMESTAMP
         }
 
     suspend fun setDailyQuizRefreshTime(time: String) {
@@ -157,7 +149,7 @@ class UserPreferences @Inject constructor(
 
     val refreshTimeAtLastCompletion: Flow<String> = context.dataStore.data
         .map { preferences ->
-            preferences[PreferencesKeys.REFRESH_TIME_AT_LAST_COMPLETION] ?: DEFAULT_REFRESH_TIMESTAMP
+            preferences[PreferencesKeys.REFRESH_TIME_AT_LAST_COMPLETION] ?: PreferenceConstants.DEFAULT_REFRESH_TIMESTAMP
         }
 
     suspend fun saveQuizCompletion(timestamp: Long, refreshTimeSnapshot: String) {
@@ -169,7 +161,7 @@ class UserPreferences @Inject constructor(
 
     val themeMode: Flow<String> = context.dataStore.data
         .map { preferences ->
-            preferences[PreferencesKeys.THEME_MODE] ?: DEFAULT_THEME
+            preferences[PreferencesKeys.THEME_MODE] ?: PreferenceConstants.DEFAULT_THEME
         }
 
     suspend fun setThemeMode(mode: String) {
@@ -180,7 +172,7 @@ class UserPreferences @Inject constructor(
 
     val fontSize: Flow<String> = context.dataStore.data
         .map { preferences ->
-            preferences[PreferencesKeys.FONT_SIZE] ?: DEFAULT_FONT_SIZE
+            preferences[PreferencesKeys.FONT_SIZE] ?: PreferenceConstants.DEFAULT_FONT_SIZE
         }
 
     suspend fun setFontSize(size: String) {

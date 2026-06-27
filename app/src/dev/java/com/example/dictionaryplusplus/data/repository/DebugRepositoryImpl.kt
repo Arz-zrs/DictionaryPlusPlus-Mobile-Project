@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.example.dictionaryplusplus.core.worker.DailyWordWorker
+import com.example.dictionaryplusplus.core.worker.WotdNotificationWorker
 import com.example.dictionaryplusplus.data.local.UserPreferences
 import com.example.dictionaryplusplus.domain.repository.DebugRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -17,7 +17,7 @@ class DebugRepositoryImpl @Inject constructor(
     private val userPreferences: UserPreferences
 ) : DebugRepository {
     override fun triggerWotdWorker() {
-        val workRequest = OneTimeWorkRequestBuilder<DailyWordWorker>().build()
+        val workRequest = OneTimeWorkRequestBuilder<WotdNotificationWorker>().build()
         WorkManager.getInstance(context).enqueue(workRequest)
         Log.d("MOBIL", "WotD Notif triggered")
     }

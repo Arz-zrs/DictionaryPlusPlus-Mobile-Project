@@ -15,7 +15,7 @@ import com.example.dictionaryplusplus.domain.usecase.GetQuizLengthUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetThemeModeUseCase
 import com.example.dictionaryplusplus.domain.usecase.LogoutUseCase
 import com.example.dictionaryplusplus.domain.usecase.ObserveUserProfileUseCase
-import com.example.dictionaryplusplus.domain.usecase.RescheduleDailyWordUseCase
+import com.example.dictionaryplusplus.domain.usecase.RescheduleWotdUseCase
 import com.example.dictionaryplusplus.domain.usecase.ResetQuizCompletionUseCase
 import com.example.dictionaryplusplus.domain.usecase.SetDailyQuizRefreshTimeUseCase
 import com.example.dictionaryplusplus.domain.usecase.SetFontSizeUseCase
@@ -46,7 +46,7 @@ class SettingsViewModel @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val changePasswordUseCase: ChangePasswordUseCase,
     getNotificationTimeUseCase: GetNotificationTimeUseCase,
-    private val rescheduleDailyWordUseCase: RescheduleDailyWordUseCase,
+    private val rescheduleWotdUseCase: RescheduleWotdUseCase,
     private val triggerWotdWorkerUseCase: TriggerWotdWorkerUseCase,
     private val resetQuizCompletionUseCase: ResetQuizCompletionUseCase,
     private val updateDisplayNameUseCase: UpdateDisplayNameUseCase,
@@ -161,7 +161,7 @@ class SettingsViewModel @Inject constructor(
 
     fun updateNotificationTime(hour: Int, minute: Int) {
         viewModelScope.launch {
-            rescheduleDailyWordUseCase(hour, minute)
+            rescheduleWotdUseCase(hour, minute)
         }
     }
 

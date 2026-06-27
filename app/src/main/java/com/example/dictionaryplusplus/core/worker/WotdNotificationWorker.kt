@@ -16,7 +16,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.firstOrNull
 
 @HiltWorker
-class DailyWordWorker @AssistedInject constructor(
+class WotdNotificationWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val wordDao: WordDao,

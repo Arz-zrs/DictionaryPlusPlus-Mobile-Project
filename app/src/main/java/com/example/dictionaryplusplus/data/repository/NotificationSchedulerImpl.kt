@@ -10,7 +10,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.example.dictionaryplusplus.core.worker.DailyWordWorker
+import com.example.dictionaryplusplus.core.worker.WotdNotificationWorker
 import com.example.dictionaryplusplus.core.worker.WotdApiWorker
 import com.example.dictionaryplusplus.domain.repository.NotificationScheduler
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -25,9 +25,9 @@ class NotificationSchedulerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val workManager: WorkManager
 ): NotificationScheduler {
-    override fun scheduleDailyWord(hour: Int, minute: Int) {
+    override fun scheduleWotdNotification(hour: Int, minute: Int) {
         val initialDelay = computeInitialDelayMillis(hour, minute)
-        val request = PeriodicWorkRequestBuilder<DailyWordWorker>(24, TimeUnit.HOURS)
+        val request = PeriodicWorkRequestBuilder<WotdNotificationWorker>(24, TimeUnit.HOURS)
             .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
             .setConstraints(
                 Constraints.Builder()
@@ -43,7 +43,7 @@ class NotificationSchedulerImpl @Inject constructor(
         )
     }
 
-    override fun scheduleWotd(hour: Int, minute: Int) {
+    override fun scheduleWotdApi(hour: Int, minute: Int) {
         val initialDelay = computeInitialDelayMillis(hour, minute)
         val request = PeriodicWorkRequestBuilder<WotdApiWorker>(24, TimeUnit.HOURS)
             .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)

@@ -6,13 +6,13 @@ import java.util.Locale
 import javax.inject.Inject
 
 
-class RescheduleDailyWordUseCase @Inject constructor(
+class RescheduleWotdUseCase @Inject constructor(
     private val onboardingRepository: OnboardingRepository,
     private val notificationScheduler: NotificationScheduler
 ) {
     suspend operator fun invoke(hour: Int, minute: Int) {
         val formatted = String.format(Locale.getDefault(), "%02d:%02d", hour, minute)
         onboardingRepository.updateNotificationTime(formatted)
-        notificationScheduler.scheduleDailyWord(hour, minute)
+        notificationScheduler.scheduleWotdNotification(hour, minute)
     }
 }
