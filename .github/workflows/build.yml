@@ -46,11 +46,20 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build prod Flavor APK
+      - name: Build Prod Flavor APK
         run: ./gradlew assembleProdRelease
 
-      - name: Upload APK Artifact
+      - name: Upload APK Prod Flavor Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-prod-release
           path: app/build/outputs/apk/prod/release/*.apk
+
+      - name: Build Dev Flavor APK
+        run: ./gradlew assembleDevRelease
+
+      - name: Upload APK Dev Flavor Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-dev-release
+          path: app/build/outputs/apk/dev/release/*.apk
