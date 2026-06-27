@@ -12,22 +12,30 @@ import com.example.dictionaryplusplus.ui.quiz.shared.AnswerState
 import com.example.dictionaryplusplus.ui.quiz.shared.QuestionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DailyQuizViewModel @Inject constructor(
     private val getDailyQuizUseCase: GetDailyQuizUseCase,
-    private val getQuizLengthUseCase: GetQuizLengthUseCase,
+    getQuizLengthUseCase: GetQuizLengthUseCase,
     private val completeDailyQuizUseCase: CompleteDailyQuizUseCase,
     private val scoreAnswerUseCase: ScoreAnswerUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<DailyQuizUiState>(DailyQuizUiState.Loading)
     val uiState: StateFlow<DailyQuizUiState> = _uiState.asStateFlow()
+
+    private val quizLength: StateFlow<Int> = getQuizLengthUseCase()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 5
+        )
 
     private var pausedAtMillis: Long? = null
     private var accumulatedPauseMillis: Long = 0L
@@ -47,8 +55,7 @@ class DailyQuizViewModel @Inject constructor(
     fun startQuiz(wordList: List<String> = emptyList()) {
         _uiState.value = DailyQuizUiState.Loading
         viewModelScope.launch {
-            val length = getQuizLengthUseCase().first()
-            getDailyQuizUseCase(count = length, wordList = wordList)
+            getDailyQuizUseCase(count = quizLength.value, wordList = wordList)
                 .onSuccess { questions ->
                     _uiState.value = DailyQuizUiState.Playing(
                         questions = questions.map { QuestionState(it) },

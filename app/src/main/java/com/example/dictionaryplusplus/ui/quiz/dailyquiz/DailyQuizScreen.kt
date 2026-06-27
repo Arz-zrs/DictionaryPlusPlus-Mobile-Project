@@ -62,7 +62,9 @@ fun DailyQuizScreen(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.startQuiz()
+        if (viewModel.uiState.value is DailyQuizUiState.Loading) {
+            viewModel.startQuiz()
+        }
     }
 
     Scaffold { innerPadding ->

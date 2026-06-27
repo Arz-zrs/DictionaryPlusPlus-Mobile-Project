@@ -6,5 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface DefinitionRepository {
     fun observeDefinition(word: String): Flow<Definition?>
+    suspend fun getDefinitionOnce(word: String): Definition?
     suspend fun getDefinition(word: String): DefinitionResult
 }

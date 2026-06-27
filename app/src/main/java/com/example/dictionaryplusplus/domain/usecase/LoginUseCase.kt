@@ -2,12 +2,12 @@ package com.example.dictionaryplusplus.domain.usecase
 
 import com.example.dictionaryplusplus.domain.model.UserProfile
 import com.example.dictionaryplusplus.domain.repository.AuthRepository
-import com.example.dictionaryplusplus.domain.repository.UserRepository
+import com.example.dictionaryplusplus.domain.repository.UserSyncRepository
 import javax.inject.Inject
 
 class LoginUseCase @Inject constructor(
     private val authRepository: AuthRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserSyncRepository
 ) {
     suspend operator fun invoke(email: String, password: String): Result<UserProfile> {
         return try {

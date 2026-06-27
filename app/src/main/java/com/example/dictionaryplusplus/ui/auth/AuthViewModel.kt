@@ -141,9 +141,15 @@ class AuthViewModel @Inject constructor(
     }
 
     fun sendPasswordReset(email: String) {
+        val emailError = validateEmail(email.trim())
+        if (emailError !is ErrorMessage.None) {
+            _resetEmailState.value = ResetEmailState.Error
+            return
+        }
+
         viewModelScope.launch {
             _resetEmailState.value = ResetEmailState.Loading
-            sendPasswordResetEmailUseCase(email)
+            sendPasswordResetEmailUseCase(email.trim())
                 .onSuccess { _resetEmailState.value = ResetEmailState.Sent }
                 .onFailure { _resetEmailState.value = ResetEmailState.Error }
         }

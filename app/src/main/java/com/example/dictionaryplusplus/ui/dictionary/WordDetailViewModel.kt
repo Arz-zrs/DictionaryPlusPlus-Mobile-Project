@@ -75,10 +75,11 @@ class WordDetailViewModel @Inject constructor(
         )
 
     init {
-        _noteInput
-            .filterNotNull()
+        combine(
+            _currentWord.filter { it.isNotEmpty() },
+            _noteInput.filterNotNull()) { word, note -> word to note }
             .debounce(500.milliseconds)
-            .onEach { noteInput -> saveWordNoteUseCase(_currentWord.value, noteInput) }
+            .onEach { (word, note) -> saveWordNoteUseCase(word, note) }
             .launchIn(viewModelScope)
     }
 

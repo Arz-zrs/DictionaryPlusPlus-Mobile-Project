@@ -1,6 +1,5 @@
 package com.example.dictionaryplusplus.data.repository
 
-import android.content.Context
 import com.example.dictionaryplusplus.data.local.dao.DefinitionDao
 import com.example.dictionaryplusplus.data.local.entity.DefinitionEntity
 import com.example.dictionaryplusplus.data.local.mapper.toDomain
@@ -10,41 +9,26 @@ import com.example.dictionaryplusplus.domain.model.DefinitionResult
 import com.example.dictionaryplusplus.domain.model.DefinitionErrorType
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
 import com.example.dictionaryplusplus.core.util.ContentSanitizer
+import com.example.dictionaryplusplus.core.util.DenyListProvider
 import com.example.dictionaryplusplus.data.local.dao.WordDao
 import com.example.dictionaryplusplus.data.local.entity.WordEntity
 import com.example.dictionaryplusplus.domain.model.WordMeaning
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import org.json.JSONArray
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class DefinitionRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val definitionDao: DefinitionDao,
     private val apiService: DictionaryApiService,
     private val wordDao: WordDao,
-    private val sanitizer: ContentSanitizer
+    private val sanitizer: ContentSanitizer,
+    private val denyListProvider: DenyListProvider
 ) : DefinitionRepository {
     private val gson = Gson()
-
-    private val denyList: Set<String> by lazy {
-        try {
-            val jsonString = context.assets.open("deny_list.json")
-                .bufferedReader()
-                .use { it.readText() }
-            val jsonArray = JSONArray(jsonString)
-            (0 until jsonArray.length()).map { jsonArray.getString(it) }.toSet()
-        } catch (e: Exception) {
-            FirebaseCrashlytics.getInstance().recordException(e)
-            emptySet()
-        }
-    }
 
     override fun observeDefinition(word: String): Flow<Definition?> {
         return definitionDao.observeDefinition(word).map { entity ->
@@ -52,9 +36,13 @@ class DefinitionRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getDefinitionOnce(word: String): Definition? {
+        return definitionDao.getDefinition(word)?.toDomain(gson)
+    }
+
     override suspend fun getDefinition(word: String): DefinitionResult {
         return try {
-            val cachedDefinition = observeDefinition(word).firstOrNull()
+            val cachedDefinition = getDefinitionOnce(word)
             if (cachedDefinition != null) {
                 return DefinitionResult.Success(cachedDefinition)
             }
@@ -76,6 +64,7 @@ class DefinitionRepositoryImpl @Inject constructor(
             val rawExample = rawMeanings.firstOrNull()?.third ?: "No example available"
             val rawSynonyms = firstEntry.meanings?.firstOrNull()?.synonyms ?: emptyList()
 
+            val denyList = denyListProvider.denyList
             val sanitizedDefinition = sanitizer.sanitizeText(rawDefinition, denyList,
                 ContentSanitizer.FALLBACK_DEFINITION)
             val sanitizedExample = sanitizer.sanitizeText(rawExample, denyList, ContentSanitizer.FALLBACK_EXAMPLE)

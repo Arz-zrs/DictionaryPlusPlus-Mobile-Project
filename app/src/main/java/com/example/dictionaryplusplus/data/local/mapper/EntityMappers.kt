@@ -26,8 +26,7 @@ fun DefinitionEntity.toDomain(gson: Gson): Definition {
         exampleSentence = exampleSentence,
         synonyms = try {
             gson.fromJson(relatedWordsJson, Array<String>::class.java)?.toList() ?: emptyList()
-        } catch (e: Exception) {
-            FirebaseCrashlytics.getInstance().recordException(e)
+        } catch (_: Exception) {
             emptyList()
         },
         meanings = rawMeanings.map { (pos, def, ex) ->

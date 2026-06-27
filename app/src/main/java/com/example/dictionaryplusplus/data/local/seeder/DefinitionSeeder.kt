@@ -6,40 +6,28 @@ import com.example.dictionaryplusplus.data.local.dao.DefinitionDao
 import com.example.dictionaryplusplus.data.local.entity.DefinitionEntity
 import com.example.dictionaryplusplus.data.local.seeder.dto.DefinitionSeedDto
 import com.example.dictionaryplusplus.core.util.ContentSanitizer
+import com.example.dictionaryplusplus.core.util.DenyListProvider
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.qualifiers.ApplicationContext
-import org.json.JSONArray
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.getValue
 
 @Singleton
 class DefinitionSeeder @Inject constructor(
     @ApplicationContext private val context: Context,
     private val definitionDao: DefinitionDao,
     private val userPreferences: UserPreferences,
-    private val sanitizer: ContentSanitizer
+    private val sanitizer: ContentSanitizer,
+    private val denyListProvider: DenyListProvider
 ) {
     private val gson = Gson()
-
-    private val denyList: Set<String> by lazy {
-        try {
-            val jsonString = context.assets.open("deny_list.json")
-                .bufferedReader()
-                .use { it.readText() }
-            val jsonArray = JSONArray(jsonString)
-            (0 until jsonArray.length()).map { jsonArray.getString(it) }.toSet()
-        } catch (e: Exception) {
-            FirebaseCrashlytics.getInstance().recordException(e)
-            emptySet()
-        }
-    }
 
     suspend fun seedDefinitions() {
         if (userPreferences.isDefinitionSeeded()) return
         try {
+            val denyList = denyListProvider.denyList
             val jsonString = context.assets.open("definition_seed.json")
                 .bufferedReader()
                 .use { it.readText() }

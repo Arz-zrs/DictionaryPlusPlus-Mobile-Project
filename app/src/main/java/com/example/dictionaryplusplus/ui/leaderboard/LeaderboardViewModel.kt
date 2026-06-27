@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -45,29 +44,6 @@ class LeaderboardViewModel @Inject constructor(
                     totalParticipants = total,
                     currentUserScore = score
                 )}
-            }
-
-
-        }
-    }
-
-    private fun calculateUserRank() {
-        viewModelScope.launch {
-            val profile = observeUserProfileUseCase().firstOrNull() ?: return@launch
-            val score = profile.totalScore
-
-            val rankResult = getUserRankUseCase(score)
-            val totalCountResult = getTotalParticipantCountUseCase()
-
-            val rank = rankResult.getOrDefault(0)
-            val total = totalCountResult.getOrDefault(0).toInt()
-
-            _uiState.update {
-                it.copy(
-                    currentUserRank = rank,
-                    totalParticipants = total,
-                    currentUserScore = score
-                )
             }
         }
     }

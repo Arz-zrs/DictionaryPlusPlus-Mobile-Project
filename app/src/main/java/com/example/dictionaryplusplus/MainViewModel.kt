@@ -5,7 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.domain.model.FontSize
 import com.example.dictionaryplusplus.domain.model.ThemeMode
 import com.example.dictionaryplusplus.domain.repository.AuthRepository
-import com.example.dictionaryplusplus.domain.repository.UserRepository
+import com.example.dictionaryplusplus.domain.repository.UserProfileRepository
+import com.example.dictionaryplusplus.domain.repository.UserSyncRepository
 import com.example.dictionaryplusplus.domain.usecase.GetFontSizeUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetThemeModeUseCase
 import com.example.dictionaryplusplus.domain.usecase.ObserveHasSeenOnboardingUseCase
@@ -18,13 +19,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val observeHasSeenOnboardingUseCase: ObserveHasSeenOnboardingUseCase,
     private val authRepository: AuthRepository,
-    private val userRepository: UserRepository,
+    private val userProfileRepository: UserProfileRepository,
+    private val userSyncRepository: UserSyncRepository,
     getThemeModeUseCase: GetThemeModeUseCase,
     getFontSizeUseCase: GetFontSizeUseCase
 ) : ViewModel() {
@@ -59,9 +63,16 @@ class MainViewModel @Inject constructor(
             }
 
             val isUserLoggedIn = authRepository.isUserSessionActive()
-            val hasUserProfile = userRepository.getUserProfile() != null
+            val userProfile = userProfileRepository.getUserProfile()
+            
+            if (isUserLoggedIn && userProfile != null) {
+                withTimeoutOrNull(3000.milliseconds) {
+                    userSyncRepository.restoreQuizStateFromCloud()
+                }
+            }
+
             _startDestination.value = when {
-                isUserLoggedIn && hasUserProfile -> Screen.Dashboard.route
+                isUserLoggedIn && userProfile != null -> Screen.Dashboard.route
                 else -> Screen.Login.route
             }
         }

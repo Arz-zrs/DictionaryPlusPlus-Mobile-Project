@@ -12,6 +12,9 @@ interface DefinitionDao {
     @Query("SELECT * FROM definition_cache WHERE word = :word LIMIT 1")
     fun observeDefinition(word: String): Flow<DefinitionEntity?>
 
+    @Query("SELECT * FROM definition_cache WHERE word = :word LIMIT 1")
+    suspend fun getDefinition(word: String): DefinitionEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDefinition(definition: DefinitionEntity)
 

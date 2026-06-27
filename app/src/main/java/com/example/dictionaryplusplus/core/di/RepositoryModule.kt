@@ -7,7 +7,8 @@ import com.example.dictionaryplusplus.data.repository.FavouriteRepositoryImpl
 import com.example.dictionaryplusplus.data.repository.HistoryRepositoryImpl
 import com.example.dictionaryplusplus.data.repository.LeaderboardRepositoryImpl
 import com.example.dictionaryplusplus.data.repository.NotificationSchedulerImpl
-import com.example.dictionaryplusplus.domain.repository.UserRepository
+import com.example.dictionaryplusplus.domain.repository.UserProfileRepository
+import com.example.dictionaryplusplus.domain.repository.UserSyncRepository
 import com.example.dictionaryplusplus.data.repository.OnboardingRepositoryImpl
 import com.example.dictionaryplusplus.data.repository.QuizRepositoryImpl
 import com.example.dictionaryplusplus.data.repository.ScoreSyncSchedulerImpl
@@ -45,9 +46,15 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindUserRepository(
+    abstract fun bindUserProfileRepository(
         userRepositoryImpl: UserRepositoryImpl
-    ): UserRepository
+    ): UserProfileRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserSyncRepository(
+        userRepositoryImpl: UserRepositoryImpl
+    ): UserSyncRepository
 
     @Binds
     @Singleton

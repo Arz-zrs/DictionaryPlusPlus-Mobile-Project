@@ -27,9 +27,9 @@ class GetDefinitionQuizUseCase @Inject constructor(
                 attempts++
                 val distractorWords = wordRepository.getRandomDistractors(anchorWord, 5)
                 for (dWord in distractorWords) {
-                    val dResult = definitionRepository.getDefinition(dWord)
-                    if (dResult is DefinitionResult.Success) {
-                        val dDef = dResult.definition.definition
+                    val dDefinition = definitionRepository.getDefinitionOnce(dWord)
+                    if (dDefinition != null) {
+                        val dDef = dDefinition.definition
                         if (dDef.isNotBlank()
                             && !ContentSanitizer.isFallbackDefinition(dDef)
                             && !choices.contains(dDef)) {
