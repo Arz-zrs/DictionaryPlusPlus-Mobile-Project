@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">DictionaryPlusPlus</string>
-    <string name="error_login_failed">Login Failed</string>
+    <string name="error_login_failed">Incorrect Username or Password, try again</string>
     <string name="error_registration_failed">Registration Failed</string>
     <string name="error_display_name_empty">Display Name cannot be empty.</string>
     <string name="error_email_empty">Email cannot be empty.</string>
@@ -66,7 +66,7 @@
     <string name="favourite_toggle_desc">Favourite Toggle</string>
     <string name="label_definition">Definition:</string>
     <string name="error_definition_not_cached">Definition Not cached</string>
-    <string name="error_word_not_found">Word not found in the dictionary.</string>
+    <string name="error_word_not_found">Word cannot be found in the dictionary.</string>
     <string name="error_no_internet">No internet connection. Please check your network.</string>
     <string name="error_timeout">The request timed out. Try again later.</string>
     <string name="error_unknown">An unexpected error occurred.</string>
@@ -79,7 +79,7 @@
     <string name="favourites_title">Favourites</string>
     <string name="favourites_empty">No favourites yet</string>
     <string name="unfavourite_content_description">Unfavourite</string>
-    <string name="no_definition_available">No definition available</string>
+    <string name="no_definition_available">No definition available, click to refresh</string>
 
     <!-- Score Banner -->
     <string name="label_total_score">TOTAL SCORE</string>
