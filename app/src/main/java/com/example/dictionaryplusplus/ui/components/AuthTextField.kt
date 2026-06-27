@@ -24,15 +24,15 @@ fun AuthTextField(
 ) {
     val errorText = when (errorMessage) {
         is ErrorMessage.Known -> stringResource(errorMessage.messageRes)
-        ErrorMessage.None -> null
+        ErrorMessage.None -> ""
     }
 
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
-        isError = errorText != null,
-        supportingText = errorText?.let { { Text(text = it, color = MaterialTheme.colorScheme.error) } },
+        isError = errorText.isNotEmpty(),
+        supportingText = errorText.let { { Text(text = it, color = MaterialTheme.colorScheme.error) } },
         visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions,
         modifier = modifier.fillMaxWidth(),

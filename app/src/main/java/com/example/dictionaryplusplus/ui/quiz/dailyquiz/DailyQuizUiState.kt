@@ -1,6 +1,7 @@
 package com.example.dictionaryplusplus.ui.quiz.dailyquiz
 
 import com.example.dictionaryplusplus.core.util.ErrorMessage
+import com.example.dictionaryplusplus.ui.quiz.shared.QuestionState
 
 sealed interface DailyQuizUiState {
     object Loading : DailyQuizUiState

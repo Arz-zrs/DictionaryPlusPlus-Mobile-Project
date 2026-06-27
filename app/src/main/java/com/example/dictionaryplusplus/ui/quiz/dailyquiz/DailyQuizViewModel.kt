@@ -8,6 +8,8 @@ import com.example.dictionaryplusplus.domain.usecase.CompleteDailyQuizUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetDailyQuizUseCase
 import com.example.dictionaryplusplus.domain.usecase.GetQuizLengthUseCase
 import com.example.dictionaryplusplus.domain.usecase.ScoreAnswerUseCase
+import com.example.dictionaryplusplus.ui.quiz.shared.AnswerState
+import com.example.dictionaryplusplus.ui.quiz.shared.QuestionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -1,4 +1,4 @@
-package com.example.dictionaryplusplus.ui.quiz
+package com.example.dictionaryplusplus.ui.quiz.shared
 
 data class QuestionDisplayData(
     val title: String,

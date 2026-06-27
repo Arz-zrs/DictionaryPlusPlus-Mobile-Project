@@ -18,7 +18,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.core.util.ErrorMessage
 import com.example.dictionaryplusplus.ui.components.QuizProgressBar
-import com.example.dictionaryplusplus.ui.quiz.*
+import com.example.dictionaryplusplus.ui.quiz.shared.QuizQuestionLayout
+import com.example.dictionaryplusplus.ui.quiz.shared.QuizSummaryCard
+import com.example.dictionaryplusplus.ui.quiz.shared.AnswerState
+import com.example.dictionaryplusplus.ui.quiz.shared.QuestionDisplayData
+import com.example.dictionaryplusplus.ui.quiz.shared.QuizAnswerDisplayState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,13 +97,15 @@ fun DailyQuizScreen(
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
 
-                        val quizAnswerDisplayState = when (val quizAnswer = currentQuestionState.answerState) {
+                        val quizAnswerDisplayState =
+                            when (val quizAnswer = currentQuestionState.answerState) {
                             is AnswerState.Unanswered -> QuizAnswerDisplayState.Unanswered
                             is AnswerState.Answered -> {
                                 QuizAnswerDisplayState.Answered(
                                     selectedIndex = quizAnswer.selectedIndex,
                                     isCorrect = quizAnswer.selectedIndex == currentQuestionState.question.correctAnswerIndex,
-                                    correctIndex = currentQuestionState.question.correctAnswerIndex
+                                    correctIndex = currentQuestionState.question.correctAnswerIndex,
+                                    showTimeBonus = quizAnswer.scoreResult.speedBonus > 0
                                 )
                             }
                         }

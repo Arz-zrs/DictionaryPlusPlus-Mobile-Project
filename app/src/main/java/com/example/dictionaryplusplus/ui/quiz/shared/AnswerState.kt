@@ -1,4 +1,4 @@
-package com.example.dictionaryplusplus.ui.quiz.dailyquiz
+package com.example.dictionaryplusplus.ui.quiz.shared
 
 import com.example.dictionaryplusplus.domain.model.AnswerScoreResult
 

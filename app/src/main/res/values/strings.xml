@@ -113,6 +113,7 @@
     <string name="btn_done">Done</string>
     <string name="label_question_count">Question %1$d of %2$d</string>
     <string name="label_speed_bonus">+%1$d (Speed!)</string>
+    <string name="quiz_time_bonus">Time Bonus!</string>
     <string name="quiz_find_definition">Match the Definition\n</string>
     <string name="quiz_quit_title">Exit Quiz?</string>
 

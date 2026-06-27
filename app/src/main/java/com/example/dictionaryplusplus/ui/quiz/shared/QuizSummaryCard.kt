@@ -1,4 +1,4 @@
-package com.example.dictionaryplusplus.ui.quiz
+package com.example.dictionaryplusplus.ui.quiz.shared
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -10,8 +10,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dictionaryplusplus.R
-import com.example.dictionaryplusplus.ui.quiz.dailyquiz.AnswerState
-import com.example.dictionaryplusplus.ui.quiz.dailyquiz.QuestionState
 
 @Composable
 fun QuizSummaryCard(
@@ -50,9 +48,9 @@ fun QuizSummaryCard(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 questions.forEach { item ->
-                    val result = (item.answerState as? AnswerState.Answered)?.scoreResult
+                    val result = (item.answerState as AnswerState.Answered).scoreResult
                     val pointsText = when {
-                        result == null || (result.totalPoints == 0) -> "0"
+                        (result.totalPoints == 0) -> "0"
                         result.speedBonus > 0 -> stringResource(R.string.label_speed_bonus, result.totalPoints)
                         else -> result.basePoints.toString()
                     }
@@ -70,7 +68,7 @@ fun QuizSummaryCard(
                         Text(
                             text = pointsText,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = if (result != null && result.totalPoints > 0) 
+                            color = if (result.totalPoints > 0)
                                 MaterialTheme.colorScheme.primary 
                             else 
                                 MaterialTheme.colorScheme.onSurfaceVariant

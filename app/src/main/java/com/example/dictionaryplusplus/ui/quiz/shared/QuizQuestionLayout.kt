@@ -1,4 +1,4 @@
-package com.example.dictionaryplusplus.ui.quiz
+package com.example.dictionaryplusplus.ui.quiz.shared
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
@@ -75,8 +75,18 @@ fun QuizQuestionLayout(
         }
 
         if (data.answerState is QuizAnswerDisplayState.Answered) {
-            Spacer(modifier = Modifier.height(24.dp))
-            Button(onClick = onDoneClick, modifier = Modifier.fillMaxWidth()) {
+            if (data.answerState.showTimeBonus) {
+                Text(
+                    text = stringResource(R.string.quiz_time_bonus),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = onDoneClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text(stringResource(R.string.btn_done))
             }
         }

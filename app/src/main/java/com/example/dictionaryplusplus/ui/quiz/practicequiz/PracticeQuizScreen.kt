@@ -14,9 +14,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.core.util.ErrorMessage
-import com.example.dictionaryplusplus.ui.quiz.QuizAnswerDisplayState
-import com.example.dictionaryplusplus.ui.quiz.QuizQuestionLayout
-import com.example.dictionaryplusplus.ui.quiz.QuestionDisplayData
+import com.example.dictionaryplusplus.ui.quiz.shared.QuizAnswerDisplayState
+import com.example.dictionaryplusplus.ui.quiz.shared.QuizQuestionLayout
+import com.example.dictionaryplusplus.ui.quiz.shared.QuestionDisplayData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
