@@ -2,10 +2,10 @@ package com.example.dictionaryplusplus.ui.leaderboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dictionaryplusplus.domain.usecase.GetTotalParticipantCountUseCase
-import com.example.dictionaryplusplus.domain.usecase.GetUserRankUseCase
-import com.example.dictionaryplusplus.domain.usecase.ObserveLeaderboardUseCase
-import com.example.dictionaryplusplus.domain.usecase.ObserveUserProfileUseCase
+import com.example.dictionaryplusplus.domain.usecase.quiz.GetTotalParticipantCountUseCase
+import com.example.dictionaryplusplus.domain.usecase.quiz.GetUserRankUseCase
+import com.example.dictionaryplusplus.domain.usecase.quiz.ObserveLeaderboardUseCase
+import com.example.dictionaryplusplus.domain.usecase.auth.ObserveUserProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -7,9 +7,9 @@ import com.example.dictionaryplusplus.domain.model.ThemeMode
 import com.example.dictionaryplusplus.domain.repository.AuthRepository
 import com.example.dictionaryplusplus.domain.repository.UserProfileRepository
 import com.example.dictionaryplusplus.domain.repository.UserSyncRepository
-import com.example.dictionaryplusplus.domain.usecase.GetFontSizeUseCase
-import com.example.dictionaryplusplus.domain.usecase.GetThemeModeUseCase
-import com.example.dictionaryplusplus.domain.usecase.ObserveHasSeenOnboardingUseCase
+import com.example.dictionaryplusplus.domain.usecase.setting.GetFontSizeUseCase
+import com.example.dictionaryplusplus.domain.usecase.setting.GetThemeModeUseCase
+import com.example.dictionaryplusplus.domain.usecase.setting.ObserveHasSeenOnboardingUseCase
 import com.example.dictionaryplusplus.core.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

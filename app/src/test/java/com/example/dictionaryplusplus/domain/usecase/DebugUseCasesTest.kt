@@ -1,6 +1,8 @@
 package com.example.dictionaryplusplus.domain.usecase
 
 import com.example.dictionaryplusplus.domain.repository.DebugRepository
+import com.example.dictionaryplusplus.domain.usecase.quiz.ResetQuizCompletionUseCase
+import com.example.dictionaryplusplus.domain.usecase.words.TriggerWotdWorkerUseCase
 import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verify

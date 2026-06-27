@@ -2,7 +2,7 @@ package com.example.dictionaryplusplus.ui.quiz
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dictionaryplusplus.domain.usecase.ObserveQuizAvailabilityUseCase
+import com.example.dictionaryplusplus.domain.usecase.quiz.ObserveQuizAvailabilityUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

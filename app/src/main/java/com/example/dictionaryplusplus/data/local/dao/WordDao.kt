@@ -21,6 +21,12 @@ interface WordDao {
     @Query("SELECT word FROM word_bank ORDER BY RANDOM() LIMIT :limit")
     suspend fun getRandomWords(limit: Int): List<String>
 
-    @Query("SELECT word FROM word_bank WHERE word != :excludedWord ORDER BY RANDOM() LIMIT :limit")
+    @Query("""
+        SELECT w.word FROM word_bank w
+        INNER JOIN definition_cache d ON w.word = d.word
+        WHERE w.word != :excludedWord
+        ORDER BY RANDOM()
+        LIMIT :limit
+    """)
     suspend fun getRandomDistractors(excludedWord: String, limit: Int): List<String>
 }

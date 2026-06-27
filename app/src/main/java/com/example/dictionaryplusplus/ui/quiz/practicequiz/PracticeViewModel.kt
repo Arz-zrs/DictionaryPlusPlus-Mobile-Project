@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.domain.model.QuizQuestion
-import com.example.dictionaryplusplus.domain.usecase.GetPracticeQuizUseCase
+import com.example.dictionaryplusplus.domain.usecase.quiz.GetPracticeQuizUseCase
 import com.example.dictionaryplusplus.core.util.asErrorMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

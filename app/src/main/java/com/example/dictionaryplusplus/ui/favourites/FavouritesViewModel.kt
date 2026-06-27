@@ -3,8 +3,8 @@ package com.example.dictionaryplusplus.ui.favourites
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.domain.model.FavouriteWord
-import com.example.dictionaryplusplus.domain.usecase.ObserveFavouriteWordsUseCase
-import com.example.dictionaryplusplus.domain.usecase.ToggleFavouriteUseCase
+import com.example.dictionaryplusplus.domain.usecase.words.ObserveFavouriteWordsUseCase
+import com.example.dictionaryplusplus.domain.usecase.words.ToggleFavouriteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

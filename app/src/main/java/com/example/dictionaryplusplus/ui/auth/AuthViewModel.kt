@@ -4,11 +4,11 @@ import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.R
-import com.example.dictionaryplusplus.domain.usecase.LoginUseCase
-import com.example.dictionaryplusplus.domain.usecase.RegisterUseCase
+import com.example.dictionaryplusplus.domain.usecase.auth.LoginUseCase
+import com.example.dictionaryplusplus.domain.usecase.auth.RegisterUseCase
 import com.example.dictionaryplusplus.core.util.ErrorMessage
 import com.example.dictionaryplusplus.core.util.asErrorMessage
-import com.example.dictionaryplusplus.domain.usecase.SendPasswordResetEmailUseCase
+import com.example.dictionaryplusplus.domain.usecase.auth.SendPasswordResetEmailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,6 +1,8 @@
 package com.example.dictionaryplusplus.domain.usecase
 
 import com.example.dictionaryplusplus.domain.repository.QuizRepository
+import com.example.dictionaryplusplus.domain.usecase.quiz.IsQuizAvailableUseCase
+import com.example.dictionaryplusplus.domain.usecase.quiz.ObserveQuizAvailabilityUseCase
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.first
@@ -22,8 +24,10 @@ class ObserveQuizAvailabilityUseCaseTest {
     @Before
     fun setup() {
         quizRepository = mockk()
-        isQuizAvailableUseCase = IsQuizAvailableUseCase() // Using real implementation as it's pure logic
-        observeQuizAvailabilityUseCase = ObserveQuizAvailabilityUseCase(quizRepository, isQuizAvailableUseCase)
+        isQuizAvailableUseCase =
+            IsQuizAvailableUseCase() // Using real implementation as it's pure logic
+        observeQuizAvailabilityUseCase =
+            ObserveQuizAvailabilityUseCase(quizRepository, isQuizAvailableUseCase)
     }
 
     @Test

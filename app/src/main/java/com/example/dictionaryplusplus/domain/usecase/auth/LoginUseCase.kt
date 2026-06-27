@@ -1,0 +1,22 @@
+package com.example.dictionaryplusplus.domain.usecase.auth
+
+import com.example.dictionaryplusplus.domain.model.UserProfile
+import com.example.dictionaryplusplus.domain.repository.AuthRepository
+import com.example.dictionaryplusplus.domain.repository.UserSyncRepository
+import javax.inject.Inject
+
+class LoginUseCase @Inject constructor(
+    private val authRepository: AuthRepository,
+    private val userRepository: UserSyncRepository
+) {
+    suspend operator fun invoke(email: String, password: String): Result<UserProfile> {
+        return try {
+            val uid = authRepository.login(email, password).getOrThrow()
+            userRepository.fetchAndSyncProfile(uid, email).onFailure {
+                authRepository.logout()
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+}

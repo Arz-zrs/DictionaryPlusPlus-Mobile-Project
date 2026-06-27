@@ -2,7 +2,7 @@ package com.example.dictionaryplusplus.ui.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.dictionaryplusplus.domain.usecase.CompleteOnboardingUseCase
+import com.example.dictionaryplusplus.domain.usecase.setting.CompleteOnboardingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -3,8 +3,8 @@ package com.example.dictionaryplusplus.ui.dictionary
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.domain.model.Word
-import com.example.dictionaryplusplus.domain.usecase.SearchWordsUseCase
-import com.example.dictionaryplusplus.domain.usecase.SetSeenEventUseCase
+import com.example.dictionaryplusplus.domain.usecase.words.SearchWordsUseCase
+import com.example.dictionaryplusplus.domain.usecase.words.SetSeenEventUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

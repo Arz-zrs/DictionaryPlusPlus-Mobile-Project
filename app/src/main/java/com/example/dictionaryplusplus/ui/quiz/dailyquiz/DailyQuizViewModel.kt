@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.core.util.ErrorMessage
-import com.example.dictionaryplusplus.domain.usecase.CompleteDailyQuizUseCase
-import com.example.dictionaryplusplus.domain.usecase.GetDailyQuizUseCase
-import com.example.dictionaryplusplus.domain.usecase.GetQuizLengthUseCase
-import com.example.dictionaryplusplus.domain.usecase.ScoreAnswerUseCase
+import com.example.dictionaryplusplus.domain.usecase.quiz.CompleteDailyQuizUseCase
+import com.example.dictionaryplusplus.domain.usecase.quiz.GetDailyQuizUseCase
+import com.example.dictionaryplusplus.domain.usecase.quiz.GetQuizLengthUseCase
+import com.example.dictionaryplusplus.domain.usecase.quiz.ScoreAnswerUseCase
 import com.example.dictionaryplusplus.ui.quiz.shared.AnswerState
 import com.example.dictionaryplusplus.ui.quiz.shared.QuestionState
 import dagger.hilt.android.lifecycle.HiltViewModel
