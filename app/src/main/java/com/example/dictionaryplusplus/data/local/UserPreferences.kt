@@ -40,7 +40,8 @@ class UserPreferences @Inject constructor(
     companion object {
         const val WOTD_FALLBACK: String = "river"
         const val DEFAULT_QUIZ_LENGTH: Int = 5
-        const val DEFAULT_TIMESTAMP: String = "06:00"
+        const val DEFAULT_REFRESH_TIMESTAMP: String = "06:00"
+        const val DEFAULT_NOTIF_TIMESTAMP: String = "08:00"
         const val DEFAULT_THEME = "SYSTEM"
         const val DEFAULT_FONT_SIZE = "MEDIUM"
     }
@@ -65,7 +66,7 @@ class UserPreferences @Inject constructor(
 
     val notificationTime: Flow<String> = context.dataStore.data
         .map { preferences ->
-            preferences[PreferencesKeys.NOTIFICATION_TIME] ?: "08:00"
+            preferences[PreferencesKeys.NOTIFICATION_TIME] ?: DEFAULT_NOTIF_TIMESTAMP
         }
 
     suspend fun setNotificationTime(time: String) {
@@ -140,7 +141,7 @@ class UserPreferences @Inject constructor(
 
     val dailyQuizRefreshTime: Flow<String> = context.dataStore.data
         .map { preferences ->
-            preferences[PreferencesKeys.DAILY_QUIZ_REFRESH_TIME] ?: DEFAULT_TIMESTAMP
+            preferences[PreferencesKeys.DAILY_QUIZ_REFRESH_TIME] ?: DEFAULT_REFRESH_TIMESTAMP
         }
 
     suspend fun setDailyQuizRefreshTime(time: String) {
@@ -156,7 +157,7 @@ class UserPreferences @Inject constructor(
 
     val refreshTimeAtLastCompletion: Flow<String> = context.dataStore.data
         .map { preferences ->
-            preferences[PreferencesKeys.REFRESH_TIME_AT_LAST_COMPLETION] ?: DEFAULT_TIMESTAMP
+            preferences[PreferencesKeys.REFRESH_TIME_AT_LAST_COMPLETION] ?: DEFAULT_REFRESH_TIMESTAMP
         }
 
     suspend fun saveQuizCompletion(timestamp: Long, refreshTimeSnapshot: String) {

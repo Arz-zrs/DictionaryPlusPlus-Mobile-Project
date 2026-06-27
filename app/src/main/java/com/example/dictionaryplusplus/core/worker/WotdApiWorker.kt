@@ -7,7 +7,6 @@ import androidx.work.WorkerParameters
 import com.example.dictionaryplusplus.BuildConfig
 import com.example.dictionaryplusplus.data.remote.WordnikApiService
 import com.example.dictionaryplusplus.domain.repository.WotdRepository
-import com.example.dictionaryplusplus.core.notification.NotificationBuilder
 import com.example.dictionaryplusplus.data.local.dao.WordDao
 import com.example.dictionaryplusplus.data.local.entity.WordEntity
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -20,8 +19,7 @@ class WotdApiWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val wotdRepository: WotdRepository,
     private val wordnikApiService: WordnikApiService,
-    private val wordDao: WordDao,
-    private val notificationBuilder: NotificationBuilder
+    private val wordDao: WordDao
 ): CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
         return try {
@@ -43,12 +41,6 @@ class WotdApiWorker @AssistedInject constructor(
             } catch (e: Exception){
                 FirebaseCrashlytics.getInstance().recordException(e)
             }
-
-            notificationBuilder.showDailyNotification(
-                word = word,
-                phonetic = "",
-                shortDefinition = wordnikDefinition
-            )
 
             Result.success()
         } catch (e: Exception) {

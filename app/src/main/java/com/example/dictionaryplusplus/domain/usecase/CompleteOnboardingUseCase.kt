@@ -15,6 +15,6 @@ class CompleteOnboardingUseCase @Inject constructor(
         val hour = parts.getOrNull(0)?.toIntOrNull() ?: 6
         val minute = parts.getOrNull(1)?.toIntOrNull() ?: 0
         notificationScheduler.scheduleDailyWord(hour, minute)
-        notificationScheduler.scheduleWotd()
+        notificationScheduler.scheduleWotd(hour, minute)
     }
 }

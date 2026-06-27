@@ -38,18 +38,20 @@ class NotificationSchedulerImpl @Inject constructor(
             .build()
         workManager.enqueueUniquePeriodicWork(
             "daily_word_worker",
-            ExistingPeriodicWorkPolicy.UPDATE,
+            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
             request
         )
     }
 
-    override fun scheduleWotd() {
+    override fun scheduleWotd(hour: Int, minute: Int) {
+        val initialDelay = computeInitialDelayMillis(hour, minute)
         val request = PeriodicWorkRequestBuilder<WotdApiWorker>(24, TimeUnit.HOURS)
+            .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
             .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
             .build()
         workManager.enqueueUniquePeriodicWork(
             "wotd_api_worker",
-            ExistingPeriodicWorkPolicy.KEEP,
+            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
             request
         )
     }

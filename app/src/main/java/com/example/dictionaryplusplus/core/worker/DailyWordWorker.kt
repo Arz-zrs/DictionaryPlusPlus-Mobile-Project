@@ -9,22 +9,26 @@ import com.example.dictionaryplusplus.domain.model.DefinitionResult
 import com.example.dictionaryplusplus.domain.model.DefinitionErrorType
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
 import com.example.dictionaryplusplus.core.notification.NotificationBuilder
+import com.example.dictionaryplusplus.domain.repository.WotdRepository
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.firstOrNull
 
 @HiltWorker
 class DailyWordWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val wordDao: WordDao,
+    private val wotdRepository: WotdRepository,
     private val definitionRepository: DefinitionRepository,
     private val notificationBuilder: NotificationBuilder
 ): CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
         return try {
-            val wordEntity = wordDao.getRandomUnseenWord() ?: return Result.failure()
-            val word = wordEntity.word
+            val word = wotdRepository.observeWordOfTheDay().firstOrNull()?.word
+                ?: wordDao.getRandomUnseenWord()?.word
+                ?: return Result.failure()
 
             val definitionResult = definitionRepository.getDefinition(word)
             
