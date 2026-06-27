@@ -21,7 +21,6 @@ import com.example.dictionaryplusplus.domain.usecase.SetDailyQuizRefreshTimeUseC
 import com.example.dictionaryplusplus.domain.usecase.SetFontSizeUseCase
 import com.example.dictionaryplusplus.domain.usecase.SetQuizLengthUseCase
 import com.example.dictionaryplusplus.domain.usecase.SetThemeModeUseCase
-import com.example.dictionaryplusplus.domain.usecase.TriggerDailyWordWorkerUseCase
 import com.example.dictionaryplusplus.domain.usecase.TriggerWotdWorkerUseCase
 import com.example.dictionaryplusplus.domain.usecase.UpdateDisplayNameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,7 +48,6 @@ class SettingsViewModel @Inject constructor(
     getNotificationTimeUseCase: GetNotificationTimeUseCase,
     private val rescheduleDailyWordUseCase: RescheduleDailyWordUseCase,
     private val triggerWotdWorkerUseCase: TriggerWotdWorkerUseCase,
-    private val triggerDailyWordWorkerUseCase: TriggerDailyWordWorkerUseCase,
     private val resetQuizCompletionUseCase: ResetQuizCompletionUseCase,
     private val updateDisplayNameUseCase: UpdateDisplayNameUseCase,
     observeUserProfileUseCase: ObserveUserProfileUseCase,
@@ -169,10 +167,6 @@ class SettingsViewModel @Inject constructor(
 
     fun triggerWotd() {
         triggerWotdWorkerUseCase()
-    }
-
-    fun triggerDailyWord() {
-        triggerDailyWordWorkerUseCase()
     }
 
     fun resetQuiz() {

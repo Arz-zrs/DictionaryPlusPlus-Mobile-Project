@@ -427,7 +427,6 @@ fun SettingsScreen(
 
         DebugSection(
             onTriggerWotd = { viewModel.triggerWotd() },
-            onTriggerDailyWord = { viewModel.triggerDailyWord() },
             onResetQuiz = { viewModel.resetQuiz() }
         )
 
