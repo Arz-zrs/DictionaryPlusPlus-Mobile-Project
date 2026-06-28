@@ -24,8 +24,8 @@ class FirestoreSyncStore @Inject constructor(
                 "display_name" to displayName,
                 "email" to email,
                 "total_score" to 0,
-                "seen_words" to emptyList<String>(),
-                "favourites" to emptyList<String>(),
+                "seen_words" to emptyMap<String, Long>(),
+                "favourites" to emptyMap<String, Long>(),
                 "notes" to emptyList<String>()
             )
             firestore.collection("users").document(uid).set(userDocument).await()
@@ -65,14 +65,12 @@ class FirestoreSyncStore @Inject constructor(
         }
     }
 
-    suspend fun syncFavouriteChange(word: String, isAdded: Boolean) {
+    suspend fun syncFavouriteChange(word: String, isAdded: Boolean, addedAtTimestamp: Long) {
         val uid = authStore.currentUserUid ?: return
         try {
-            val updateValue =
-                if (isAdded) FieldValue.arrayUnion(word)
-                else FieldValue.arrayRemove(word)
+            val updateValue = if (isAdded) addedAtTimestamp else FieldValue.delete()
             firestore.collection("users").document(uid)
-                .update("favourites", updateValue)
+                .update("favourites.$word", updateValue)
                 .await()
         } catch (e: Exception) {
             FirebaseCrashlytics.getInstance().recordException(e)
@@ -90,11 +88,11 @@ class FirestoreSyncStore @Inject constructor(
         }
     }
 
-    suspend fun syncSeenWordAdded(word: String) {
+    suspend fun syncSeenWordAdded(word: String, seenAtTimestamp: Long) {
         val uid = authStore.currentUserUid ?: return
         try {
             firestore.collection("users").document(uid)
-                .update("seen_words", FieldValue.arrayUnion(word))
+                .update("seen_words.$word", seenAtTimestamp)
                 .await()
         } catch (e: Exception) {
             FirebaseCrashlytics.getInstance().recordException(e)

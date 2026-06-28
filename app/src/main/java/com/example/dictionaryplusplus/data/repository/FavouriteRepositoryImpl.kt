@@ -30,6 +30,7 @@ class FavouriteRepositoryImpl @Inject constructor(
         return try {
             val isFavourite =
                 favouriteDao.observeIsFavourite(word).map { it }.firstOrNull() ?: false
+            val timestamp = System.currentTimeMillis()
 
             val newState = !isFavourite
             if (isFavourite) {
@@ -38,12 +39,16 @@ class FavouriteRepositoryImpl @Inject constructor(
                 favouriteDao.insertFavourite(
                     FavouriteEntity(
                         word = word,
-                        addedAtTimestamp = System.currentTimeMillis()
+                        addedAtTimestamp = timestamp
                     )
                 )
             }
             applicationScope.launch(Dispatchers.IO) {
-                firestoreSyncStore.syncFavouriteChange(word, isAdded = newState)
+                firestoreSyncStore.syncFavouriteChange(
+                    word = word,
+                    isAdded = newState,
+                    addedAtTimestamp = timestamp
+                )
             }
             newState
         } catch (e: Exception) {

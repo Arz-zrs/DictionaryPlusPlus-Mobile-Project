@@ -78,15 +78,12 @@ class UserRepositoryImpl @Inject constructor(
             )
             userProfileDao.insertUserProfile(localProfile)
 
-            val favourites = (cloudData["favourites"] as? List<*>)
-                ?.filterIsInstance<String>() ?: emptyList()
+            @Suppress("UNCHECKED_CAST")
+            val favouritesMap = (cloudData["favourites"] as? Map<String, Long>) ?: emptyMap()
             favouriteDao.clearAll()
-            favourites.forEach { word ->
+            favouritesMap.forEach { (word, addedAt) ->
                 favouriteDao.insertFavourite(
-                    FavouriteEntity(
-                        word = word,
-                        addedAtTimestamp = System.currentTimeMillis()
-                    )
+                    FavouriteEntity(word = word, addedAtTimestamp = addedAt)
                 )
             }
 
@@ -103,15 +100,15 @@ class UserRepositoryImpl @Inject constructor(
                 )
             }
 
-            val seenWords = (cloudData["seen_words"] as? List<*>)
-                ?.filterIsInstance<String>() ?: emptyList()
+            @Suppress("UNCHECKED_CAST")
+            val seenWordsMap = (cloudData["seen_words"] as? Map<String, Long>) ?: emptyMap()
             seenEventDao.clearAll()
-            seenWords.forEach { word ->
+            seenWordsMap.forEach { (word, seenAt) ->
                 wordDao.insertWords(listOf(WordEntity(word = word)))
                 seenEventDao.insertSeenEvent(
                     SeenEventEntity(
                         word = word,
-                        seenAtTimestamp = System.currentTimeMillis(),
+                        seenAtTimestamp = seenAt,
                         isConfirmed = true
                     )
                 )

@@ -43,6 +43,7 @@ class HistoryRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addSeenEvent(word: String) {
+        val timestamp = System.currentTimeMillis()
         wordDao.insertWords(listOf(WordEntity(word)))
         seenEventDao.insertSeenEvent(
             SeenEventEntity(
@@ -52,7 +53,7 @@ class HistoryRepositoryImpl @Inject constructor(
             )
         )
         applicationScope.launch(Dispatchers.IO) {
-            firestoreSyncStore.syncSeenWordAdded(word)
+            firestoreSyncStore.syncSeenWordAdded(word, timestamp)
         }
     }
 }
