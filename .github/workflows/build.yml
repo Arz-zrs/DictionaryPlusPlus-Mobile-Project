@@ -46,8 +46,8 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build Release APK
-        run: ./gradlew assembleRelease
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
 
       - name: Upload APK Debug Artifact
         uses: actions/upload-artifact@v4
@@ -55,8 +55,8 @@ jobs:
           name: app-release
           path: app/build/outputs/apk/debug/*.apk
 
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
 
       - name: Upload APK Release Artifact
         uses: actions/upload-artifact@v4
