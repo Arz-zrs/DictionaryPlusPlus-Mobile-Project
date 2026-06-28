@@ -50,6 +50,15 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Run Unit Tests
+        run: ./gradlew testDebugUnitTest
+
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-report
+          path: app/build/test-results/testDebugUnitTest/ 
+          
       - name: Build Debug APK
         run: ./gradlew assembleDebug
 
@@ -79,3 +88,4 @@ jobs:
           prerelease: false
           files: |
             app/build/outputs/apk/release/*.apk
+            app/build/outputs/apk/debug/*.apk
