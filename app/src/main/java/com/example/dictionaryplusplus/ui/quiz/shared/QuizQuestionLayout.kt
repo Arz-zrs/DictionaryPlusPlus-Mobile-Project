@@ -10,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.ui.theme.Success
@@ -39,9 +38,7 @@ fun QuizQuestionLayout(
             text = data.prompt,
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(vertical = 16.dp),
-            textAlign = TextAlign.Center,
-            maxLines = 5,
-            overflow = TextOverflow.Ellipsis
+            textAlign = TextAlign.Center
         )
 
         data.choices.forEachIndexed { index, choice ->
@@ -75,8 +72,6 @@ fun QuizQuestionLayout(
                 Text(
                     text = choice,
                     textAlign = TextAlign.Center,
-                    maxLines = 5,
-                    overflow = TextOverflow.Ellipsis,
                     color = if (hasAnswered && (isCorrect || isSelected)) {
                         if (isCorrect) Success else MaterialTheme.colorScheme.error
                     } else {
