@@ -41,9 +41,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.R
-import com.example.dictionaryplusplus.core.util.ErrorMessage
 import com.example.dictionaryplusplus.domain.model.Definition
 import com.example.dictionaryplusplus.domain.model.WordMeaning
+import com.example.dictionaryplusplus.util.ErrorMessage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
