@@ -14,5 +14,5 @@ interface WotdRepository {
     suspend fun fetchWotdSync()
     suspend fun getWotdHistoryForDate(date: String): WotdHistoryEntry?
     fun observeWotdHistory(limit: Int = 30): Flow<List<WotdHistoryEntry>>
-    suspend fun fallbackToLocalWord()
+    suspend fun fallbackToLocalWotd()
 }

@@ -10,7 +10,7 @@ import com.example.dictionaryplusplus.domain.usecase.words.ObserveIsFavouriteUse
 import com.example.dictionaryplusplus.domain.usecase.words.ObserveWordNoteUseCase
 import com.example.dictionaryplusplus.domain.usecase.words.SaveWordNoteUseCase
 import com.example.dictionaryplusplus.domain.usecase.words.ToggleFavouriteUseCase
-import com.example.dictionaryplusplus.core.util.ErrorMessage
+import com.example.dictionaryplusplus.util.ErrorMessage
 import com.example.dictionaryplusplus.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi

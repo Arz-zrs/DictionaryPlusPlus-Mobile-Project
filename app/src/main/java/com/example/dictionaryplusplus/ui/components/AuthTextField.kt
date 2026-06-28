@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.VisualTransformation
-import com.example.dictionaryplusplus.core.util.ErrorMessage
+import com.example.dictionaryplusplus.util.ErrorMessage
 
 @Composable
 fun AuthTextField(

@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.domain.usecase.words.ObserveSeenEventsUseCase
 import com.example.dictionaryplusplus.domain.usecase.words.DeleteSeenEventUseCase
 import com.example.dictionaryplusplus.domain.usecase.words.ToggleFavouriteUseCase
-import com.example.dictionaryplusplus.core.util.UiText
+import com.example.dictionaryplusplus.util.UiText
 import com.example.dictionaryplusplus.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

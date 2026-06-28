@@ -1,7 +1,7 @@
 package com.example.dictionaryplusplus.ui.dictionary
 
 import com.example.dictionaryplusplus.domain.model.Definition
-import com.example.dictionaryplusplus.core.util.ErrorMessage
+import com.example.dictionaryplusplus.util.ErrorMessage
 
 sealed interface DefinitionState {
     data object Loading : DefinitionState

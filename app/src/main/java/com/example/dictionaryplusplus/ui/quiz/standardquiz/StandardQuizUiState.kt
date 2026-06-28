@@ -1,6 +1,6 @@
 package com.example.dictionaryplusplus.ui.quiz.standardquiz
 
-import com.example.dictionaryplusplus.core.util.ErrorMessage
+import com.example.dictionaryplusplus.util.ErrorMessage
 import com.example.dictionaryplusplus.ui.quiz.shared.QuestionState
 
 sealed interface StandardQuizUiState {

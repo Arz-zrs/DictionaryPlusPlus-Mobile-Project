@@ -19,7 +19,7 @@ import com.example.dictionaryplusplus.R
 import com.example.dictionaryplusplus.ui.components.AuthTextField
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.dictionaryplusplus.core.util.ErrorMessage
+import com.example.dictionaryplusplus.util.ErrorMessage
 import com.example.dictionaryplusplus.ui.theme.Success
 
 @Composable

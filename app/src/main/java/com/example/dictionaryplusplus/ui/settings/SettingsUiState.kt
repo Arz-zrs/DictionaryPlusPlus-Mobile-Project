@@ -1,6 +1,6 @@
 package com.example.dictionaryplusplus.ui.settings
 
-import com.example.dictionaryplusplus.core.util.ErrorMessage
+import com.example.dictionaryplusplus.util.ErrorMessage
 
 sealed interface SettingsUiState {
     object Idle: SettingsUiState

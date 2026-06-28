@@ -1,4 +1,4 @@
-package com.example.dictionaryplusplus.core.util
+package com.example.dictionaryplusplus.util
 
 import android.content.Context
 import androidx.annotation.StringRes

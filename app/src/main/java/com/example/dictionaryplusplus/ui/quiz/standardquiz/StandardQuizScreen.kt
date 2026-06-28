@@ -16,7 +16,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.R
-import com.example.dictionaryplusplus.core.util.ErrorMessage
+import com.example.dictionaryplusplus.util.ErrorMessage
 import com.example.dictionaryplusplus.ui.components.QuizProgressBar
 import com.example.dictionaryplusplus.ui.quiz.shared.QuizQuestionLayout
 import com.example.dictionaryplusplus.ui.quiz.shared.QuizSummaryCard

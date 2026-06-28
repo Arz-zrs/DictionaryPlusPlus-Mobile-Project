@@ -1,6 +1,6 @@
 package com.example.dictionaryplusplus.ui.auth
 
-import com.example.dictionaryplusplus.core.util.ErrorMessage
+import com.example.dictionaryplusplus.util.ErrorMessage
 
 data class AuthFormState(
     val displayName: String = "",

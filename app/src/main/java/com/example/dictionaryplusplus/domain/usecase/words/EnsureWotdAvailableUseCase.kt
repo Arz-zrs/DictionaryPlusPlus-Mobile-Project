@@ -19,7 +19,7 @@ class EnsureWotdAvailableUseCase @Inject constructor(
                 true
             }
             if (fetched == null) {
-                wotdRepository.fallbackToLocalWord()
+                wotdRepository.fallbackToLocalWotd()
             }
         }
     }

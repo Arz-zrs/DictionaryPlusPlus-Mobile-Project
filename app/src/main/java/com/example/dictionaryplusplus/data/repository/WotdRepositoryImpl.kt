@@ -98,7 +98,7 @@ class WotdRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun fallbackToLocalWord() {
+    override suspend fun fallbackToLocalWotd() {
         val localWord = definitionDao.getRandomDefinition()?.word
             ?: PreferenceConstants.WOTD_FALLBACK
         userPreferences.setWordOfTheDay(localWord)

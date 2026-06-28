@@ -50,7 +50,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import com.example.dictionaryplusplus.R
-import com.example.dictionaryplusplus.core.util.ErrorMessage
+import com.example.dictionaryplusplus.util.ErrorMessage
 import com.example.dictionaryplusplus.domain.model.FontSize
 import com.example.dictionaryplusplus.domain.model.ThemeMode
 import com.example.dictionaryplusplus.ui.theme.Success

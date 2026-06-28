@@ -2,7 +2,7 @@ package com.example.dictionaryplusplus.ui.quiz.practicequiz
 
 import androidx.annotation.StringRes
 import com.example.dictionaryplusplus.domain.model.QuizQuestion
-import com.example.dictionaryplusplus.core.util.ErrorMessage
+import com.example.dictionaryplusplus.util.ErrorMessage
 
 sealed interface PracticeQuizUiState {
     data object Loading: PracticeQuizUiState

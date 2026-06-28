@@ -38,7 +38,7 @@ class WotdNotificationWorker @AssistedInject constructor(
                     true
                 }
                 if (fetched == null) {
-                    wotdRepository.fallbackToLocalWord()
+                    wotdRepository.fallbackToLocalWotd()
                 }
             }
 

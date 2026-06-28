@@ -3,7 +3,7 @@ package com.example.dictionaryplusplus.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.dictionaryplusplus.R
-import com.example.dictionaryplusplus.core.util.asErrorMessage
+import com.example.dictionaryplusplus.util.asErrorMessage
 import com.example.dictionaryplusplus.domain.model.FontSize
 import com.example.dictionaryplusplus.domain.model.ThemeMode
 import com.example.dictionaryplusplus.domain.usecase.auth.ChangePasswordUseCase
