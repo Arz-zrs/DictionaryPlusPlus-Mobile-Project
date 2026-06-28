@@ -134,7 +134,8 @@ fun StandardQuizScreen(
                         QuizQuestionLayout(
                             data = displayData,
                             onChoiceClick = { viewModel.submitAnswer(it) },
-                            onDoneClick = { viewModel.nextQuestion() }
+                            onDoneClick = { viewModel.nextQuestion() },
+                            modifier = Modifier.weight(1f)
                         )
                     }
                 }
