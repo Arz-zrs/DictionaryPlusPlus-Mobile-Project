@@ -8,8 +8,6 @@ import com.example.dictionaryplusplus.domain.model.Definition
 import com.example.dictionaryplusplus.domain.model.DefinitionResult
 import com.example.dictionaryplusplus.domain.model.DefinitionErrorType
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
-import com.example.dictionaryplusplus.core.util.ContentSanitizer
-import com.example.dictionaryplusplus.core.util.DenyListProvider
 import com.example.dictionaryplusplus.data.local.dao.WordDao
 import com.example.dictionaryplusplus.data.local.entity.WordEntity
 import com.example.dictionaryplusplus.domain.model.WordMeaning
@@ -24,9 +22,7 @@ import javax.inject.Singleton
 class DefinitionRepositoryImpl @Inject constructor(
     private val definitionDao: DefinitionDao,
     private val apiService: DictionaryApiService,
-    private val wordDao: WordDao,
-    private val sanitizer: ContentSanitizer,
-    private val denyListProvider: DenyListProvider
+    private val wordDao: WordDao
 ) : DefinitionRepository {
     private val gson = Gson()
 
@@ -64,24 +60,14 @@ class DefinitionRepositoryImpl @Inject constructor(
             val rawExample = rawMeanings.firstOrNull()?.third ?: "No example available"
             val rawSynonyms = firstEntry.meanings?.firstOrNull()?.synonyms ?: emptyList()
 
-            val denyList = denyListProvider.denyList
-            val sanitizedDefinition = sanitizer.sanitizeText(rawDefinition, denyList,
-                ContentSanitizer.FALLBACK_DEFINITION)
-            val sanitizedExample = sanitizer.sanitizeText(rawExample, denyList, ContentSanitizer.FALLBACK_EXAMPLE)
-            val sanitizedSynonyms = sanitizer.sanitizeSynonyms(rawSynonyms, denyList)
-            val sanitizedMeanings = rawMeanings.map { (pos, def, ex) ->
-                Triple(pos, sanitizer.sanitizeText(def, denyList, ContentSanitizer.FALLBACK_DEFINITION),
-                    ex?.let { sanitizer.sanitizeText(it, denyList, ContentSanitizer.FALLBACK_EXAMPLE) })
-            }.filter { !ContentSanitizer.isFallbackDefinition(it.second) }
-
             val definitionEntity = DefinitionEntity(
                 word = word,
-                definition = sanitizedDefinition,
+                definition = rawDefinition,
                 phonetic = phoneticText,
                 partOfSpeech = rawMeanings.firstOrNull()?.first,
-                exampleSentence = sanitizedExample,
-                relatedWordsJson = gson.toJson(sanitizedSynonyms),
-                meaningsJson = gson.toJson(sanitizedMeanings)
+                exampleSentence = rawExample,
+                relatedWordsJson = gson.toJson(rawSynonyms),
+                meaningsJson = gson.toJson(rawMeanings)
             )
             definitionDao.insertDefinition(definitionEntity)
 
@@ -93,12 +79,12 @@ class DefinitionRepositoryImpl @Inject constructor(
 
             val domainModel = Definition(
                 word = word,
-                definition = sanitizedDefinition,
+                definition = rawDefinition,
                 phonetic = phoneticText,
                 partOfSpeech = rawMeanings.firstOrNull()?.first,
-                exampleSentence = sanitizedExample,
-                synonyms = sanitizedSynonyms,
-                meanings = sanitizedMeanings.map { (pos, def, ex) ->
+                exampleSentence = rawExample,
+                synonyms = rawSynonyms,
+                meanings = rawMeanings.map { (pos, def, ex) ->
                     WordMeaning(pos, def, ex)
                 }
             )

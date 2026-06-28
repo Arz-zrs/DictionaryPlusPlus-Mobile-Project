@@ -1,6 +1,5 @@
 package com.example.dictionaryplusplus.domain.usecase.quiz
 
-import com.example.dictionaryplusplus.core.util.ContentSanitizer
 import com.example.dictionaryplusplus.domain.model.DefinitionResult
 import com.example.dictionaryplusplus.domain.model.QuizQuestion
 import com.example.dictionaryplusplus.domain.repository.DefinitionRepository
@@ -33,10 +32,7 @@ class GetDefinitionQuizUseCase @Inject constructor(
                 val dDefinition = definitionRepository.getDefinitionOnce(dWord) ?: continue
                 val dDef = dDefinition.definition
 
-                if (dDef.isNotBlank() &&
-                    !ContentSanitizer.isFallbackDefinition(dDef) &&
-                    dDef !in choices
-                ) {
+                if (dDef.isNotBlank() && dDef !in choices) {
                     choices.add(dDef)
                 }
             }

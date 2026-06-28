@@ -5,8 +5,6 @@ import com.example.dictionaryplusplus.data.local.UserPreferences
 import com.example.dictionaryplusplus.data.local.dao.DefinitionDao
 import com.example.dictionaryplusplus.data.local.entity.DefinitionEntity
 import com.example.dictionaryplusplus.data.local.seeder.dto.DefinitionSeedDto
-import com.example.dictionaryplusplus.core.util.ContentSanitizer
-import com.example.dictionaryplusplus.core.util.DenyListProvider
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -18,16 +16,13 @@ import javax.inject.Singleton
 class DefinitionSeeder @Inject constructor(
     @ApplicationContext private val context: Context,
     private val definitionDao: DefinitionDao,
-    private val userPreferences: UserPreferences,
-    private val sanitizer: ContentSanitizer,
-    private val denyListProvider: DenyListProvider
+    private val userPreferences: UserPreferences
 ) {
     private val gson = Gson()
 
     suspend fun seedDefinitions() {
         if (userPreferences.isDefinitionSeeded()) return
         try {
-            val denyList = denyListProvider.denyList
             val jsonString = context.assets.open("definition_seed.json")
                 .bufferedReader()
                 .use { it.readText() }
@@ -35,18 +30,12 @@ class DefinitionSeeder @Inject constructor(
             val seedEntries: List<DefinitionSeedDto> = gson.fromJson(jsonString, type)
 
             val entities = seedEntries.map {
-                val safeDefinition = sanitizer.sanitizeText(it.definition, denyList, ContentSanitizer.FALLBACK_DEFINITION)
-                val safeExample = it.exampleSentence?.let { example ->
-                    sanitizer.sanitizeText(example, denyList, "Example omitted")
-                }
-                val safeSynonyms = sanitizer.sanitizeSynonyms(it.synonyms ?: emptyList(), denyList)
-
                 DefinitionEntity(
                     word = it.word,
-                    definition = safeDefinition,
+                    definition = it.definition,
                     phonetic = it.phonetic,
-                    exampleSentence = safeExample,
-                    relatedWordsJson = gson.toJson(safeSynonyms)
+                    exampleSentence = it.exampleSentence,
+                    relatedWordsJson = gson.toJson(it.synonyms ?: emptyList<String>())
                 )
             }
 
