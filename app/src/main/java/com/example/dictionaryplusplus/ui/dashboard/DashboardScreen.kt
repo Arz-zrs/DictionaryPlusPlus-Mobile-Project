@@ -71,7 +71,9 @@ fun DashboardScreen(
                 item {
                     WordOfTheDayCard(
                         wotd = wotd.definition,
-                        onCardClick = { viewModel.onWotdClicked(wotd.definition.word) }
+                        onCardClick = { viewModel.onWotdClicked(wotd.definition.word) },
+                        isRefreshing = uiState.isFetchingWotd,
+                        onRefreshClick = { viewModel.onRefreshWotdClicked() }
                     )
                 }
             }

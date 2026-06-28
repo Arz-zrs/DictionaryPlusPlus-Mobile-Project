@@ -6,6 +6,7 @@ data class DashboardUiState(
     val displayName: String = "",
     val userScore: Int = 0,
     val wordOfTheDay: WotdState = WotdState.Loading,
+    val isFetchingWotd: Boolean = false,
     val recentWords: List<HistoryUiState> = emptyList(),
     val sheetState: DashboardSheetState = DashboardSheetState.Hidden
 )

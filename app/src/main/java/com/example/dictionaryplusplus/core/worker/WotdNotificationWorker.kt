@@ -14,6 +14,9 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.withTimeoutOrNull
+import java.time.LocalDate
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltWorker
 class WotdNotificationWorker @AssistedInject constructor(
@@ -26,26 +29,34 @@ class WotdNotificationWorker @AssistedInject constructor(
 ): CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
         return try {
+            val today = LocalDate.now().toString()
+            val todaysEntry = wotdRepository.getWotdHistoryForDate(today)
+
+            if (todaysEntry == null) {
+                val fetched = withTimeoutOrNull(5000.milliseconds) {
+                    wotdRepository.fetchWotdSync()
+                    true
+                }
+                if (fetched == null) {
+                    wotdRepository.fallbackToLocalWord()
+                }
+            }
+
             val word = wotdRepository.observeWordOfTheDay().firstOrNull()?.word
                 ?: wordDao.getRandomUnseenWord()?.word
                 ?: return Result.failure()
 
             val definitionResult = definitionRepository.getDefinition(word)
-            
             val definition = when (definitionResult) {
                 is DefinitionResult.Success -> definitionResult.definition
                 is DefinitionResult.Error -> {
                     return if (definitionResult.type == DefinitionErrorType.NOT_FOUND) {
                         Result.failure()
-                    } else if (runAttemptCount < 3) {
-                        Result.retry()
                     } else {
-                        FirebaseCrashlytics.getInstance().recordException(Exception("WotdNotificationWorker: definition fetch failed after max retries for word: $word"))
-                        Result.failure()
+                        Result.retry()
                     }
                 }
-                DefinitionResult.Loading ->
-                    return if (runAttemptCount < 3) Result.retry() else Result.failure()
+                DefinitionResult.Loading -> return Result.retry()
             }
 
             notificationBuilder.showDailyNotification(
@@ -56,12 +67,8 @@ class WotdNotificationWorker @AssistedInject constructor(
 
             Result.success()
         } catch (e: Exception) {
-            if (runAttemptCount < 3) {
-                Result.retry()
-            } else {
-                FirebaseCrashlytics.getInstance().recordException(e)
-                Result.failure()
-            }
+            FirebaseCrashlytics.getInstance().recordException(e)
+            Result.retry()
         }
     }
 }

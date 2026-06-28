@@ -12,6 +12,8 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.dictionaryplusplus.data.local.dao.WotdHistoryDao
 import com.example.dictionaryplusplus.data.local.entity.WotdHistoryEntity
+import com.example.dictionaryplusplus.domain.model.PreferenceConstants
+import com.example.dictionaryplusplus.domain.model.WotdHistoryEntry
 import com.example.dictionaryplusplus.domain.model.WotdSource
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -86,8 +88,28 @@ class WotdRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getWotdHistoryForDate(date: String): WotdHistoryEntity? {
-        return wotdHistoryDao.getWotdForDate(date)
+    override suspend fun getWotdHistoryForDate(date: String): WotdHistoryEntry? {
+        return wotdHistoryDao.getWotdForDate(date)?.toDomain()
+    }
+
+    override fun observeWotdHistory(limit: Int): Flow<List<WotdHistoryEntry>> {
+        return wotdHistoryDao.observeRecentHistory(limit).map { entities ->
+            entities.map { it.toDomain() }
+        }
+    }
+
+    override suspend fun fallbackToLocalWord() {
+        val localWord = definitionDao.getRandomDefinition()?.word
+            ?: PreferenceConstants.WOTD_FALLBACK
+        userPreferences.setWordOfTheDay(localWord)
+
+        wotdHistoryDao.insertWotdHistory(
+            WotdHistoryEntity(
+                date = LocalDate.now().toString(),
+                word = localWord,
+                source = WotdSource.LOCAL_FALLBACK.name
+            )
+        )
     }
 
     override suspend fun fetchWotdSync() {
@@ -104,15 +126,6 @@ class WotdRepositoryImpl @Inject constructor(
         }
         finally {
             _isFetching.value = false
-        }
-    }
-
-    fun WotdHistoryEntity.toDomain(): WotdSource {
-        return try {
-            WotdSource.valueOf(source)
-        } catch (e: IllegalArgumentException) {
-            FirebaseCrashlytics.getInstance().recordException(e)
-            WotdSource.LOCAL_FALLBACK
         }
     }
 }

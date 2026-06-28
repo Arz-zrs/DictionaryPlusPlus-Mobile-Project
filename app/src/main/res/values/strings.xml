@@ -165,4 +165,5 @@
     <!-- Debug Section -->
     <string name="debug_title">Debug Tools</string>
     <string name="debug_trigger_wotd">Trigger WotD Notification</string>
+    <string name="btn_refresh_wotd">refresh wotd</string>
 </resources>

@@ -1,7 +1,7 @@
 package com.example.dictionaryplusplus.domain.repository
 
-import com.example.dictionaryplusplus.data.local.entity.WotdHistoryEntity
 import com.example.dictionaryplusplus.domain.model.Definition
+import com.example.dictionaryplusplus.domain.model.WotdHistoryEntry
 import kotlinx.coroutines.flow.Flow
 
 interface WotdRepository {
@@ -12,5 +12,7 @@ interface WotdRepository {
     suspend fun setWordOfTheDay(word: String)
     suspend fun setWordnikWordOfTheDay(word: String, definition: String)
     suspend fun fetchWotdSync()
-    suspend fun getWotdHistoryForDate(date: String): WotdHistoryEntity?
+    suspend fun getWotdHistoryForDate(date: String): WotdHistoryEntry?
+    fun observeWotdHistory(limit: Int = 30): Flow<List<WotdHistoryEntry>>
+    suspend fun fallbackToLocalWord()
 }

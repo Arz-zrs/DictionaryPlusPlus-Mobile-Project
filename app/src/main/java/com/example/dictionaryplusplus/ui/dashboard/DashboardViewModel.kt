@@ -9,6 +9,7 @@ import com.example.dictionaryplusplus.domain.usecase.words.ObserveIsFetchingWotd
 import com.example.dictionaryplusplus.domain.usecase.auth.ObserveUserProfileUseCase
 import com.example.dictionaryplusplus.domain.usecase.words.ObserveWordOfTheDayUseCase
 import com.example.dictionaryplusplus.domain.usecase.words.ObserveSeenEventsUseCase
+import com.example.dictionaryplusplus.domain.usecase.words.RefreshWordOfTheDayUseCase
 import com.example.dictionaryplusplus.domain.usecase.words.SetSeenEventUseCase
 import com.example.dictionaryplusplus.ui.history.HistoryUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +30,8 @@ class DashboardViewModel @Inject constructor(
     observeSeenEventsUseCase: ObserveSeenEventsUseCase,
     observeIsFetchingWotdUseCase: ObserveIsFetchingWotdUseCase,
     private val ensureWotdAvailableUseCase: EnsureWotdAvailableUseCase,
-    private val setSeenEventUseCase: SetSeenEventUseCase
+    private val setSeenEventUseCase: SetSeenEventUseCase,
+    private val refreshWordOfTheDayUseCase: RefreshWordOfTheDayUseCase
 ): ViewModel() {
 
     private val _sheetState = MutableStateFlow<DashboardSheetState>(DashboardSheetState.Hidden)
@@ -53,8 +55,8 @@ class DashboardViewModel @Inject constructor(
         val sheetState = flows[4] as DashboardSheetState
 
         val wotdState = when {
-            isFetching -> WotdState.Loading
             wotd != null -> WotdState.Available(wotd)
+            isFetching -> WotdState.Loading
             else -> WotdState.Unavailable
         }
 
@@ -62,6 +64,7 @@ class DashboardViewModel @Inject constructor(
             displayName = userPair.first,
             userScore = userPair.second,
             wordOfTheDay = wotdState,
+            isFetchingWotd = isFetching,
             recentWords = recentList.map { event ->
                 HistoryUiState.fromDomain(
                     id = event.id,
@@ -71,12 +74,11 @@ class DashboardViewModel @Inject constructor(
             },
             sheetState = sheetState
         )
-    }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = DashboardUiState()
-        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = DashboardUiState()
+    )
 
     init {
         viewModelScope.launch {
@@ -89,6 +91,12 @@ class DashboardViewModel @Inject constructor(
             setSeenEventUseCase(word)
         }
         _sheetState.value = DashboardSheetState.WordDetail(word)
+    }
+
+    fun onRefreshWotdClicked() {
+        viewModelScope.launch {
+            refreshWordOfTheDayUseCase()
+        }
     }
 
     fun onSheetDismissed() {
