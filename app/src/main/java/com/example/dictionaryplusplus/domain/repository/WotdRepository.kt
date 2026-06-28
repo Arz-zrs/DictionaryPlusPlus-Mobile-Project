@@ -1,5 +1,6 @@
 package com.example.dictionaryplusplus.domain.repository
 
+import com.example.dictionaryplusplus.data.local.entity.WotdHistoryEntity
 import com.example.dictionaryplusplus.domain.model.Definition
 import kotlinx.coroutines.flow.Flow
 
@@ -11,4 +12,5 @@ interface WotdRepository {
     suspend fun setWordOfTheDay(word: String)
     suspend fun setWordnikWordOfTheDay(word: String, definition: String)
     suspend fun fetchWotdSync()
+    suspend fun getWotdHistoryForDate(date: String): WotdHistoryEntity?
 }

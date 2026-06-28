@@ -44,4 +44,7 @@ object DatabaseModule {
 
     @Provides
     fun provideUserProfileDao(database: AppDatabase) : UserProfileDao = database.userProfileDao()
+
+    @Provides
+    fun provideWotdHistoryDao(database: AppDatabase) : WotdHistoryDao = database.wotdHistoryDao()
 }

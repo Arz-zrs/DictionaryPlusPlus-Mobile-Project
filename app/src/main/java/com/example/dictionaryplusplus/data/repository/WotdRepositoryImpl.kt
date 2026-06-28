@@ -10,6 +10,9 @@ import com.example.dictionaryplusplus.domain.repository.WotdRepository
 import com.google.gson.Gson
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.dictionaryplusplus.data.local.dao.WotdHistoryDao
+import com.example.dictionaryplusplus.data.local.entity.WotdHistoryEntity
+import com.example.dictionaryplusplus.domain.model.WotdSource
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -21,6 +24,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withTimeoutOrNull
+import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Duration.Companion.seconds
@@ -29,6 +33,7 @@ import kotlin.time.Duration.Companion.seconds
 class WotdRepositoryImpl @Inject constructor(
     private val userPreferences: UserPreferences,
     private val definitionDao: DefinitionDao,
+    private val wotdHistoryDao: WotdHistoryDao,
     private val workManager: WorkManager,
     private val gson: Gson
 ) : WotdRepository {
@@ -71,6 +76,18 @@ class WotdRepositoryImpl @Inject constructor(
             )
         }
         userPreferences.setWordOfTheDay(word)
+
+        wotdHistoryDao.insertWotdHistory(
+            WotdHistoryEntity(
+                date = LocalDate.now().toString(),
+                word = word,
+                source = WotdSource.WORDNIK.name
+            )
+        )
+    }
+
+    override suspend fun getWotdHistoryForDate(date: String): WotdHistoryEntity? {
+        return wotdHistoryDao.getWotdForDate(date)
     }
 
     override suspend fun fetchWotdSync() {
@@ -87,6 +104,15 @@ class WotdRepositoryImpl @Inject constructor(
         }
         finally {
             _isFetching.value = false
+        }
+    }
+
+    fun WotdHistoryEntity.toDomain(): WotdSource {
+        return try {
+            WotdSource.valueOf(source)
+        } catch (e: IllegalArgumentException) {
+            FirebaseCrashlytics.getInstance().recordException(e)
+            WotdSource.LOCAL_FALLBACK
         }
     }
 }
