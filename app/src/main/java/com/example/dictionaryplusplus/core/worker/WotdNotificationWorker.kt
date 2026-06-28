@@ -37,11 +37,15 @@ class WotdNotificationWorker @AssistedInject constructor(
                 is DefinitionResult.Error -> {
                     return if (definitionResult.type == DefinitionErrorType.NOT_FOUND) {
                         Result.failure()
-                    } else {
+                    } else if (runAttemptCount < 3) {
                         Result.retry()
+                    } else {
+                        FirebaseCrashlytics.getInstance().recordException(Exception("WotdNotificationWorker: definition fetch failed after max retries for word: $word"))
+                        Result.failure()
                     }
                 }
-                DefinitionResult.Loading -> return Result.retry()
+                DefinitionResult.Loading ->
+                    return if (runAttemptCount < 3) Result.retry() else Result.failure()
             }
 
             notificationBuilder.showDailyNotification(
@@ -52,8 +56,12 @@ class WotdNotificationWorker @AssistedInject constructor(
 
             Result.success()
         } catch (e: Exception) {
-            FirebaseCrashlytics.getInstance().recordException(e)
-            Result.retry()
+            if (runAttemptCount < 3) {
+                Result.retry()
+            } else {
+                FirebaseCrashlytics.getInstance().recordException(e)
+                Result.failure()
+            }
         }
     }
 }

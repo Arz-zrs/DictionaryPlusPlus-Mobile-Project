@@ -17,7 +17,7 @@ class RegisterUseCase @Inject constructor(
         return try {
             val uid = authRepository.register(email, password).getOrThrow()
             userRepository.createProfile(uid, displayName, email).getOrElse {
-                authRepository.logout()
+                authRepository.deleteCurrentUser()
                 return Result.failure(it)
             }
             userRepository.getUserProfile()?.let { Result.success(it) }

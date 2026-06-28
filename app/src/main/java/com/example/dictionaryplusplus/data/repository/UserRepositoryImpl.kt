@@ -102,6 +102,7 @@ class UserRepositoryImpl @Inject constructor(
 
             @Suppress("UNCHECKED_CAST")
             val notes = (cloudData["notes"] as? Map<String, String>) ?: emptyMap()
+            wordNoteDao.clearAll()
             notes.forEach { (word, note) ->
                 wordNoteDao.insertWordNote(
                     WordNoteEntity(
@@ -128,6 +129,7 @@ class UserRepositoryImpl @Inject constructor(
 
             Result.success(localProfile.toDomain())
         } catch (e: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(e)
             Result.failure(e)
         }
     }
@@ -148,6 +150,7 @@ class UserRepositoryImpl @Inject constructor(
             userProfileDao.insertUserProfile(localProfile)
             Result.success(localProfile.toDomain())
         } catch (e: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(e)
             Result.failure(e)
         }
     }
@@ -167,6 +170,7 @@ class UserRepositoryImpl @Inject constructor(
             userProfileDao.updateScore(points)
             Result.success(Unit)
         } catch (e: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(e)
             Result.failure(e)
         }
     }
@@ -187,6 +191,7 @@ class UserRepositoryImpl @Inject constructor(
 
             Result.success(Unit)
         } catch (e: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(e)
             Result.failure(e)
         }
     }
@@ -207,6 +212,7 @@ class UserRepositoryImpl @Inject constructor(
             userPreferences.saveQuizCompletion(lastQuizCompletedAt, refreshTimeAtCompletion)
             Result.success(Unit)
         } catch (e: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(e)
             Result.failure(e)
         }
     }

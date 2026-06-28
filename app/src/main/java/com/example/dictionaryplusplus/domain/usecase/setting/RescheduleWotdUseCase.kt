@@ -13,6 +13,7 @@ class RescheduleWotdUseCase @Inject constructor(
     suspend operator fun invoke(hour: Int, minute: Int) {
         val formatted = String.format(Locale.getDefault(), "%02d:%02d", hour, minute)
         onboardingRepository.updateNotificationTime(formatted)
+        notificationScheduler.scheduleWotdApi(hour, minute)
         notificationScheduler.scheduleWotdNotification(hour, minute)
     }
 }

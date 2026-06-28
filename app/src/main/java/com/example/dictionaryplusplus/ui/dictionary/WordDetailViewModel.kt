@@ -42,7 +42,7 @@ class WordDetailViewModel @Inject constructor(
 ) : ViewModel() {
     private val _currentWord = MutableStateFlow("")
     private val _definitionError = MutableStateFlow<ErrorMessage>(ErrorMessage.None)
-    private val _noteInput = MutableStateFlow<String?>(null)
+    private val _noteInput = MutableStateFlow<NoteUpdate?>(null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<WordDetailUiState> = _currentWord
@@ -75,21 +75,25 @@ class WordDetailViewModel @Inject constructor(
         )
 
     init {
-        combine(
-            _currentWord.filter { it.isNotEmpty() },
-            _noteInput.filterNotNull()) { word, note -> word to note }
+        _noteInput
+            .filterNotNull()
             .debounce(500.milliseconds)
-            .onEach { (word, note) -> saveWordNoteUseCase(word, note) }
+            .onEach { update -> saveWordNote(update.note) }
             .launchIn(viewModelScope)
     }
 
     fun onNoteChanged(note: String) {
-        _noteInput.value = note
+        val word = _currentWord.value
+        if (word.isNotEmpty()) {
+            _noteInput.value = NoteUpdate(word, note)
+        }
     }
 
     fun loadWordDetails(word: String) {
         _definitionError.value = ErrorMessage.None
         _currentWord.value = word
+        _noteInput.value = null
+
         viewModelScope.launch {
             val response = getDefinitionUseCase(word)
             if (response is DefinitionResult.Error) {

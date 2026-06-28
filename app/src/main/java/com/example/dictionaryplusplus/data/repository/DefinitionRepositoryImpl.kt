@@ -104,6 +104,7 @@ class DefinitionRepositoryImpl @Inject constructor(
             )
             DefinitionResult.Success(domainModel)
         } catch (e: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(e)
             val errorType = when (e) {
                 is java.net.UnknownHostException -> DefinitionErrorType.NO_INTERNET
                 is java.net.SocketTimeoutException -> DefinitionErrorType.TIMEOUT

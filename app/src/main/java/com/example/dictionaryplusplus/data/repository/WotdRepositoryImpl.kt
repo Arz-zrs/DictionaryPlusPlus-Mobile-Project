@@ -10,6 +10,7 @@ import com.example.dictionaryplusplus.domain.repository.WotdRepository
 import com.google.gson.Gson
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +20,10 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.seconds
 
 @Singleton
 class WotdRepositoryImpl @Inject constructor(
@@ -75,9 +78,14 @@ class WotdRepositoryImpl @Inject constructor(
         try {
             val workRequest = OneTimeWorkRequestBuilder<WotdApiWorker>().build()
             workManager.enqueue(workRequest)
-            workManager.getWorkInfoByIdFlow(workRequest.id)
-                .first { it?.state?.isFinished ?: return@first false }
-        } finally {
+            withTimeoutOrNull(15.seconds) {
+                workManager.getWorkInfoByIdFlow(workRequest.id)
+                    .first { it?.state?.isFinished ?: return@first false }
+            }
+        } catch (e: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
+        finally {
             _isFetching.value = false
         }
     }

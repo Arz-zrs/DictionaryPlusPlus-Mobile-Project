@@ -1,6 +1,5 @@
 package com.example.dictionaryplusplus.data.repository
 
-import android.database.sqlite.SQLiteConstraintException
 import com.example.dictionaryplusplus.core.di.ApplicationScope
 import com.example.dictionaryplusplus.data.firebase.FirestoreSyncStore
 import com.example.dictionaryplusplus.data.local.dao.FavouriteDao
@@ -47,10 +46,8 @@ class FavouriteRepositoryImpl @Inject constructor(
                 firestoreSyncStore.syncFavouriteChange(word, isAdded = newState)
             }
             newState
-        } catch (e: SQLiteConstraintException) {
-            FirebaseCrashlytics.getInstance().recordException(
-                Exception("Foreign Key Violation: can't toggle favourite on non-existent word: $word", e)
-            )
+        } catch (e: Exception) {
+            FirebaseCrashlytics.getInstance().recordException(e)
             false
         }
     }

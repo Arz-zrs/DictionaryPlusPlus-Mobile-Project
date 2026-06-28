@@ -32,8 +32,12 @@ class ConfirmSeenWordWorker @AssistedInject constructor(
             )
             Result.success()
         } catch (e: Exception) {
-            FirebaseCrashlytics.getInstance().recordException(e)
-            Result.retry()
+            if (runAttemptCount < 3) {
+                Result.retry()
+            } else {
+                FirebaseCrashlytics.getInstance().recordException(e)
+                Result.failure()
+            }
         }
     }
 }

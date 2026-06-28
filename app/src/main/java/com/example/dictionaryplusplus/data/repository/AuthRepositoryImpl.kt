@@ -27,6 +27,10 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun deleteCurrentUser(): Result<Unit> {
+        return authSource.deleteCurrentUser()
+    }
+
     override suspend fun changePassword(
         currentPassword: String,
         newPassword: String

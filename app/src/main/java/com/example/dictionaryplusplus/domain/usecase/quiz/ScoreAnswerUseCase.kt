@@ -8,7 +8,7 @@ class ScoreAnswerUseCase @Inject constructor() {
         if (!isCorrect) return AnswerScoreResult(0, 0, 0)
 
         val basePoints = 10
-        val speedBonus = if (answerTimeMillis <= 5000) 5 else 0
+        val speedBonus = if (answerTimeMillis < 5000) 5 else 0
 
         return AnswerScoreResult(
             basePoints = basePoints,

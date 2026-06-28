@@ -2,6 +2,7 @@ package com.example.dictionaryplusplus.data.repository
 
 import com.example.dictionaryplusplus.domain.model.LeaderboardUser
 import com.example.dictionaryplusplus.domain.repository.LeaderboardRepository
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.firestore.AggregateSource
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -44,6 +45,7 @@ class LeaderboardRepositoryImpl @Inject constructor(
             .await()
         Result.success(snapshot.count)
     } catch (e: Exception) {
+        FirebaseCrashlytics.getInstance().recordException(e)
         Result.failure(e)
     }
 
@@ -55,6 +57,7 @@ class LeaderboardRepositoryImpl @Inject constructor(
             .await()
         Result.success(snapshot.count.toInt() + 1)
     } catch (e: Exception) {
+        FirebaseCrashlytics.getInstance().recordException(e)
         Result.failure(e)
     }
 }

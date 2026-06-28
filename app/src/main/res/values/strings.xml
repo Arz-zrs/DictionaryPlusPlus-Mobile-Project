@@ -111,6 +111,7 @@
     <string name="quiz_back_to_hub">Back to Hub</string>
     <string name="daily_quiz_completed_title">QUIZ COMPLETED</string>
     <string name="btn_done">Done</string>
+    <string name="btn_retry">Retry</string>
     <string name="label_question_count">Question %1$d of %2$d</string>
     <string name="label_speed_bonus">+%1$d (Speed!)</string>
     <string name="quiz_time_bonus">Time Bonus!</string>

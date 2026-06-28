@@ -83,7 +83,15 @@ fun DailyQuizScreen(
                         ErrorMessage.None -> ""
                     }
                     if (errorText.isNotEmpty()) {
-                        Text(errorText, color = MaterialTheme.colorScheme.error)
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Text(errorText, color = MaterialTheme.colorScheme.error)
+                            Button(onClick = { viewModel.startQuiz() }) {
+                                Text(stringResource(R.string.btn_retry))
+                            }
+                        }
                     }
                 }
                 is DailyQuizUiState.Playing -> {
