@@ -21,7 +21,12 @@ interface SeenEventDao {
     @Query("UPDATE seen_event SET isConfirmed = 1 WHERE id = :id")
     suspend fun confirmSeenEvent(id: Long)
 
-    @Query("SELECT word FROM seen_event ORDER BY RANDOM() LIMIT 1")
+    @Query("""
+        SELECT s.word FROM seen_event s
+        INNER JOIN definition_cache d ON s.word = d.word
+        ORDER BY RANDOM()
+        LIMIT 1
+    """)
     suspend fun getRandomSeenWord(): String?
 
     @Query("DELETE FROM seen_event")

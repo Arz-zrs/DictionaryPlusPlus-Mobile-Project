@@ -18,7 +18,12 @@ interface WordDao {
     @Query("SELECT * FROM word_bank WHERE word NOT IN (SELECT word FROM seen_event) ORDER BY RANDOM() LIMIT 1")
     suspend fun getRandomUnseenWord(): WordEntity?
 
-    @Query("SELECT word FROM word_bank ORDER BY RANDOM() LIMIT :limit")
+    @Query("""
+        SELECT w.word FROM word_bank w
+        INNER JOIN definition_cache d ON w.word = d.word
+        ORDER BY RANDOM()
+        LIMIT :limit
+    """)
     suspend fun getRandomWords(limit: Int): List<String>
 
     @Query("""
