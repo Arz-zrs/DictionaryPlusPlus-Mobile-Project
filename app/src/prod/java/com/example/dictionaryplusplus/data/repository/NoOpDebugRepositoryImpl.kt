@@ -9,8 +9,4 @@ class NoOpDebugRepositoryImpl @Inject constructor() : DebugRepository {
     override fun triggerWotdWorker() {
         // No-op for prod
     }
-
-    override suspend fun resetQuizCompletion() {
-        // No-op for prod
-    }
 }

@@ -24,8 +24,6 @@ class FirestoreSyncStore @Inject constructor(
                 "display_name" to displayName,
                 "email" to email,
                 "total_score" to 0,
-                "last_quiz_completed_at" to 0L,
-                "refresh_time_at_completion" to "06:00",
                 "seen_words" to emptyList<String>(),
                 "favourites" to emptyList<String>(),
                 "notes" to emptyList<String>()
@@ -48,18 +46,14 @@ class FirestoreSyncStore @Inject constructor(
         }
     }
 
-    suspend fun updateScoreAndQuizCompletion(
+    suspend fun updateScore(
         uid: String,
         displayName: String,
-        totalScore: Int,
-        lastCompletedAt: Long,
-        refreshTime: String
+        totalScore: Int
     ): Result<Unit> {
         return try {
             val userUpdates = mapOf(
-                "total_score" to totalScore,
-                "last_quiz_completed_at" to lastCompletedAt,
-                "refresh_time_at_completion" to refreshTime
+                "total_score" to totalScore
             )
             firestore.collection("users").document(uid).update(userUpdates).await()
             firestore.collection("leaderboard").document(uid)
@@ -121,6 +115,4 @@ class FirestoreSyncStore @Inject constructor(
             Result.failure(e)
         }
     }
-
-    fun getCurrentUid(): String? = authStore.currentUserUid
 }

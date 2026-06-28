@@ -5,7 +5,6 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.dictionaryplusplus.domain.model.PreferenceConstants
@@ -31,11 +30,8 @@ class UserPreferences @Inject constructor(
         val IS_DEFINITION_SEEDED = booleanPreferencesKey("is_definition_seeded")
         val WORD_OF_THE_DAY = stringPreferencesKey("word_of_the_day")
         val QUIZ_LENGTH = intPreferencesKey("quiz_length")
-        val DAILY_QUIZ_REFRESH_TIME = stringPreferencesKey("daily_quiz_refresh_time")
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val FONT_SIZE = stringPreferencesKey("font_size")
-        val LAST_COMPLETED_AT_TIMESTAMP = longPreferencesKey("last_completed_at_timestamp")
-        val REFRESH_TIME_AT_LAST_COMPLETION = stringPreferencesKey("refresh_time_at_last_completion")
     }
 
     val hasSeenOnboarding: Flow<Boolean> = context.dataStore.data
@@ -131,34 +127,6 @@ class UserPreferences @Inject constructor(
         }
     }
 
-    val dailyQuizRefreshTime: Flow<String> = context.dataStore.data
-        .map { preferences ->
-            preferences[PreferencesKeys.DAILY_QUIZ_REFRESH_TIME] ?: PreferenceConstants.DEFAULT_REFRESH_TIMESTAMP
-        }
-
-    suspend fun setDailyQuizRefreshTime(time: String) {
-        context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.DAILY_QUIZ_REFRESH_TIME] = time
-        }
-    }
-
-    val lastCompletedAtTimestamp: Flow<Long?> = context.dataStore.data
-        .map { preferences ->
-            preferences[PreferencesKeys.LAST_COMPLETED_AT_TIMESTAMP]
-        }
-
-    val refreshTimeAtLastCompletion: Flow<String> = context.dataStore.data
-        .map { preferences ->
-            preferences[PreferencesKeys.REFRESH_TIME_AT_LAST_COMPLETION] ?: PreferenceConstants.DEFAULT_REFRESH_TIMESTAMP
-        }
-
-    suspend fun saveQuizCompletion(timestamp: Long, refreshTimeSnapshot: String) {
-        context.dataStore.edit { preferences ->
-            preferences[PreferencesKeys.LAST_COMPLETED_AT_TIMESTAMP] = timestamp
-            preferences[PreferencesKeys.REFRESH_TIME_AT_LAST_COMPLETION] = refreshTimeSnapshot
-        }
-    }
-
     val themeMode: Flow<String> = context.dataStore.data
         .map { preferences ->
             preferences[PreferencesKeys.THEME_MODE] ?: PreferenceConstants.DEFAULT_THEME
@@ -178,13 +146,6 @@ class UserPreferences @Inject constructor(
     suspend fun setFontSize(size: String) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.FONT_SIZE] = size
-        }
-    }
-
-    suspend fun resetQuizCompletion() {
-        context.dataStore.edit { preferences ->
-            preferences.remove(PreferencesKeys.LAST_COMPLETED_AT_TIMESTAMP)
-            preferences.remove(PreferencesKeys.REFRESH_TIME_AT_LAST_COMPLETION)
         }
     }
 }

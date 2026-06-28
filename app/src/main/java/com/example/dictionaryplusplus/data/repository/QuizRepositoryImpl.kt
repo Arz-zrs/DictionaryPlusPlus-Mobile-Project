@@ -13,16 +13,4 @@ class QuizRepositoryImpl @Inject constructor(
     override fun getQuizLength(): Flow<Int> = userPreferences.quizLength
 
     override suspend fun setQuizLength(length: Int) = userPreferences.setQuizLength(length)
-
-    override suspend fun saveQuizCompletion(timestamp: Long, refreshTimeSnapshot: String) {
-        userPreferences.saveQuizCompletion(timestamp, refreshTimeSnapshot)
-    }
-
-    override fun getDailyQuizRefreshTime(): Flow<String> = userPreferences.dailyQuizRefreshTime
-
-    override suspend fun setDailyQuizRefreshTime(time: String) = userPreferences.setDailyQuizRefreshTime(time)
-
-    override fun getLastCompletedAtTimestamp(): Flow<Long?> = userPreferences.lastCompletedAtTimestamp
-
-    override fun getRefreshTimeAtLastCompletion(): Flow<String> = userPreferences.refreshTimeAtLastCompletion
 }

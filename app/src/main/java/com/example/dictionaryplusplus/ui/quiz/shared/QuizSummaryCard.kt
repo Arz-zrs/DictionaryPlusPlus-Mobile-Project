@@ -31,7 +31,7 @@ fun QuizSummaryCard(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                text = stringResource(R.string.daily_quiz_completed_title),
+                text = stringResource(R.string.standard_quiz_completed_title),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.primary
             )

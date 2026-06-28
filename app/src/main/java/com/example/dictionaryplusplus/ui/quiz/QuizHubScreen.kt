@@ -3,23 +3,17 @@ package com.example.dictionaryplusplus.ui.quiz
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.R
-import com.example.dictionaryplusplus.ui.components.DailyQuizEntryCard
+import com.example.dictionaryplusplus.ui.components.StandardQuizEntryCard
 
 @Composable
 fun QuizScreen(
     onNavigateToPracticeQuiz: () -> Unit,
-    onNavigateToDailyQuiz: () -> Unit,
-    viewModel: QuizHubViewModel = hiltViewModel()
+    onNavigateToDailyQuiz: () -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -53,8 +47,7 @@ fun QuizScreen(
             }
         }
 
-        DailyQuizEntryCard(
-            isAvailable = uiState.isDailyQuizAvailable,
+        StandardQuizEntryCard(
             onStartClick = onNavigateToDailyQuiz
         )
     }

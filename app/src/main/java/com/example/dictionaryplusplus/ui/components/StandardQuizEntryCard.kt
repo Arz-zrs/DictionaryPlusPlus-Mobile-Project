@@ -17,42 +17,27 @@ import androidx.compose.ui.unit.dp
 import com.example.dictionaryplusplus.R
 
 @Composable
-fun DailyQuizEntryCard(
-    isAvailable: Boolean,
+fun StandardQuizEntryCard(
     onStartClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(enabled = isAvailable) { onStartClick() },
+            .clickable { onStartClick() },
         colors = CardDefaults.cardColors(
-            containerColor = if (isAvailable) {
-                MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
-            } else {
-                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
-            }
+            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = stringResource(R.string.daily_quiz_title),
+                text = stringResource(R.string.standard_quiz_title),
                 style = MaterialTheme.typography.labelSmall,
-                color =
-                    if (isAvailable) {
-                        MaterialTheme.colorScheme.onSurface
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    }
+                color = MaterialTheme.colorScheme.onSurface
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text =
-                    if (isAvailable) {
-                        stringResource(R.string.daily_quiz_start)
-                    } else {
-                        stringResource(R.string.daily_quiz_completed)
-                    },
+                text = stringResource(R.string.standard_quiz_start),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )

@@ -66,7 +66,6 @@ fun SettingsScreen(
     val scrollState = rememberScrollState()
 
     val quizLength by viewModel.quizLength.collectAsStateWithLifecycle()
-    val refreshTime by viewModel.dailyQuizRefreshTime.collectAsStateWithLifecycle()
     val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
     val fontSize by viewModel.fontSize.collectAsStateWithLifecycle()
     val passwordUiState by viewModel.passwordUiState.collectAsStateWithLifecycle()
@@ -274,35 +273,6 @@ fun SettingsScreen(
 
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(stringResource(R.string.settings_reset_time), style = MaterialTheme.typography.titleMedium)
-                Text(
-                    text = stringResource(R.string.settings_reset_time_desc),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Button(
-                    onClick = {
-                        val parts = refreshTime.split(":")
-                        val hour = parts.getOrNull(0)?.toIntOrNull() ?: 6
-                        val minute = parts.getOrNull(1)?.toIntOrNull() ?: 0
-                        TimePickerDialog(context, { _, h, m ->
-                            viewModel.updateQuizRefreshTime(context.getString(R.string.time_format, h, m))
-                        }, hour, minute, true).show()
-                    },
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                ) {
-                    Text(stringResource(R.string.settings_selected_time, refreshTime))
-                }
-            }
-        }
-
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(
                 modifier = Modifier.fillMaxWidth().padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -426,8 +396,7 @@ fun SettingsScreen(
         }
 
         DebugSection(
-            onTriggerWotd = { viewModel.triggerWotd() },
-            onResetQuiz = { viewModel.resetQuiz() }
+            onTriggerWotd = { viewModel.triggerWotd() }
         )
 
         Spacer(modifier = Modifier.height(8.dp))

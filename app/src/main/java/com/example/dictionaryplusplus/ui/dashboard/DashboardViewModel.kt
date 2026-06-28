@@ -6,7 +6,6 @@ import com.example.dictionaryplusplus.domain.model.Definition
 import com.example.dictionaryplusplus.domain.model.SeenEvent
 import com.example.dictionaryplusplus.domain.usecase.words.EnsureWotdAvailableUseCase
 import com.example.dictionaryplusplus.domain.usecase.words.ObserveIsFetchingWotdUseCase
-import com.example.dictionaryplusplus.domain.usecase.quiz.ObserveQuizAvailabilityUseCase
 import com.example.dictionaryplusplus.domain.usecase.auth.ObserveUserProfileUseCase
 import com.example.dictionaryplusplus.domain.usecase.words.ObserveWordOfTheDayUseCase
 import com.example.dictionaryplusplus.domain.usecase.words.ObserveSeenEventsUseCase
@@ -28,7 +27,6 @@ class DashboardViewModel @Inject constructor(
     observeUserProfileUseCase: ObserveUserProfileUseCase,
     observeWordOfTheDayUseCase: ObserveWordOfTheDayUseCase,
     observeSeenEventsUseCase: ObserveSeenEventsUseCase,
-    observeQuizAvailabilityUseCase: ObserveQuizAvailabilityUseCase,
     observeIsFetchingWotdUseCase: ObserveIsFetchingWotdUseCase,
     private val ensureWotdAvailableUseCase: EnsureWotdAvailableUseCase,
     private val setSeenEventUseCase: SetSeenEventUseCase
@@ -44,7 +42,6 @@ class DashboardViewModel @Inject constructor(
         observeWordOfTheDayUseCase(),
         observeIsFetchingWotdUseCase(),
         observeSeenEventsUseCase().map { it.take(5) },
-        observeQuizAvailabilityUseCase(),
         _sheetState
     ) { flows ->
         @Suppress("UNCHECKED_CAST")
@@ -53,8 +50,7 @@ class DashboardViewModel @Inject constructor(
         val isFetching = flows[2] as Boolean
         @Suppress("UNCHECKED_CAST")
         val recentList = flows[3] as List<SeenEvent>
-        val isQuizAvailable = flows[4] as Boolean
-        val sheetState = flows[5] as DashboardSheetState
+        val sheetState = flows[4] as DashboardSheetState
 
         val wotdState = when {
             isFetching -> WotdState.Loading
@@ -73,7 +69,6 @@ class DashboardViewModel @Inject constructor(
                     timestamp = event.seenAtTimestamp
                 )
             },
-            isQuizAvailable = isQuizAvailable,
             sheetState = sheetState
         )
     }

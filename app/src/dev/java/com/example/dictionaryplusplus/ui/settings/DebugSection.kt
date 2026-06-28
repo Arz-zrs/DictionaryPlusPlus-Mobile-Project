@@ -17,8 +17,7 @@ import com.example.dictionaryplusplus.R
 
 @Composable
 fun DebugSection(
-    onTriggerWotd: () -> Unit,
-    onResetQuiz: () -> Unit
+    onTriggerWotd: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -44,15 +43,6 @@ fun DebugSection(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(stringResource(R.string.debug_trigger_wotd))
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Button(
-                onClick = onResetQuiz,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(stringResource(R.string.debug_reset_quiz))
             }
         }
     }

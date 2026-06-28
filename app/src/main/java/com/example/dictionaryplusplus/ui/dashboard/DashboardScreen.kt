@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.dictionaryplusplus.R
-import com.example.dictionaryplusplus.ui.components.DailyQuizEntryCard
+import com.example.dictionaryplusplus.ui.components.StandardQuizEntryCard
 import com.example.dictionaryplusplus.ui.components.ScoreBanner
 import com.example.dictionaryplusplus.ui.components.WordOfTheDayCard
 import com.example.dictionaryplusplus.ui.dictionary.WordDetailSheet
@@ -86,8 +86,7 @@ fun DashboardScreen(
 
 
         item {
-            DailyQuizEntryCard(
-                isAvailable = uiState.isQuizAvailable,
+            StandardQuizEntryCard(
                 onStartClick = onNavigateToQuizHub
             )
             HorizontalDivider(Modifier.padding(vertical = 16.dp))

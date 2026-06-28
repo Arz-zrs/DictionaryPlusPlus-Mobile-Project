@@ -16,7 +16,7 @@ import com.example.dictionaryplusplus.ui.favourites.FavouritesScreen
 import com.example.dictionaryplusplus.ui.history.WordHistoryScreen
 import com.example.dictionaryplusplus.ui.leaderboard.LeaderboardScreen
 import com.example.dictionaryplusplus.ui.onboarding.OnboardingScreen
-import com.example.dictionaryplusplus.ui.quiz.dailyquiz.DailyQuizScreen
+import com.example.dictionaryplusplus.ui.quiz.standardquiz.StandardQuizScreen
 import com.example.dictionaryplusplus.ui.quiz.QuizScreen
 import com.example.dictionaryplusplus.ui.quiz.practicequiz.PracticeQuizScreen
 import com.example.dictionaryplusplus.ui.settings.SettingsScreen
@@ -69,7 +69,7 @@ fun NavigationGraph(
         composable(route = Screen.Dashboard.route) {
             DashboardScreen(
                 onNavigateToQuizHub = {
-                    navController.navigate(Screen.DailyQuiz.route)
+                    navController.navigate(Screen.StandardQuiz.route)
                 },
                 onNavigateToLeaderboard = {
                     navController.navigate(Screen.Leaderboard.route)
@@ -98,7 +98,7 @@ fun NavigationGraph(
                     navController.navigate(Screen.PracticeQuiz.createRoute(null))
                 },
                 onNavigateToDailyQuiz = {
-                    navController.navigate(Screen.DailyQuiz.route)
+                    navController.navigate(Screen.StandardQuiz.route)
                 }
             )
         }
@@ -125,8 +125,8 @@ fun NavigationGraph(
             )
         }
 
-        composable(route = Screen.DailyQuiz.route) {
-            DailyQuizScreen(
+        composable(route = Screen.StandardQuiz.route) {
+            StandardQuizScreen(
                 onNavigateBack = {
                     navController.popBackStack()
                 }

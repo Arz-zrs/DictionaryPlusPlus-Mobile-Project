@@ -15,7 +15,7 @@ sealed class Screen(val route: String) {
             else "practice_quiz"
     }
 
-    object DailyQuiz : Screen("daily_quiz")
+    object StandardQuiz : Screen("standard_quiz")
     object Leaderboard : Screen("leaderboard")
     object Favourites : Screen("favourites")
     object Settings : Screen("settings")

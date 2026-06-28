@@ -4,8 +4,7 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun DebugSection(
-    onTriggerWotd: () -> Unit,
-    onResetQuiz: () -> Unit
+    onTriggerWotd: () -> Unit
 ) {
     // No-op for prod flavor
 }

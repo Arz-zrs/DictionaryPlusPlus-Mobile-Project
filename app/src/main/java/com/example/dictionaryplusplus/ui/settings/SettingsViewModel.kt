@@ -7,7 +7,6 @@ import com.example.dictionaryplusplus.core.util.asErrorMessage
 import com.example.dictionaryplusplus.domain.model.FontSize
 import com.example.dictionaryplusplus.domain.model.ThemeMode
 import com.example.dictionaryplusplus.domain.usecase.auth.ChangePasswordUseCase
-import com.example.dictionaryplusplus.domain.usecase.quiz.GetDailyQuizRefreshTimeUseCase
 import com.example.dictionaryplusplus.domain.usecase.setting.GetFontSizeUseCase
 import com.example.dictionaryplusplus.domain.usecase.setting.GetNotificationPermissionStatusUseCase
 import com.example.dictionaryplusplus.domain.usecase.setting.GetNotificationTimeUseCase
@@ -16,8 +15,6 @@ import com.example.dictionaryplusplus.domain.usecase.setting.GetThemeModeUseCase
 import com.example.dictionaryplusplus.domain.usecase.auth.LogoutUseCase
 import com.example.dictionaryplusplus.domain.usecase.auth.ObserveUserProfileUseCase
 import com.example.dictionaryplusplus.domain.usecase.setting.RescheduleWotdUseCase
-import com.example.dictionaryplusplus.domain.usecase.quiz.ResetQuizCompletionUseCase
-import com.example.dictionaryplusplus.domain.usecase.quiz.SetDailyQuizRefreshTimeUseCase
 import com.example.dictionaryplusplus.domain.usecase.setting.SetFontSizeUseCase
 import com.example.dictionaryplusplus.domain.usecase.quiz.SetQuizLengthUseCase
 import com.example.dictionaryplusplus.domain.usecase.setting.SetThemeModeUseCase
@@ -37,8 +34,6 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     getQuizLengthUseCase: GetQuizLengthUseCase,
     private val setQuizLengthUseCase: SetQuizLengthUseCase,
-    getDailyQuizRefreshTimeUseCase: GetDailyQuizRefreshTimeUseCase,
-    private val setDailyQuizRefreshTimeUseCase: SetDailyQuizRefreshTimeUseCase,
     getThemeModeUseCase: GetThemeModeUseCase,
     private val setThemeModeUseCase: SetThemeModeUseCase,
     getFontSizeUseCase: GetFontSizeUseCase,
@@ -48,7 +43,6 @@ class SettingsViewModel @Inject constructor(
     getNotificationTimeUseCase: GetNotificationTimeUseCase,
     private val rescheduleWotdUseCase: RescheduleWotdUseCase,
     private val triggerWotdWorkerUseCase: TriggerWotdWorkerUseCase,
-    private val resetQuizCompletionUseCase: ResetQuizCompletionUseCase,
     private val updateDisplayNameUseCase: UpdateDisplayNameUseCase,
     observeUserProfileUseCase: ObserveUserProfileUseCase,
     private val getNotificationPermissionStatusUseCase: GetNotificationPermissionStatusUseCase
@@ -64,13 +58,6 @@ class SettingsViewModel @Inject constructor(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
             initialValue = 5)
-
-    val dailyQuizRefreshTime: StateFlow<String> = getDailyQuizRefreshTimeUseCase()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            initialValue = "08:00"
-        )
 
     val themeMode: StateFlow<ThemeMode> = getThemeModeUseCase()
         .stateIn(
@@ -89,12 +76,6 @@ class SettingsViewModel @Inject constructor(
     fun updateQuizLength(length: Int) {
         viewModelScope.launch {
             setQuizLengthUseCase(length)
-        }
-    }
-
-    fun updateQuizRefreshTime(time: String) {
-        viewModelScope.launch {
-            setDailyQuizRefreshTimeUseCase(time)
         }
     }
 
@@ -167,12 +148,6 @@ class SettingsViewModel @Inject constructor(
 
     fun triggerWotd() {
         triggerWotdWorkerUseCase()
-    }
-
-    fun resetQuiz() {
-        viewModelScope.launch {
-            resetQuizCompletionUseCase()
-        }
     }
 
     private val _isNotificationPermissionGranted = MutableStateFlow(
