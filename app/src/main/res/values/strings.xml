@@ -74,7 +74,6 @@
     <string name="placeholder_personal_notes">Add your notes here…</string>
     <string name="example_format">“%1$s”</string>
 
-
     <!-- Favourites Screen -->
     <string name="favourites_title">Favourites</string>
     <string name="favourites_empty">No favourites yet</string>
@@ -99,6 +98,7 @@
     <string name="dashboard_no_recent_words">No recent words</string>
     <string name="dashboard_wotd_unavailable">Word of the Day is not available due to fetching issue</string>
     <string name="btn_see_all">See all</string>
+    <string name="btn_refresh_wotd">refresh wotd</string>
 
 
     <!-- Quiz Screens -->
@@ -165,5 +165,4 @@
     <!-- Debug Section -->
     <string name="debug_title">Debug Tools</string>
     <string name="debug_trigger_wotd">Trigger WotD Notification</string>
-    <string name="btn_refresh_wotd">refresh wotd</string>
 </resources>
