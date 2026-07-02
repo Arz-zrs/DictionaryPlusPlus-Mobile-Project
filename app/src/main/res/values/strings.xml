@@ -147,6 +147,8 @@
     <string name="settings_password_changed_success">Password changed successfully!</string>
     <string name="settings_update_password">Update Password</string>
     <string name="settings_logout">Logout</string>
+    <string name="settings_logout_confirm_title">Logout</string>
+    <string name="settings_logout_confirm_message">Are you sure you want to log out?</string>
     <string name="change_password_failed">Failed to change password.</string>
     <string name="error_update_display_name_failed">Failed to update Display Name</string>
     <string name="settings_display_name_updated_success">Display Name updated successfully!</string>
