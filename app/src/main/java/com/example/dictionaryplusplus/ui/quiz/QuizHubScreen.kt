@@ -49,7 +49,7 @@ fun QuizScreen(
                 )
             }
         }
-        // test push
+
         StandardQuizEntryCard(
             onStartClick = onNavigateToDailyQuiz
         )
